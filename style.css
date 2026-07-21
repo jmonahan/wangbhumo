@@ -8,7 +8,13 @@
   --card-bg: #ffffff;             /* Crisp card background */
   --text-primary: #2c1a04;        /* Deep warm brown for primary text */
   --text-secondary: #705335;      /* Medium warm brown for subtitles & notes */
+	--text-dark: #2c3e50;        /* Deep charcoal for primary text */
+	--gray-dark: #555555;        /* Dark gray for secondary icons/labels */
+	--gray-medium: #7f8c8d;      /* Neutral gray for default icon states */
+	--gray-light: #e0e0e0;       /* Light gray for borders/dividers */
+	--gray-hover: rgba(0, 0, 0, 0.06); /* Subtle background fill on hover */
   --accent-maroon: #800020;       /* Traditional Tibetan burgundy/maroon */
+  --accent-gold: #d4af37;         /* Warm gold for accents & highlights */
   --accent-gold: #d4af37;         /* Warm gold for accents & highlights */
   --border-color: #e8e3dc;        /* Soft earthy border */
   --shadow: 0 4px 12px rgba(112, 83, 53, 0.08); /* Warm subtle shadow */
@@ -80,19 +86,69 @@ body {
 /* 4. Shared Header & Title Styling */
 header {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 3.5rem;
 }
 
 h1 {
   color: var(--accent-maroon);
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   margin-bottom: 5px;
 }
 
 p.subtitle, header p {
   color: var(--text-secondary);
-  font-size: 1rem;
-  margin-top: 0;
+  font-size: .75rem;
+  margin-top: -12px;
+}
+
+/* Section 4.1: Headers Play Button */
+.title-with-audio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Equal width for left spacer and right button */
+.title-spacer,
+.audio-btn-inline {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0; /* Prevents squeezing */
+}
+
+/* Button styling */
+.audio-btn-inline {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-dark, #555555);
+  opacity: 0.5;
+  transition: opacity 0.2s ease, transform 0.15s ease, background-color 0.2s ease;
+  line-height: 1;
+}
+
+.audio-btn-inline:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
+}
+
+.audio-btn-inline:active {
+  transform: scale(0.95);
+}
+
+/* Speaker Icon */
+.speaker-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
 }
 
 /* 5. Modules Grid (Home / Index Page) */
@@ -173,17 +229,33 @@ p.subtitle, header p {
 
 /* 6. Settings / Controls Bar (Syllable Grid Page) */
 .controls-container {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 12px 20px;
-  margin-bottom: 25px;
-  box-shadow: var(--shadow);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
+	position: sticky;
+	top: 0;
+	z-index: 100; 
+	
+	background-color: #fff;
+	border-top: 1px solid #e8e2d9;
+	border-bottom: 1px solid #e8e2d9;
+	padding: 8px; /* Extra bottom padding so content doesn't collide with the transparent fade */
+	margin: 0 auto 24px auto;
+	max-width: 900px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	
+	box-shadow: 0 3px 8px rgba(212, 175, 55, 0.2);
+	  box-shadow: 0 1px 6px rgba(44, 26, 4, 0.25);
+}
+.sticky-toggle-bar{
+	
+}
+.controls-container-title{
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--gray-dark, #555555);
 }
 
 .control-group {
