@@ -8,6 +8,8 @@ class SiteNav extends HTMLElement {
           <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="syllables.html">Syllables</a>
+	        <a href="vowels.html">Vowels</a>
+            <a href="headletters.html">Head Letters</a>
           </div>
         </div>
       </nav>

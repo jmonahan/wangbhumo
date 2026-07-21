@@ -15,7 +15,6 @@
 	--gray-hover: rgba(0, 0, 0, 0.06); /* Subtle background fill on hover */
   --accent-maroon: #800020;       /* Traditional Tibetan burgundy/maroon */
   --accent-gold: #d4af37;         /* Warm gold for accents & highlights */
-  --accent-gold: #d4af37;         /* Warm gold for accents & highlights */
   --border-color: #e8e3dc;        /* Soft earthy border */
   --shadow: 0 4px 12px rgba(112, 83, 53, 0.08); /* Warm subtle shadow */
 }
@@ -215,7 +214,7 @@ p.subtitle, header p {
   background-color: #ede8e1;
   color: var(--text-secondary);
 }
-
+/* index page disabled card for COMING SOON */
 .disabled-card {
   opacity: 0.65;
   cursor: not-allowed;
@@ -227,6 +226,7 @@ p.subtitle, header p {
   box-shadow: var(--shadow);
 }
 
+
 /* 6. Settings / Controls Bar (Syllable Grid Page) */
 .controls-container {
 	position: sticky;
@@ -234,9 +234,8 @@ p.subtitle, header p {
 	z-index: 100; 
 	
 	background-color: #fff;
-	border-top: 1px solid #e8e2d9;
-	border-bottom: 1px solid #e8e2d9;
-	padding: 8px; /* Extra bottom padding so content doesn't collide with the transparent fade */
+	border: 1px solid #e8e2d9;
+    padding: 10px;
 	margin: 0 auto 24px auto;
 	max-width: 900px;
 	display: flex;
@@ -244,8 +243,8 @@ p.subtitle, header p {
 	align-items: center;
 	gap: 12px;
 	
-	box-shadow: 0 3px 8px rgba(212, 175, 55, 0.2);
-	  box-shadow: 0 1px 6px rgba(44, 26, 4, 0.25);
+/*	box-shadow: 0 3px 8px rgba(212, 175, 55, 0.2);
+	  box-shadow: 0 1px 6px rgba(44, 26, 4, 0.25);*/
 }
 .sticky-toggle-bar{
 	
@@ -302,6 +301,7 @@ p.subtitle, header p {
   transition: all 0.2s ease-in-out;
   box-shadow: var(--shadow);
   user-select: none;
+  position: relative;
 }
 
 .syllable-card:hover {
@@ -346,6 +346,61 @@ p.subtitle, header p {
   text-align: center;
   font-weight: 500;
 }
+/* Disabled/Unused Syllables in the Syllable Grid*/
+.card.disabled {
+  opacity: 0.25;
+  filter: grayscale(100%);
+  pointer-events: none; /* Prevents audio playback on click */
+}
+
+/* Valid combo where the sound shifts (e.g., high tone / nasal change) */
+
+.syllable-card.sound-shift {
+  border: 1px solid var(--accent-gold, #d4af37); 
+/*  background-color: rgba(212, 175, 55, 0.05); */
+  font-weight: bold;
+}
+
+/* Optional hover state for highlighted cards */
+.syllable-card.sound-shift:hover {
+/*  background-color: rgba(212, 175, 55, 0.15);*/
+  border-color: var(--accent-gold, #d4af37);
+}
+.syllable-card {
+  position: relative;
+}
+
+/* 1. FORCE HIDE by default on all cards */
+.shift-icon {
+  display: none !important; 
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 14px;
+  height: 14px;
+  stroke: #d4af37;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+/* 2. ONLY DISPLAY when parent card has .sound-shift */
+.syllable-card.sound-shift .shift-icon {
+  display: block !important;
+}
+
+/* Styling for sound shift cards */
+.syllable-card.sound-shift {
+  border: 1px solid #d4af37;
+/*  background-color: rgba(212, 175, 55, 0.12);*/
+}
+
+.syllable-card.sound-shift:hover .shift-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+
 
 .hidden {
   display: none !important;
@@ -381,8 +436,10 @@ p.subtitle, header p {
 .site-footer a:hover {
   text-decoration: underline;
 }
+/* 9. Head Letters */
 
-/* 9. Responsive Adjustments */
+
+/* 99. Responsive Adjustments */
 @media (max-width: 600px) {
   .grid-container {
     grid-template-columns: repeat(2, 1fr);

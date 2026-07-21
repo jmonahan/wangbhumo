@@ -18,8 +18,10 @@
 	  justify-content: center;
 	  flex-wrap: wrap;
 	}
+	.vowel-selector-group{
+	  line-height: 1.2;
+	}
 	
-
 	/* Hide the actual radio button visually while keeping it functional for JS & keyboard navigation */
 	.vowel-option input[type="radio"] {
 	  position: absolute;
@@ -33,9 +35,8 @@
 	.vowel-option {
 	  display: inline;
 	  align-items: center;
-	  margin-right: 6px;
+	  margin-right: 10px;
 	  padding: 15px 8px 15px 8px;
-	  	  
 	  background-color: #ffffff;
 	  border: 1px solid var(--gray-light, #e0e0e0);
 	  border-radius: 20px;
@@ -49,8 +50,9 @@
 	
 	/* height fix*/
 	.vowel-symbol{
-	  margin-top: -28px;
-	  padding: 15px 8px 15px 8px;
+/*	  margin-top: -3px;*/
+	  margin-bottom: 10px;
+	  padding: 0px 8px 10px 8px;
 	}
 	/* Remove margin from the final button so it doesn't push the right edge */
 	.vowel-option:last-child {
