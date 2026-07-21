@@ -6,6 +6,62 @@
   <title>Tibetan Syllable Audio Grid</title>
   <link rel="stylesheet" href="style.css">
   <script src="shared-layout.js"></script>
+  <style>
+    /* Syllables Toggle Pill Buttons Styling */
+    .controls-container {
+      padding: 15px;
+    }
+
+    .syllable-toggle-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Hide the actual checkbox visually while keeping it functional */
+    .toggle-option input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    /* Style the label as a standalone pill button */
+    .toggle-option {
+      display: inline-block;
+      margin-right: 6px;
+      padding: 8px 16px;
+      background-color: #ffffff;
+      border: 1px solid var(--gray-light, #e0e0e0);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-weight: 500;
+      color: var(--text-dark, #2c3e50);
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .toggle-option:last-child {
+      margin-right: 0;
+    }
+
+    /* Hover state for unselected pills */
+    .toggle-option:hover {
+      border-color: var(--accent-maroon, #800000);
+      background-color: rgba(128, 0, 0, 0.03);
+    }
+
+    /* ACTIVE/CHECKED STATE: Highlights when checkbox inside is checked */
+    .toggle-option:has(input[type="checkbox"]:checked) {
+      background-color: var(--accent-maroon, #800000);
+      color: #ffffff;
+      border-color: var(--accent-maroon, #800000);
+    }
+  </style>
 </head>
 <body>
 
@@ -15,18 +71,27 @@
   <div class="container">
     <header>
       <h1>གསལ་བྱེད་སུམ་ཅུ།</h1>
-      <p class="subtitle">Tibetan 30 Syllables — Click any syllable to hear transmission</p>
+      <p class="subtitle">Tibetan 30 Syllables</p>
     </header>
 
     <!-- Customization / Settings Bar -->
     <div class="controls-container">
-      <div class="control-group">
-        <input type="checkbox" id="toggleEng">
-        <label for="toggleEng">Show Pronunciation Tip (ENG)</label>
-      </div>
-      <div class="control-group">
-        <input type="checkbox" id="toggleTips" checked>
-        <label for="toggleTips">Show Tone & Aspiration</label>
+      <div class="sticky-toggle-bar">
+        <div class="syllable-toggle-group">
+          
+          <!-- Checkbox 1: Pronunciation Hint -->
+          <label class="toggle-option">
+            <input type="checkbox" id="toggleEng">
+            <span>Show Pronunciation Tip (ENG)</span>
+          </label>
+
+          <!-- Checkbox 2: Tone & Aspiration -->
+          <label class="toggle-option">
+            <input type="checkbox" id="toggleTips" checked>
+            <span>Show Tone & Aspiration</span>
+          </label>
+
+        </div>
       </div>
     </div>
 
@@ -91,10 +156,14 @@
       const card = document.createElement('div');
       card.className = 'syllable-card';
       
+      // Determine initial visibility based on default checkbox states
+      const engClass = toggleEng.checked ? 'eng-hint' : 'eng-hint hidden';
+      const tipClass = toggleTips.checked ? 'tip-text' : 'tip-text hidden';
+
       card.innerHTML = `
         <span class="tibetan-script">${item.tib}</span>
-        <span class="eng-hint hidden">${item.eng}</span>
-        <span class="tip-text">${item.tip}</span>
+        <span class="${engClass}">${item.eng}</span>
+        <span class="${tipClass}">${item.tip}</span>
       `;
 
       const audioObj = new Audio(item.audio);
