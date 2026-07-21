@@ -1,0 +1,327 @@
+/* ==========================================================================
+   TIBETAN STUDY COMPANION - MASTER STYLESHEET
+   ========================================================================== */
+
+/* 1. Theme Color Palette & Global Tokens */
+:root {
+  --bg-color: #fcfbfa;            /* Warm off-white / parchment */
+  --card-bg: #ffffff;             /* Crisp card background */
+  --text-primary: #2c1a04;        /* Deep warm brown for primary text */
+  --text-secondary: #705335;      /* Medium warm brown for subtitles & notes */
+  --accent-maroon: #800020;       /* Traditional Tibetan burgundy/maroon */
+  --accent-gold: #d4af37;         /* Warm gold for accents & highlights */
+  --border-color: #e8e3dc;        /* Soft earthy border */
+  --shadow: 0 4px 12px rgba(112, 83, 53, 0.08); /* Warm subtle shadow */
+}
+
+/* 2. Reset & Global Typography */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Microsoft Himalaya', 'Noto Sans Tibetan', 'Dzongkha', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* 3. Universal Navigation Bar (<site-nav>) */
+.site-nav {
+  background-color: var(--accent-maroon);
+  padding: 0.8rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(44, 26, 4, 0.15);
+}
+
+.nav-container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.2rem;
+}
+
+.nav-links a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-links a:hover {
+  color: var(--accent-gold);
+}
+
+/* 4. Shared Header & Title Styling */
+header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  color: var(--accent-maroon);
+  font-size: 2.5rem;
+  margin-bottom: 5px;
+}
+
+p.subtitle, header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-top: 0;
+}
+
+/* 5. Modules Grid (Home / Index Page) */
+.module-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  width: 100%;
+}
+
+.module-card {
+  background-color: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow);
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.module-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-gold);
+  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.2);
+}
+
+.module-title {
+  color: var(--accent-maroon);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.module-description {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.badge {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-available {
+  background-color: #f4efe8;
+  color: var(--accent-maroon);
+}
+
+.badge-coming-soon {
+  background-color: #ede8e1;
+  color: var(--text-secondary);
+}
+
+.disabled-card {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.disabled-card:hover {
+  transform: none;
+  border-color: var(--border-color);
+  box-shadow: var(--shadow);
+}
+
+/* 6. Settings / Controls Bar (Syllable Grid Page) */
+.controls-container {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 20px;
+  margin-bottom: 25px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.controls-container label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  padding-right: 8px;
+}
+
+.controls-container input[type="checkbox"] {
+  accent-color: var(--accent-maroon);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* 7. Syllables Grid Layout & Cards */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  width: 100%;
+}
+
+.syllable-card {
+  background-color: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 15px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: var(--shadow);
+  user-select: none;
+}
+
+.syllable-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-gold);
+  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.2);
+}
+
+.syllable-card:active {
+  transform: translateY(1px);
+  background-color: #fffdf9;
+}
+
+.syllable-card.playing {
+  border-color: var(--accent-maroon);
+  background-color: #fbf2f4;
+  animation: pulse 0.4s ease-in-out;
+}
+
+.tibetan-script {
+  font-size: 3.5rem;
+  font-weight: 500;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+
+.eng-hint {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.75rem;
+  color: var(--accent-maroon);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.tip-text {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background-color: #f4efe8;
+  padding: 3px 8px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* 8. Universal Footer (<site-footer>) */
+.site-footer {
+  text-align: center;
+  margin-top: 4rem;
+  padding: 2rem 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.site-footer .copyright {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.site-footer a {
+  color: var(--accent-maroon);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
+
+/* 9. Responsive Adjustments */
+@media (max-width: 600px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .tibetan-script {
+    font-size: 2.8rem;
+  }
+  .controls-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

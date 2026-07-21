@@ -1,7 +1,6 @@
 སློབ་སྦྱོང་རོགས་དན།
 Sarah: First Year Tibetan Language Study Companion
-
-Gen. Wangbhumo's Interactive Syllable & Audio Grid
+with Gen. Wangbhumo
 
 An interactive, responsive web application designed to help students master the foundations of the Tibetan language.  This project is being built to be a study companion to Gen Wangbhumo's first year language textbook. Gen la teaches Tibetan Language online and in person at Sarah: College of Higher Tibetan Studies), Dharamshala, Himachel Pradesh, India.
 
