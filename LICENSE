@@ -1,4 +1,6 @@
-MIT License
+===============================================================================
+SOFTWARE LICENSE: MIT LICENSE
+===============================================================================
 
 Copyright (c) 2026 jmonahan
 
@@ -19,3 +21,28 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+===============================================================================
+MEDIA & ASSETS LICENSE: CREATIVE COMMONS ATTRIBUTION-NONCOMMERCIAL 4.0
+===============================================================================
+
+All media assets in this repository—including voice audio recordings in the 
+`audio/` directory, photos, diagrams, illustrations, and graphical icons in 
+the `images/` directory—are licensed under the Creative Commons 
+Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+
+Voice Audio Attribution:
+  Spoken audio recordings feature the voice of Gen. Wangbhumo (Sarah College 
+  of Higher Tibetan Studies).
+
+Under this license, you are free to:
+  * Share: Copy and redistribute the material in any medium or format.
+  * Adapt: Remix, transform, and build upon the material.
+
+Under the following terms:
+  * Attribution: You must give appropriate credit, provide a link to the 
+    license, and indicate if changes were made.
+  * NonCommercial: You may not use the material for commercial purposes.
+
+Full license text: https://creativecommons.org/licenses/by-nc/4.0/legalcode

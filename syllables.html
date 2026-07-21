@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="bo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tibetan Syllable Audio Grid</title>
+    <style>
+        :root {
+            --bg-color: #fcfbfa;
+            --card-bg: #ffffff;
+            --text-primary: #2c1a04;
+            --text-secondary: #705335;
+            --accent-maroon: #800020;
+            --accent-gold: #d4af37;
+            --border-color: #e8e3dc;
+            --shadow: 0 4px 12px rgba(112, 83, 53, 0.08);
+        }
+
+        body {
+            font-family: 'Microsoft Himalaya', 'Noto Sans Tibetan', 'Dzongkha', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: var(--accent-maroon);
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+
+        p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-top: 0;
+        }
+
+        /* Settings Bar Controls */
+        .controls-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap; /* Allows stacking on small mobile screens */
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .controls-container label {
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 500;
+			padding-right: 8px;
+        }
+
+        .controls-container input[type="checkbox"] {
+            accent-color: var(--accent-maroon);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        /* The Traditional 4x8 Grid Layout Container */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 900px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        /* Interactive Syllable Cards */
+        .syllable-card {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: var(--shadow);
+            user-select: none;
+        }
+
+        .syllable-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-gold);
+            box-shadow: 0 6px 16px rgba(212, 175, 55, 0.2);
+        }
+
+        .syllable-card:active {
+            transform: translateY(1px);
+            background-color: #fffdf9;
+        }
+
+        /* Playing animation state */
+        .syllable-card.playing {
+            border-color: var(--accent-maroon);
+            background-color: #fbf2f4;
+            animation: pulse 0.4s ease-in-out;
+        }
+
+        /* Large traditional script */
+        .tibetan-script {
+            font-size: 3.5rem;
+            font-weight: 500;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        /* English Phonetic Helper */
+        .eng-hint {
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: .75rem;
+            color: var(--accent-maroon);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        /* Phonetic Tip Badge */
+        .tip-text {
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            background-color: #f4efe8;
+            padding: 3px 8px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Utility class to hide element */
+        .hidden {
+            display: none !important;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 600px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .tibetan-script {
+                font-size: 2.8rem;
+            }
+            .controls-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>བོད་ཡིག་གསལ་བྱེད།</h1>
+        <p>Tibetan Alphabet Consonant Grid — Click any syllable to hear transmission</p>
+    </header>
+
+    <!-- Customization / Settings Bar -->
+    <div class="controls-container">
+        <div class="control-group">
+            <input type="checkbox" id="toggleEng" checked>
+            <label for="toggleEng">Show Pronunciation Tip (ENG)</label>
+        </div>
+        <div class="control-group">
+            <input type="checkbox" id="toggleTips" checked>
+            <label for="toggleTips">Show Tone & Aspiration</label>
+        </div>
+    </div>
+
+    <!-- Main Grid Target Elements -->
+    <main class="grid-container" id="alphabetGrid"></main>
+
+    <script>
+        // Complete structural dictionary mapping consonants, audio, custom hints, and tips
+        const tibetanAlphabet = [
+            { tib: "ཀ", eng: "ka", audio: "audio/syllables/01_ka.mp3", tip: "High tone" },
+            { tib: "ཁ", eng: "kha", audio: "audio/syllables/02_kha.mp3", tip: "High + Aspirated" },
+            { tib: "ག", eng: "kaa", audio: "audio/syllables/03_kaa.mp3", tip: "Low tone" },
+            { tib: "ང", eng: "nga", audio: "audio/syllables/04_nga.mp3", tip: "Low + Nasal" },
+            
+            { tib: "ཅ", eng: "cha", audio: "audio/syllables/05_cha.mp3", tip: "High tone" },
+            { tib: "ཆ", eng: "chha", audio: "audio/syllables/06_chha.mp3", tip: "High + Aspirated" },
+            { tib: "ཇ", eng: "chaa", audio: "audio/syllables/07_chaa.mp3", tip: "Low tone" },
+            { tib: "ཉ", eng: "nya", audio: "audio/syllables/08_nya.mp3", tip: "Low + Nasal" },
+            
+            { tib: "ཏ", eng: "ta", audio: "audio/syllables/09_ta.mp3", tip: "High tone" },
+            { tib: "ཐ", eng: "tha", audio: "audio/syllables/10_tha.mp3", tip: "High + Aspirated" },
+            { tib: "ད", eng: "taa", audio: "audio/syllables/11_taa.mp3", tip: "Low tone" },
+            { tib: "ན", eng: "na", audio: "audio/syllables/12_na.mp3", tip: "Low + Nasal" },
+            
+            { tib: "པ", eng: "pa", audio: "audio/syllables/13_pa.mp3", tip: "High tone" },
+            { tib: "ཕ", eng: "pha", audio: "audio/syllables/14_pha.mp3", tip: "High + Aspirated" },
+            { tib: "བ", eng: "paa", audio: "audio/syllables/15_paa.mp3", tip: "Low tone" },
+            { tib: "མ", eng: "ma", audio: "audio/syllables/16_ma.mp3", tip: "Low + Nasal" },
+            
+            { tib: "ཙ", eng: "tsa", audio: "audio/syllables/17_tsa.mp3", tip: "High tone" },
+            { tib: "ཚ", eng: "tsha", audio: "audio/syllables/18_tsha.mp3", tip: "High + Aspirated" },
+            { tib: "ཛ", eng: "tsaa", audio: "audio/syllables/19_tsaa.mp3", tip: "Low tone" },
+            { tib: "ཝ", eng: "wa", audio: "audio/syllables/20_wa.mp3", tip: "Low tone" },
+            
+            { tib: "ཞ", eng: "shaa", audio: "audio/syllables/21_shaa.mp3", tip: "Low tone" },
+            { tib: "ཟ", eng: "saa", audio: "audio/syllables/22_saa.mp3", tip: "Low tone" },
+            { tib: "འ", eng: "‘aa", audio: "audio/syllables/23_aa.mp3", tip: "Low tone" },
+            { tib: "ཡ", eng: "ya", audio: "audio/syllables/24_ya.mp3", tip: "Low tone" },
+            
+            { tib: "ར", eng: "raa", audio: "audio/syllables/25_raa.mp3", tip: "Low tone" },
+            { tib: "ལ", eng: "laa", audio: "audio/syllables/26_laa.mp3", tip: "Low tone" },
+            { tib: "ཤ", eng: "sha", audio: "audio/syllables/27_sha.mp3", tip: "High tone" },
+            { tib: "ས", eng: "sa", audio: "audio/syllables/28_sa.mp3", tip: "High tone" },
+            
+            { tib: "ཧ", eng: "ha", audio: "audio/syllables/29_ha.mp3", tip: "High tone" },
+            { tib: "ཨ", eng: "a", audio: "audio/syllables/30_a.mp3", tip: "High tone" }
+        ];
+
+        const grid = document.getElementById('alphabetGrid');
+        const toggleEng = document.getElementById('toggleEng');
+        const toggleTips = document.getElementById('toggleTips');
+        
+        let currentAudio = null;
+        let currentCard = null;
+
+        // Render cards
+        tibetanAlphabet.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'syllable-card';
+            
+            card.innerHTML = `
+                <span class="tibetan-script">${item.tib}</span>
+                <span class="eng-hint">${item.eng}</span>
+                <span class="tip-text">${item.tip}</span>
+            `;
+
+            const audioObj = new Audio(item.audio);
+            audioObj.preload = 'auto';
+
+            card.addEventListener('click', () => {
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    if (currentCard) currentCard.classList.remove('playing');
+                }
+
+                card.classList.add('playing');
+                audioObj.play().catch(error => {
+                    console.error("Audio playback interrupted or blocked:", error);
+                });
+
+                currentAudio = audioObj;
+                currentCard = card;
+
+                audioObj.onended = () => {
+                    card.classList.remove('playing');
+                };
+            });
+
+            grid.appendChild(card);
+        });
+
+        // Toggle visibility of the English hints
+        toggleEng.addEventListener('change', (e) => {
+            const hints = document.querySelectorAll('.eng-hint');
+            hints.forEach(hint => {
+                if (e.target.checked) {
+                    hint.classList.remove('hidden');
+                } else {
+                    hint.classList.add('hidden');
+                }
+            });
+        });
+
+        // Toggle visibility of the Tone & Aspiration tips
+        toggleTips.addEventListener('change', (e) => {
+            const tips = document.querySelectorAll('.tip-text');
+            tips.forEach(tip => {
+                if (e.target.checked) {
+                    tip.classList.remove('hidden');
+                } else {
+                    tip.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
