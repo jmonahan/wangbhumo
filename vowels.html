@@ -197,6 +197,10 @@
       e: new Audio("audio/vowels/dengpo.mp3"),
       o: new Audio("audio/vowels/naro.mp3")
     };
+	// Set playback speed for all vowel name audio clips
+	Object.values(vowelAudio).forEach(audio => {
+	  audio.playbackRate = 1.5; // Change this number to 1.25, 1.3, 1.5, etc.
+	});
 
     // Base 30 consonants mapping
     const tibetanAlphabet = [
@@ -303,22 +307,33 @@
     }
 
     // Radio Button Listener - Switches Vowels
-    vowelRadios.forEach(radio => {
-      radio.addEventListener('change', (e) => {
-        activeVowel = e.target.value;
-        stopAudio();
+	// Attach both change and click listeners to the radio inputs
+	vowelRadios.forEach(radio => {
+	  // Helper function to handle audio playback
+	  const playVowelAudio = (vowelKey) => {
+	    if (vowelKey !== "none" && vowelAudio[vowelKey]) {
+	      stopAudio(); // Stop any other playing sound
+	      vowelAudio[vowelKey].currentTime = 0; // Reset to start
+	      vowelAudio[vowelKey].play().catch(err => console.log("Audio play error:", err));
+	      currentAudio = vowelAudio[vowelKey];
+	    }
+	  };
 
-        // If a specific vowel was picked, play its dedicated name audio
-        if (activeVowel !== "none" && vowelAudio[activeVowel]) {
-          vowelAudio[activeVowel].currentTime = 0;
-          vowelAudio[activeVowel].play().catch(err => console.log("Vowel audio missing or blocked"));
-          currentAudio = vowelAudio[activeVowel];
-        }
+	  // Triggers when switching to a NEW vowel
+	  radio.addEventListener('change', (e) => {
+	    activeVowel = e.target.value;
+	    playVowelAudio(activeVowel);
+	    renderGrid();
+	  });
 
-        // Re-render grid with updated vowel signs and audio paths
-        renderGrid();
-      });
-    });
+	  // Triggers on EVERY click (even on the already-selected radio)
+	  radio.addEventListener('click', (e) => {
+	    // If it's already selected, play the audio again
+	    if (e.target.value === activeVowel) {
+	      playVowelAudio(activeVowel);
+	    }
+	  });
+	});
 
     // Initial Render
     renderGrid();
