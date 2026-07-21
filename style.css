@@ -270,7 +270,7 @@ p.subtitle, header p {
   cursor: pointer;
   user-select: none;
   font-weight: 500;
-  padding-right: 8px;
+/*  padding-right: 8px;*/
 }
 
 .controls-container input[type="checkbox"] {
