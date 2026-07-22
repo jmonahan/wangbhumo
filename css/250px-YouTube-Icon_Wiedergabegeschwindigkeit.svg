@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="b" data-name="Ebene 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52.00279 52.00279">
+  <defs>
+    <style>
+      .d {
+        fill: #e1002d;
+      }
+
+      .e {
+        stroke-dasharray: 10 8 10;
+        stroke-miterlimit: 10;
+      }
+
+      .e, .f {
+        fill: none;
+        stroke: #e1002d;
+        stroke-linecap: round;
+        stroke-width: 5px;
+      }
+
+      .f {
+        stroke-linejoin: round;
+      }
+    </style>
+  </defs>
+  <g id="c" data-name="Ebene 1">
+    <circle class="e" cx="26.00139" cy="26.00139" r="23.5"/>
+    <path class="f" d="M30.34884,2.90703c11.06324,2.08262,19.15256,11.83681,19.15256,23.09437,0,11.45818-8.38021,21.32913-19.68652,23.18852"/>
+    <polygon class="d" points="38.5037 26.00139 19.07524 14.78437 19.07524 37.21842 38.5037 26.00139"/>
+  </g>
+</svg>

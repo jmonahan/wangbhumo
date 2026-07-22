@@ -7,7 +7,15 @@ class SiteNav extends HTMLElement {
     const isHomepage = this.hasAttribute('homepage');
 	
     // Check if explicitly told to show via attribute OR if we are running locally
-    const showDev = this.hasAttribute('show-dev') || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';  
+
+	 const hostname = window.location.hostname;
+
+	 // Check if it's localhost or a standard local network IP
+	 const showDev = hostname === 'localhost' || 
+	               hostname === '127.0.0.1' || 
+	               hostname.startsWith('10.') || 
+	               hostname.startsWith('192.168.') ||
+	               hostname.startsWith('172.'); // Covers all standard local IP ranges
 
     if (isHomepage) {
       // Render ONLY the language dropdown for the homepage
@@ -148,39 +156,39 @@ class SiteControls extends HTMLElement {
     document.body.classList.add('hide-romanization');
     document.body.classList.add('hide-tones');
 
-    this.innerHTML = `
-      <div class="controls-container" style="position: sticky; top: 0; z-index: 100; background: #fff;">
-        <div class="sticky-toggle-bar">
-          <!-- Row 1: Global Settings & Speed -->
-          <div class="global-controls-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; font-size: 0.9rem;">
-            <div class="global-toggles" style="display: flex; gap: 10px; align-items: center;">
-              <label style="opacity: 0.8; font-size: 0.85rem;">${t('hintsLabel') || 'Hints:'}</label>
-              <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
-                <input type="checkbox" id="globalToggleEng"> ${t('phonetics') || 'Phonetics'}
-              </label>
-              <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
-                <input type="checkbox" id="globalToggleTips"> ${t('tones') || 'Tones'}
-              </label>
-            </div>
-            <div class="global-speed" style="margin-left: 40px; display: inline-flex; align-items: center; gap: 10px;">
-              <label for="globalSpeedSelect" style="opacity: 0.8; font-size: 0.85rem;">${t('speedLabel') || 'Speed:'}</label>
-              <select id="globalSpeedSelect" style="background: #fff; border: 1px solid #ccc; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; cursor: pointer;">
-                <option value="1.0" selected>1.0x</option>
-                <option value="1.25">1.25x</option>
-                <option value="1.5">1.5x</option>
-                <option value="1.9">2x</option>
-              </select>
-            </div>
-          </div>
-          <!-- Row 2: Rendered ONLY if page-specific content exists -->
-          ${hasSlottedContent ? `
-            <div class="page-controls-row" style="margin-top: 8px; padding-top: 8px;">
-              ${slottedContent}
-            </div>
-          ` : ''}
-        </div>
-      </div>
-    `;
+	this.innerHTML = `
+	  <div class="controls-container">
+	    <div class="sticky-toggle-bar">
+	      <!-- Row 1: Global Settings & Speed -->
+	      <div class="global-controls-row">
+	        <div class="global-toggles">
+	          <label class="hints-label">${t('hintsLabel') || 'Hints:'}</label>
+	          <label class="toggle-label">
+	            <input type="checkbox" id="globalToggleEng"> ${t('phonetics') || 'Phonetics'}
+	          </label>
+	          <label class="toggle-label">
+	            <input type="checkbox" id="globalToggleTips"> ${t('tones') || 'Tones'}
+	          </label>
+	        </div>
+	        <div class="global-speed">
+	          <label for="globalSpeedSelect" class="speed-label">${t('speedLabel') || 'Speed:'}</label>
+	          <select id="globalSpeedSelect" class="speed-select">
+	            <option value="1.0" selected>1.0x</option>
+	            <option value="1.25">1.25x</option>
+	            <option value="1.5">1.5x</option>
+	            <option value="1.9">2x</option>
+	          </select>
+	        </div>
+	      </div>
+	      <!-- Row 2: Rendered ONLY if page-specific content exists -->
+	      ${hasSlottedContent ? `
+	        <div class="page-controls-row">
+	          ${slottedContent}
+	        </div>
+	      ` : ''}
+	    </div>
+	  </div>
+	`;
 
     // Wire up global Romanization toggle (uncheck/hidden by default)
     const engToggle = this.querySelector('#globalToggleEng');

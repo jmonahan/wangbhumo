@@ -29,26 +29,8 @@
     }
 
     /* Style the label as a standalone toggle button */
-    .vowel-option {
-      display: inline;
-      align-items: center;
-      margin-right: 10px;
-      padding: 15px 8px 15px 8px;
-      background-color: #ffffff;
-      border: 1px solid var(--gray-light, #e0e0e0);
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      color: var(--text-dark, #2c3e50);
-      transition: all 0.2s ease;
-      user-select: none;
-    }
+
     
-    .vowel-symbol {
-      margin-bottom: 10px;
-      padding: 0px 8px 10px 8px;
-      font-size: 2.5rem;
-    }
 
     .vowel-option:last-child {
       margin-right: 0;
@@ -155,7 +137,7 @@
 
     // Apply translations on load
     document.getElementById('subtitleText').textContent = t('vowels');
-    document.getElementById('labelNoVowel').textContent = t('noVowel');
+    document.getElementById('labelNoVowel').textContent = t('none');
 
     // Page Title Audio Clip
     const titleAudio = new Audio("audio/vowels/vowels_title.mp3");

@@ -285,6 +285,26 @@ p.subtitle, header p {
   cursor: pointer;
 }
 
+.vowel-option {
+  display: inline;
+  align-items: center;
+  margin-right: 10px;
+  padding: 15px 8px 15px 8px;
+  background-color: #ffffff;
+  border: 1px solid var(--gray-light, #e0e0e0);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--text-dark, #2c3e50);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.vowel-symbol {
+  margin-bottom: 10px;
+  padding: 0px 8px 10px 8px;
+  font-size: 2.5rem;
+}
+
 /* 7. Syllables Grid Layout & Cards */
 .grid-container {
   display: grid;
@@ -456,6 +476,12 @@ body.hide-tones .syllable-card .shift-tip {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
+  h1 {
+    font-size: 3rem;
+  }
+  .nav-links a{
+	  font-size: .75rem;
+  }
   .tibetan-script {
     font-size: 2.8rem;
   }
@@ -464,4 +490,8 @@ body.hide-tones .syllable-card .shift-tip {
     align-items: flex-start;
     gap: 10px;
   }
+  .vowel-symbol{
+	  font-size: 2rem;
+  }
+  
 }
