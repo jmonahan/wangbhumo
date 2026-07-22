@@ -351,12 +351,6 @@ p.subtitle, header p {
   text-align: center;
   font-weight: 500;
 }
-/* Disabled/Unused Syllables in the Syllable Grid*/
-.card.disabled {
-  opacity: 0.25;
-  filter: grayscale(100%);
-  pointer-events: none; /* Prevents audio playback on click */
-}
 
 /* Valid combo where the sound shifts (e.g., high tone / nasal change) */
 

@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tibetan Vowels Study Guide</title>
   <link rel="stylesheet" href="css/all.css">
-    <script type="module" src="js/shared-layout.js"></script>
+  <script type="module" src="js/shared-layout.js"></script>
+
   <style>
     /* Specific styles for Vowel Radio Controls */
 	.controls-container{
@@ -45,12 +46,10 @@
 	  color: var(--text-dark, #2c3e50);
 	  transition: all 0.2s ease;
 	  user-select: none;
-
 	}
 	
 	/* height fix*/
 	.vowel-symbol{
-/*	  margin-top: -3px;*/
 	  margin-bottom: 10px;
 	  padding: 0px 8px 10px 8px;
 	}
@@ -81,14 +80,11 @@
 	/* ACTIVE/CHECKED STATE: When radio inside is checked, style the parent label */
 	.vowel-option:has(input[type="radio"]:checked),
 	.vowel-option input[type="radio"]:checked { 
-	  /* :has() handles modern browsers smoothly */
 	  background-color: var(--accent-maroon, #800000);
 	  color: #ffffff;
 	  border-color: var(--accent-maroon, #800000);
-
 	}
 
-	/* If using fallback CSS without :has() support, target checked state via JS or CSS siblings */
 	.vowel-option:has(input:checked) {
 	  background-color: var(--accent-maroon, #800000);
 	  color: #ffffff;
@@ -97,8 +93,6 @@
   </style>
 </head>
 <body>
-	
-	
 
   <!-- Shared Universal Navigation -->
   <site-nav></site-nav>
@@ -107,13 +101,8 @@
     <!-- Section 1: Header -->
     <header>
 		<h1 class="title-with-audio">
-		    <!-- Invisible spacer matching button width -->
 		    <span class="title-spacer" aria-hidden="true"></span>
-
-		    <!-- Truly centered text -->
 		    <span class="title-text">དབྱངས་བཞི།</span>
-
-		    <!-- Fixed-width button on the right -->
 		    <button type="button" class="audio-btn-inline" id="titleAudioBtn" aria-label="Listen to 'Vowels' pronunciation" title="Listen">
 		      <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 		        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -169,7 +158,10 @@
     <site-footer></site-footer>
   </div>
 
-  <script>
+  <script type="module">
+    import { createSyllableCard } from './js/shared-layout.js';
+	import { tibetanAlphabet } from './js/syllables_data.js';
+
 	// Page Title Audio Clip
 	const titleAudio = new Audio("audio/vowels/vowels_title.mp3");
 	titleAudio.preload = 'auto';
@@ -177,13 +169,14 @@
 
 	const titleAudioBtn = document.getElementById('titleAudioBtn');
 	if (titleAudioBtn) {
-	titleAudioBtn.addEventListener('click', () => {
-	  stopAudio(); // Stops any other playing audio on the page first
-	  titleAudio.currentTime = 0;
-	  titleAudio.play().catch(err => console.log("Title audio playback prevented or file missing"));
-	  currentAudio = titleAudio;
-	});
+	  titleAudioBtn.addEventListener('click', () => {
+	    stopAudio(); 
+	    titleAudio.currentTime = 0;
+	    titleAudio.play().catch(err => console.log("Title audio playback prevented or file missing"));
+	    currentAudio = titleAudio;
+	  });
 	}
+
     // Dictionary of Tibetan Unicode Combining Vowel Characters
     const vowelMarks = {
       none: "",
@@ -200,51 +193,10 @@
       e: new Audio("audio/vowels/dengpo.mp3"),
       o: new Audio("audio/vowels/naro.mp3")
     };
-	// Set playback speed for all vowel name audio clips
-	Object.values(vowelAudio).forEach(audio => {
-	  audio.playbackRate = 1.5; // Change this number to 1.25, 1.3, 1.5, etc.
-	});
 
-    // Base 30 consonants mapping
-    const tibetanAlphabet = [
-      { id: "01_ka", tib: "ཀ", eng: "ka", tip: "High tone" },
-      { id: "02_kha", tib: "ཁ", eng: "kha", tip: "High + Aspirated" },
-      { id: "03_kaa", tib: "ག", eng: "kaa", tip: "Low tone" },
-      { id: "04_nga", tib: "ང", eng: "nga", tip: "Low + Nasal" },
-      
-      { id: "05_cha", tib: "ཅ", eng: "cha", tip: "High tone" },
-      { id: "06_chha", tib: "ཆ", eng: "chha", tip: "High + Aspirated" },
-      { id: "07_chaa", tib: "ཇ", eng: "chaa", tip: "Low tone" },
-      { id: "08_nya", tib: "ཉ", eng: "nya", tip: "Low + Nasal" },
-      
-      { id: "09_ta", tib: "ཏ", eng: "ta", tip: "High tone" },
-      { id: "10_tha", tib: "ཐ", eng: "tha", tip: "High + Aspirated" },
-      { id: "11_taa", tib: "ད", eng: "taa", tip: "Low tone" },
-      { id: "12_na", tib: "ན", eng: "na", tip: "Low + Nasal" },
-      
-      { id: "13_pa", tib: "པ", eng: "pa", tip: "High tone" },
-      { id: "14_pha", tib: "ཕ", eng: "pha", tip: "High + Aspirated" },
-      { id: "15_paa", tib: "བ", eng: "paa", tip: "Low tone" },
-      { id: "16_ma", tib: "མ", eng: "ma", tip: "Low + Nasal" },
-      
-      { id: "17_tsa", tib: "ཙ", eng: "tsa", tip: "High tone" },
-      { id: "18_tsha", tib: "ཚ", eng: "tsha", tip: "High + Aspirated" },
-      { id: "19_tsaa", tib: "ཛ", eng: "tsaa", tip: "Low tone" },
-      { id: "20_wa", tib: "ཝ", eng: "wa", tip: "Low tone" },
-      
-      { id: "21_shaa", tib: "ཞ", eng: "shaa", tip: "Low tone" },
-      { id: "22_saa", tib: "ཟ", eng: "saa", tip: "Low tone" },
-      { id: "23_aa", tib: "འ", eng: "‘aa", tip: "Low tone" },
-      { id: "24_ya", tib: "ཡ", eng: "ya", tip: "Low tone" },
-      
-      { id: "25_raa", tib: "ར", eng: "raa", tip: "Low tone" },
-      { id: "26_laa", tib: "ལ", eng: "laa", tip: "Low tone" },
-      { id: "27_sha", tib: "ཤ", eng: "sha", tip: "High tone" },
-      { id: "28_sa", tib: "ས", eng: "sa", tip: "High tone" },
-      
-      { id: "29_ha", tib: "ཧ", eng: "ha", tip: "High tone" },
-      { id: "30_a", tib: "ཨ", eng: "a", tip: "High tone" }
-    ];
+	Object.values(vowelAudio).forEach(audio => {
+	  audio.playbackRate = 1.5;
+	});
 
     const grid = document.getElementById('alphabetGrid');
     const vowelRadios = document.querySelectorAll('input[name="vowelSelect"]');
@@ -262,20 +214,19 @@
       }
     }
 
-    // Function to render / update the 30 grid cards
+    // Function to render / update the 30 grid cards using the component
     function renderGrid() {
       grid.innerHTML = ''; // Clear current grid
 
       tibetanAlphabet.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'syllable-card';
-        
         // Dynamically attach the active Unicode vowel character to the Tibetan base letter
         const displayTibetan = item.tib + vowelMarks[activeVowel];
         
-        card.innerHTML = `
-          <span class="tibetan-script">${displayTibetan}</span>
-        `;
+        // Use the shared component factory function
+        const card = createSyllableCard({
+          id: item.id,
+          script: displayTibetan
+        });
 
         // Determine audio path based on active vowel
         let audioPath = "";
@@ -310,28 +261,23 @@
     }
 
     // Radio Button Listener - Switches Vowels
-	// Attach both change and click listeners to the radio inputs
 	vowelRadios.forEach(radio => {
-	  // Helper function to handle audio playback
 	  const playVowelAudio = (vowelKey) => {
 	    if (vowelKey !== "none" && vowelAudio[vowelKey]) {
-	      stopAudio(); // Stop any other playing sound
-	      vowelAudio[vowelKey].currentTime = 0; // Reset to start
+	      stopAudio(); 
+	      vowelAudio[vowelKey].currentTime = 0; 
 	      vowelAudio[vowelKey].play().catch(err => console.log("Audio play error:", err));
 	      currentAudio = vowelAudio[vowelKey];
 	    }
 	  };
 
-	  // Triggers when switching to a NEW vowel
 	  radio.addEventListener('change', (e) => {
 	    activeVowel = e.target.value;
 	    playVowelAudio(activeVowel);
 	    renderGrid();
 	  });
 
-	  // Triggers on EVERY click (even on the already-selected radio)
 	  radio.addEventListener('click', (e) => {
-	    // If it's already selected, play the audio again
 	    if (e.target.value === activeVowel) {
 	      playVowelAudio(activeVowel);
 	    }

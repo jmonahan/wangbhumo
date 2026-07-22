@@ -98,47 +98,9 @@
     <site-footer></site-footer>
   </div>
 
-  <script>
-    // Complete structural dictionary mapping consonants, audio, custom hints, and tips
-    const tibetanAlphabet = [
-      { tib: "ཀ", eng: "ka", audio: "audio/syllables/01_ka.mp3", tip: "High tone" },
-      { tib: "ཁ", eng: "kha", audio: "audio/syllables/02_kha.mp3", tip: "High + Aspirated" },
-      { tib: "ག", eng: "kaa", audio: "audio/syllables/03_kaa.mp3", tip: "Low tone" },
-      { tib: "ང", eng: "nga", audio: "audio/syllables/04_nga.mp3", tip: "Low + Nasal" },
-      
-      { tib: "ཅ", eng: "cha", audio: "audio/syllables/05_cha.mp3", tip: "High tone" },
-      { tib: "ཆ", eng: "chha", audio: "audio/syllables/06_chha.mp3", tip: "High + Aspirated" },
-      { tib: "ཇ", eng: "chaa", audio: "audio/syllables/07_chaa.mp3", tip: "Low tone" },
-      { tib: "ཉ", eng: "nya", audio: "audio/syllables/08_nya.mp3", tip: "Low + Nasal" },
-      
-      { tib: "ཏ", eng: "ta", audio: "audio/syllables/09_ta.mp3", tip: "High tone" },
-      { tib: "ཐ", eng: "tha", audio: "audio/syllables/10_tha.mp3", tip: "High + Aspirated" },
-      { tib: "ད", eng: "taa", audio: "audio/syllables/11_taa.mp3", tip: "Low tone" },
-      { tib: "ན", eng: "na", audio: "audio/syllables/12_na.mp3", tip: "Low + Nasal" },
-      
-      { tib: "པ", eng: "pa", audio: "audio/syllables/13_pa.mp3", tip: "High tone" },
-      { tib: "ཕ", eng: "pha", audio: "audio/syllables/14_pha.mp3", tip: "High + Aspirated" },
-      { tib: "བ", eng: "paa", audio: "audio/syllables/15_paa.mp3", tip: "Low tone" },
-      { tib: "མ", eng: "ma", audio: "audio/syllables/16_ma.mp3", tip: "Low + Nasal" },
-      
-      { tib: "ཙ", eng: "tsa", audio: "audio/syllables/17_tsa.mp3", tip: "High tone" },
-      { tib: "ཚ", eng: "tsha", audio: "audio/syllables/18_tsha.mp3", tip: "High + Aspirated" },
-      { tib: "ཛ", eng: "tsaa", audio: "audio/syllables/19_tsaa.mp3", tip: "Low tone" },
-      { tib: "ཝ", eng: "wa", audio: "audio/syllables/20_wa.mp3", tip: "Low tone" },
-      
-      { tib: "ཞ", eng: "shaa", audio: "audio/syllables/21_shaa.mp3", tip: "Low tone" },
-      { tib: "ཟ", eng: "saa", audio: "audio/syllables/22_saa.mp3", tip: "Low tone" },
-      { tib: "འ", eng: "‘aa", audio: "audio/syllables/23_aa.mp3", tip: "Low tone" },
-      { tib: "ཡ", eng: "ya", audio: "audio/syllables/24_ya.mp3", tip: "Low tone" },
-      
-      { tib: "ར", eng: "raa", audio: "audio/syllables/25_raa.mp3", tip: "Low tone" },
-      { tib: "ལ", eng: "laa", audio: "audio/syllables/26_laa.mp3", tip: "Low tone" },
-      { tib: "ཤ", eng: "sha", audio: "audio/syllables/27_sha.mp3", tip: "High tone" },
-      { tib: "ས", eng: "sa", audio: "audio/syllables/28_sa.mp3", tip: "High tone" },
-      
-      { tib: "ཧ", eng: "ha", audio: "audio/syllables/29_ha.mp3", tip: "High tone" },
-      { tib: "ཨ", eng: "a", audio: "audio/syllables/30_a.mp3", tip: "High tone" }
-    ];
+  <script type="module">
+    import { createSyllableCard } from './js/shared-layout.js';
+	import { tibetanAlphabet } from './js/syllables_data.js';
 
     const grid = document.getElementById('alphabetGrid');
     const toggleEng = document.getElementById('toggleEng');
@@ -147,20 +109,21 @@
     let currentAudio = null;
     let currentCard = null;
 
-    // Render cards
+    // Render cards using the shared component template
     tibetanAlphabet.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'syllable-card';
-      
-      // Determine initial visibility based on default checkbox states
-      const engClass = toggleEng.checked ? 'eng-hint' : 'eng-hint hidden';
-      const tipClass = toggleTips.checked ? 'tip-text' : 'tip-text hidden';
+      const card = createSyllableCard({
+        id: item.id,
+        script: item.tib,
+        romanization: item.eng,
+        tone: item.tip
+      });
 
-      card.innerHTML = `
-        <span class="tibetan-script">${item.tib}</span>
-        <span class="${engClass}">${item.eng}</span>
-        <span class="${tipClass}">${item.tip}</span>
-      `;
+      // Handle initial visibility classes based on checkbox states
+      const romanizationEl = card.querySelector('.romanization-text');
+      const toneEl = card.querySelector('.card-tone');
+      
+      if (!toggleEng.checked && romanizationEl) romanizationEl.classList.add('hidden');
+      if (!toggleTips.checked && toneEl) toneEl.classList.add('hidden');
 
       const audioObj = new Audio(item.audio);
       audioObj.preload = 'auto';
@@ -190,7 +153,7 @@
 
     // Toggle visibility of the English hints
     toggleEng.addEventListener('change', (e) => {
-      const hints = document.querySelectorAll('.eng-hint');
+      const hints = document.querySelectorAll('.romanization-text');
       hints.forEach(hint => {
         if (e.target.checked) {
           hint.classList.remove('hidden');
@@ -202,7 +165,7 @@
 
     // Toggle visibility of the Tone & Aspiration tips
     toggleTips.addEventListener('change', (e) => {
-      const tips = document.querySelectorAll('.tip-text');
+      const tips = document.querySelectorAll('.card-tone');
       tips.forEach(tip => {
         if (e.target.checked) {
           tip.classList.remove('hidden');

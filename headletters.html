@@ -132,139 +132,18 @@
     <site-footer></site-footer>
   </div>
 
-  <script>
+  <script type="module">
+    import { createSyllableCard } from './js/shared-layout.js';
+    import { tibetanAlphabet } from './js/syllables_data.js';
+
     // Page Title Audio Clip
     const titleAudio = new Audio("audio/headletters/headletters_title.mp3");
     titleAudio.preload = 'auto';
 
     const titleAudioBtn = document.getElementById('titleAudioBtn');
-    if (titleAudioBtn) {
-      titleAudioBtn.addEventListener('click', () => {
-        stopAudio();
-        titleAudio.currentTime = 0;
-        titleAudio.play().catch(err => console.log("Title audio playback prevented or file missing"));
-        currentAudio = titleAudio;
-      });
-    }
-	
-	// Sparkle Icon Template string for sound-shifted cards
-	const sparkleSvg = `
-	  <svg class="shift-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-	    <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"></path>
-	  </svg>
-	`;
-
-    // Dedicated standalone audio for the head letter names
-    const headLetterAudio = {
-      ra: new Audio("audio/headletters/rago.mp3"),
-      la: new Audio("audio/headletters/lago.mp3"),
-      sa: new Audio("audio/headletters/sago.mp3")
-    };
-
-    // Set playback speed for head letter name audio clips (1.45x)
-    Object.values(headLetterAudio).forEach(audio => {
-      audio.playbackRate = 1.45;
-    });
-
-    /* -------------------------------------------------------------
-       COMPLETE RULE-BASED HEAD LETTER SOUND SHIFT MAPPINGS
-    ------------------------------------------------------------- */
-    const headLetterData = {
-      // 12 Ra-go (ར) combinations
-      ra: {
-        "01_ka":  { tib: "རྐ", soundShift: false }, // High tone unchanged
-        "03_kaa": { tib: "རྒ", soundShift: true },  // Low-tone ག -> High-tone 'gaa'
-        "04_nga": { tib: "རྔ", soundShift: true },  // Low-tone ང -> High-tone nasal
-        "07_chaa":{ tib: "རྗ", soundShift: true },  // Low-tone ཇ -> High-tone 'chaa'
-        "08_nya": { tib: "རྙ", soundShift: true },  // Low-tone ཉ -> High-tone nasal
-        "09_ta":  { tib: "རྟ", soundShift: false }, // High tone unchanged
-        "11_taa": { tib: "རྡ", soundShift: true },  // Low-tone ད -> High-tone 'taa'
-        "12_na":  { tib: "རྣ", soundShift: true },  // Low-tone ན -> High-tone nasal
-        "15_paa": { tib: "རྦ", soundShift: true },  // Low-tone བ -> High-tone 'paa'
-        "16_ma":  { tib: "རྨ", soundShift: true },  // Low-tone མ -> High-tone nasal
-        "17_tsa": { tib: "རྩ", soundShift: false }, // High tone unchanged
-        "19_tsaa":{ tib: "རྫ", soundShift: true }   // Low-tone ཛ -> High-tone 'tsaa'
-      },
-
-      // 10 La-go (ལ) combinations
-      la: {
-        "01_ka":  { tib: "ལྐ", soundShift: false }, // High tone unchanged
-        "03_kaa": { tib: "ལྒ", soundShift: true },  // Low-tone ག -> High-tone 'gaa'
-        "04_nga": { tib: "ལྔ", soundShift: true },  // Low-tone ང -> High-tone nasal
-        "05_cha": { tib: "ལྕ", soundShift: false }, // High tone unchanged
-        "07_chaa":{ tib: "ལྗ", soundShift: true },  // Low-tone ཇ -> High-tone 'chaa'
-        "09_ta":  { tib: "ལྟ", soundShift: false }, // High tone unchanged
-        "11_taa": { tib: "ལྡ", soundShift: true },  // Low-tone ད -> High-tone 'taa'
-        "13_pa":  { tib: "ལྤ", soundShift: false }, // High tone unchanged
-        "15_paa": { tib: "ལྦ", soundShift: true },  // Low-tone བ -> High-tone 'paa'
-        "29_ha":  { tib: "ལྷ", soundShift: true }   // Shift to voiceless 'L' sound
-      },
-
-      // 11 Sa-go (ས) combinations
-      sa: {
-        "01_ka":  { tib: "སྐ", soundShift: false }, // High tone unchanged
-        "03_kaa": { tib: "སྒ", soundShift: true },  // Low-tone ག -> High-tone 'gaa'
-        "04_nga": { tib: "སྔ", soundShift: true },  // Low-tone ང -> High-tone nasal
-        "08_nya": { tib: "སྙ", soundShift: true },  // Low-tone ཉ -> High-tone nasal
-        "09_ta":  { tib: "སྟ", soundShift: false }, // High tone unchanged
-        "11_taa": { tib: "སྡ", soundShift: true },  // Low-tone ད -> High-tone 'taa'
-        "12_na":  { tib: "སྣ", soundShift: true },  // Low-tone ན -> High-tone nasal
-        "13_pa":  { tib: "སྤ", soundShift: false }, // High tone unchanged
-        "15_paa": { tib: "སྦ", soundShift: true },  // Low-tone བ -> High-tone 'paa'
-        "16_ma":  { tib: "སྨ", soundShift: true },  // Low-tone མ -> High-tone nasal
-        "17_tsa": { tib: "སྩ", soundShift: false }  // High tone unchanged
-      }
-    };
-
-    // Base 30 consonants mapping matching project standard
-    const tibetanAlphabet = [
-      { id: "01_ka", tib: "ཀ", eng: "ka", tip: "High tone" },
-      { id: "02_kha", tib: "ཁ", eng: "kha", tip: "High + Aspirated" },
-      { id: "03_kaa", tib: "ག", eng: "kaa", tip: "Low tone" },
-      { id: "04_nga", tib: "ང", eng: "nga", tip: "Low + Nasal" },
-      
-      { id: "05_cha", tib: "ཅ", eng: "cha", tip: "High tone" },
-      { id: "06_chha", tib: "ཆ", eng: "chha", tip: "High + Aspirated" },
-      { id: "07_chaa", tib: "ཇ", eng: "chaa", tip: "Low tone" },
-      { id: "08_nya", tib: "ཉ", eng: "nya", tip: "Low + Nasal" },
-      
-      { id: "09_ta", tib: "ཏ", eng: "ta", tip: "High tone" },
-      { id: "10_tha", tib: "ཐ", eng: "tha", tip: "High + Aspirated" },
-      { id: "11_taa", tib: "ད", eng: "taa", tip: "Low tone" },
-      { id: "12_na", tib: "ན", eng: "na", tip: "Low + Nasal" },
-      
-      { id: "13_pa", tib: "པ", eng: "pa", tip: "High tone" },
-      { id: "14_pha", tib: "ཕ", eng: "pha", tip: "High + Aspirated" },
-      { id: "15_paa", tib: "བ", eng: "paa", tip: "Low tone" },
-      { id: "16_ma", tib: "མ", eng: "ma", tip: "Low + Nasal" },
-      
-      { id: "17_tsa", tib: "ཙ", eng: "tsa", tip: "High tone" },
-      { id: "18_tsha", tib: "ཚ", eng: "tsha", tip: "High + Aspirated" },
-      { id: "19_tsaa", tib: "ཛ", eng: "tsaa", tip: "Low tone" },
-      { id: "20_wa", tib: "ཝ", eng: "wa", tip: "Low tone" },
-      
-      { id: "21_shaa", tib: "ཞ", eng: "shaa", tip: "Low tone" },
-      { id: "22_saa", tib: "ཟ", eng: "saa", tip: "Low tone" },
-      { id: "23_aa", tib: "འ", eng: "‘aa", tip: "Low tone" },
-      { id: "24_ya", tib: "ཡ", eng: "ya", tip: "Low tone" },
-      
-      { id: "25_raa", tib: "ར", eng: "raa", tip: "Low tone" },
-      { id: "26_laa", tib: "ལ", eng: "laa", tip: "Low tone" },
-      { id: "27_sha", tib: "ཤ", eng: "sha", tip: "High tone" },
-      { id: "28_sa", tib: "ས", eng: "sa", tip: "High tone" },
-      
-      { id: "29_ha", tib: "ཧ", eng: "ha", tip: "High tone" },
-      { id: "30_a", tib: "ཨ", eng: "a", tip: "High tone" }
-    ];
-
-    const grid = document.getElementById('alphabetGrid');
-    const headLetterRadios = document.querySelectorAll('input[name="headLetterSelect"]');
-    
-    let activeHeadLetter = "none";
     let currentAudio = null;
     let currentCard = null;
 
-    // Helper to stop any playing audio
     function stopAudio() {
       if (currentAudio) {
         currentAudio.pause();
@@ -273,64 +152,125 @@
       }
     }
 
-    // Function to render / update the 30 grid cards based on active Head Letter
-	function renderGrid() {
-	  grid.innerHTML = ''; // Clear grid
+    if (titleAudioBtn) {
+      titleAudioBtn.addEventListener('click', () => {
+        stopAudio();
+        titleAudio.currentTime = 0;
+        titleAudio.play().catch(err => console.log("Title audio playback prevented or file missing"));
+        currentAudio = titleAudio;
+      });
+    }
 
-	  tibetanAlphabet.forEach(item => {
-	    const card = document.createElement('div');
-	    card.className = 'syllable-card';
-    
-	    let displayTibetan = item.tib;
-	    let audioPath = `audio/syllables/${item.id}.mp3`;
-	    let isCardDisabled = false;
+    // Dedicated standalone audio for the head letter names
+    const headLetterAudio = {
+      ra: new Audio("audio/headletters/rago.mp3"),
+      la: new Audio("audio/headletters/lago.mp3"),
+      sa: new Audio("audio/headletters/sago.mp3")
+    };
 
-		if (activeHeadLetter !== "none") {
-		  const currentMap = headLetterData[activeHeadLetter];
-		  const comboData = currentMap ? currentMap[item.id] : null;
+    Object.values(headLetterAudio).forEach(audio => {
+      audio.playbackRate = 1.45;
+    });
 
-		  if (comboData) {
-		    displayTibetan = comboData.tib;
-		    audioPath = `audio/headletters/${item.id}_${activeHeadLetter}.mp3`;
+    /* Head Letter Mappings (keeping rules isolated here) */
+    const headLetterData = {
+      ra: {
+        "01_ka":  { tib: "རྐ", soundShift: false },
+        "03_kaa": { tib: "རྒ", soundShift: true, tip: "Low ག shifts to High 'gaa'" },
+        "04_nga": { tib: "རྔ", soundShift: true, tip: "Low ང shifts to High nasal" },
+        "07_chaa":{ tib: "རྗ", soundShift: true, tip: "Low ཇ shifts to High 'chaa'" },
+        "08_nya": { tib: "རྙ", soundShift: true, tip: "Low ཉ shifts to High nasal" },
+        "09_ta":  { tib: "རྟ", soundShift: false },
+        "11_taa": { tib: "རྡ", soundShift: true, tip: "Low ད shifts to High 'taa'" },
+        "12_na":  { tib: "རྣ", soundShift: true, tip: "Low ན shifts to High nasal" },
+        "15_paa": { tib: "རྦ", soundShift: true, tip: "Low བ shifts to High 'paa'" },
+        "16_ma":  { tib: "རྨ", soundShift: true, tip: "Low མ shifts to High nasal" },
+        "17_tsa": { tib: "རྩ", soundShift: false },
+        "19_tsaa":{ tib: "རྫ", soundShift: true, tip: "Low ཛ shifts to High 'tsaa'" }
+      },
+      la: {
+        "01_ka":  { tib: "ལྐ", soundShift: false },
+        "03_kaa": { tib: "ལྒ", soundShift: true, tip: "Low ག shifts to High 'gaa'" },
+        "04_nga": { tib: "ལྔ", soundShift: true, tip: "Low ང shifts to High nasal" },
+        "05_cha": { tib: "ལྕ", soundShift: false },
+        "07_chaa":{ tib: "ལྗ", soundShift: true, tip: "Low ཇ shifts to High 'chaa'" },
+        "09_ta":  { tib: "ལྟ", soundShift: false },
+        "11_taa": { tib: "ལྡ", soundShift: true, tip: "Low ད shifts to High 'taa'" },
+        "13_pa":  { tib: "ལྤ", soundShift: false },
+        "15_paa": { tib: "ལྦ", soundShift: true, tip: "Low བ shifts to High 'paa'" },
+        "29_ha":  { tib: "ལྷ", soundShift: true, tip: "Shifts to voiceless 'L'" }
+      },
+      sa: {
+        "01_ka":  { tib: "སྐ", soundShift: false },
+        "03_kaa": { tib: "སྒ", soundShift: true, tip: "Low ག shifts to High 'gaa'" },
+        "04_nga": { tib: "སྔ", soundShift: true, tip: "Low ང shifts to High nasal" },
+        "08_nya": { tib: "སྙ", soundShift: true, tip: "Low ཉ shifts to High nasal" },
+        "09_ta":  { tib: "སྟ", soundShift: false },
+        "11_taa": { tib: "སྡ", soundShift: true, tip: "Low ད shifts to High 'taa'" },
+        "12_na":  { tib: "སྣ", soundShift: true, tip: "Low ན shifts to High nasal" },
+        "13_pa":  { tib: "སྤ", soundShift: false },
+        "15_paa": { tib: "སྦ", soundShift: true, tip: "Low བ shifts to High 'paa'" },
+        "16_ma":  { tib: "སྨ", soundShift: true, tip: "Low མ shifts to High nasal" },
+        "17_tsa": { tib: "སྩ", soundShift: false }
+      }
+    };
 
-		    // CRITICAL: Only add the class if soundShift is explicitly true!
-		    if (comboData.soundShift === true) {
-		      card.classList.add('sound-shift');
-		    }
-		  } else {
-		    card.classList.add('card', 'disabled');
-		    isCardDisabled = true;
-		  }
-		}
+    const grid = document.getElementById('alphabetGrid');
+    const headLetterRadios = document.querySelectorAll('input[name="headLetterSelect"]');
+    let activeHeadLetter = "none";
 
-	    // Always include the icon in the innerHTML structure
-	    card.innerHTML = `
-	      <span class="tibetan-script">${displayTibetan}</span>
-	      <svg class="shift-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-	        <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"></path>
-	      </svg>
-	    `;
+    function renderGrid() {
+      grid.innerHTML = '';
 
-	    // Attach click and audio handlers...
-	    if (!isCardDisabled) {
-	      const audioObj = new Audio(audioPath);
-	      audioObj.preload = 'auto';
+      tibetanAlphabet.forEach(item => {
+        let displayTibetan = item.tib;
+        let audioPath = `audio/syllables/${item.id}.mp3`;
+        let hasShift = false;
+        let shiftExplanation = null;
+        let isDisabled = false;
 
-	      card.addEventListener('click', () => {
-	        stopAudio();
-	        card.classList.add('playing');
-	        audioObj.play().catch(error => console.error("Audio error:", audioPath));
-	        currentAudio = audioObj;
-	        currentCard = card;
-	        audioObj.onended = () => card.classList.remove('playing');
-	      });
-	    }
+        if (activeHeadLetter !== "none") {
+          const currentMap = headLetterData[activeHeadLetter];
+          const comboData = currentMap ? currentMap[item.id] : null;
 
-	    grid.appendChild(card);
-	  });
-	}
+          if (comboData) {
+            displayTibetan = comboData.tib;
+            audioPath = `audio/headletters/${item.id}_${activeHeadLetter}.mp3`;
+            hasShift = comboData.soundShift === true;
+            shiftExplanation = comboData.tip || null;
+          } else {
+            isDisabled = true; // Gray out unsupported letter combos
+          }
+        }
 
-    // Radio Button Listener - Switches Head Letters and plays pill audio
+        // Use your standardized component factory function!
+        const card = createSyllableCard({
+          id: item.id,
+          script: displayTibetan,
+          hasSoundShift: hasShift,
+          shiftExplanation: shiftExplanation,
+          isDisabled: isDisabled
+        });
+
+        // Attach audio & click behavior if the card is active/valid
+        if (!isDisabled) {
+          const audioObj = new Audio(audioPath);
+          audioObj.preload = 'auto';
+
+          card.addEventListener('click', () => {
+            stopAudio();
+            card.classList.add('playing');
+            audioObj.play().catch(error => console.error("Audio error:", audioPath));
+            currentAudio = audioObj;
+            currentCard = card;
+            audioObj.onended = () => card.classList.remove('playing');
+          });
+        }
+
+        grid.appendChild(card);
+      });
+    }
+
     headLetterRadios.forEach(radio => {
       const playHLNameAudio = (hlKey) => {
         if (hlKey !== "none" && headLetterAudio[hlKey]) {
@@ -354,7 +294,6 @@
       });
     });
 
-    // Initial Render
     renderGrid();
   </script>
 </body>

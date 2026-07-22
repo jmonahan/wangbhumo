@@ -22,6 +22,14 @@
   padding: 10px 0;
 }
 
+/* Disabled/Unused Syllables in the Syllable Grid*/
+.grid-container .disabled {
+  opacity: 0.25;
+  filter: grayscale(100%);
+  pointer-events: none; /* Prevents audio playback on click */
+}
+
+
 /* Card Footer Container */
 /* Footer Container - Centered */
 .card-footer {
@@ -41,10 +49,11 @@
 
 /* Romanization Style (Dark Red / Maroon) */
 .romanization-text {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #630018; /* Dark red accent */
-  line-height: 1.1;
+	font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.75rem;
+    color: var(--accent-maroon);
+    font-weight: 600;
+    margin-bottom: 4px;
 }
 
 /* Tone Pill Badge Style */
