@@ -143,13 +143,14 @@ class SiteControls extends HTMLElement {
   connectedCallback() {
     // Check if there is pre-existing child content (like your head letter pills) 
     // before we overwrite innerHTML, so we can preserve and re-slot them!
-    const slottedContent = this.innerHTML;
+	const slottedContent = this.innerHTML.trim();
+	const hasSlottedContent = slottedContent.length > 0;
 
     this.innerHTML = `
       <div class="controls-container" style="position: sticky; top: 0; z-index: 100; background: #fff;">
         <div class="sticky-toggle-bar">
 		<!-- Row 1: Global Settings & Speed -->
-          <div class="global-controls-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; padding-bottom: 8px; border-bottom: 1px solid rgba(0,0,0,0.06); font-size: 0.9rem;">
+          <div class="global-controls-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; font-size: 0.9rem;">
             <div class="global-toggles" style="display: flex; gap: 10px; align-items: center;">
               <label style="opacity: 0.8; font-size: 0.85rem;">${t('hintsLabel') || 'Hints:'}</label>
               <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
@@ -169,10 +170,12 @@ class SiteControls extends HTMLElement {
               </select>
             </div>
           </div>
-          <!-- Row 2: Page-Specific Container -->
-          <div class="page-controls-row" style="margin-top: 8px;">
-            ${slottedContent}
-          </div>
+		  <!-- Row 2: Rendered ONLY if page-specific content exists -->
+	        ${hasSlottedContent ? `
+	          <div class="page-controls-row" style="margin-top: 8px; padding-top: 8px;">
+	            ${slottedContent}
+	          </div>
+	        ` : ''}
         </div>
       </div>
     `;

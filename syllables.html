@@ -6,58 +6,6 @@
   <title>Tibetan Syllable Audio Grid</title>
   <link rel="stylesheet" href="css/all.css">
   <script type="module" src="js/shared-layout.js"></script>
-  <style>
-    /* Syllables Toggle Pill Buttons Styling */
-    .syllable-toggle-group {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    /* Hide the actual checkbox visually while keeping it functional */
-    .toggle-option input[type="checkbox"] {
-      position: absolute;
-      opacity: 0;
-      width: 0;
-      height: 0;
-      pointer-events: none;
-    }
-
-    /* Style the label as a standalone pill button */
-    .toggle-option {
-      display: inline-block;
-      margin-right: 6px;
-      padding: 8px 16px;
-      background-color: #ffffff;
-      border: 1px solid var(--gray-light, #e0e0e0);
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-family: system-ui, -apple-system, sans-serif;
-      font-weight: 500;
-      color: var(--text-dark, #2c3e50);
-      transition: all 0.2s ease;
-      user-select: none;
-    }
-
-    .toggle-option:last-child {
-      margin-right: 0;
-    }
-
-    /* Hover state for unselected pills */
-    .toggle-option:hover {
-      border-color: var(--accent-maroon, #800000);
-      background-color: rgba(128, 0, 0, 0.03);
-    }
-
-    /* ACTIVE/CHECKED STATE: Highlights when checkbox inside is checked */
-    .toggle-option:has(input[type="checkbox"]:checked) {
-      background-color: var(--accent-maroon, #800000);
-      color: #ffffff;
-      border-color: var(--accent-maroon, #800000);
-    }
-  </style>
 </head>
 <body>
 
@@ -70,26 +18,8 @@
 	  <p class="subtitle" id="subtitleText"></p>
     </header>
 
-    <!-- Customization / Settings Bar -->
-    <div class="controls-container">
-      <div class="sticky-toggle-bar">
-        <div class="syllable-toggle-group">
-          
-          <!-- Checkbox 1: Pronunciation Hint -->
-          <label class="toggle-option">
-            <input type="checkbox" id="toggleEng">
-            <span id="labelToggleEng"></span>
-          </label>
-
-          <!-- Checkbox 2: Tone & Aspiration -->
-          <label class="toggle-option">
-            <input type="checkbox" id="toggleTips" checked>
-			<span id="labelToggleTips"></span>
-          </label>
-
-        </div>
-      </div>
-    </div>
+    <!-- Unified Shared Controls Bar (Row 1 is built-in globally, Row 2 is empty here) -->
+    <site-controls></site-controls>
 
     <!-- Main Grid Target Elements -->
     <main class="grid-container" id="alphabetGrid"></main>
@@ -106,22 +36,23 @@
       // Function to apply localized text to static elements on the page
       function updatePageText() {
         const subtitleEl = document.getElementById('subtitleText');
-        const labelEngEl = document.getElementById('labelToggleEng');
-        const labelTipsEl = document.getElementById('labelToggleTips');
-
         if (subtitleEl) subtitleEl.textContent = t('syllablesSubtitle');
-        if (labelEngEl) labelEngEl.textContent = t('showPronunciation');
-        if (labelTipsEl) labelTipsEl.textContent = t('showTone');
       }
 
       // Run text updates on initial load
       updatePageText();
-
-      const toggleEng = document.getElementById('toggleEng');
-      const toggleTips = document.getElementById('toggleTips');
     
       let currentAudio = null;
       let currentCard = null;
+      let playbackRate = window.globalPlaybackRate || 1.0;
+
+      // Listen for global playback rate changes from the site-controls bar
+      window.addEventListener('playbackRateChanged', (e) => {
+        playbackRate = e.detail.speed;
+        if (currentAudio) {
+          currentAudio.playbackRate = playbackRate;
+        }
+      });
 
       // Render cards using the shared component template
       tibetanAlphabet.forEach(item => {
@@ -131,13 +62,6 @@
           romanization: item.eng,
           tone: t(item.toneKey) // Pulls localized string from i18n.js
         });
-
-        // Handle initial visibility classes based on checkbox states
-        const romanizationEl = card.querySelector('.romanization-text');
-        const toneEl = card.querySelector('.card-tone');
-      
-        if (toggleEng && !toggleEng.checked && romanizationEl) romanizationEl.classList.add('hidden');
-        if (toggleTips && !toggleTips.checked && toneEl) toneEl.classList.add('hidden');
 
         const audioObj = new Audio(`audio/syllables/${item.id}.mp3`);
         audioObj.preload = 'auto';
@@ -149,6 +73,7 @@
             if (currentCard) currentCard.classList.remove('playing');
           }
 
+          audioObj.playbackRate = playbackRate;
           card.classList.add('playing');
           audioObj.play().catch(error => {
             console.error("Audio playback interrupted or blocked:", error);
@@ -167,34 +92,6 @@
           grid.appendChild(card);
         }
       });
-
-      // Toggle visibility of the English hints
-      if (toggleEng) {
-        toggleEng.addEventListener('change', (e) => {
-          const hints = document.querySelectorAll('.romanization-text');
-          hints.forEach(hint => {
-            if (e.target.checked) {
-              hint.classList.remove('hidden');
-            } else {
-              hint.classList.add('hidden');
-            }
-          });
-        });
-      }
-
-      // Toggle visibility of the Tone & Aspiration tips
-      if (toggleTips) {
-        toggleTips.addEventListener('change', (e) => {
-          const tips = document.querySelectorAll('.card-tone');
-          tips.forEach(tip => {
-            if (e.target.checked) {
-              tip.classList.remove('hidden');
-            } else {
-              tip.classList.add('hidden');
-            }
-          });
-        });
-      }
     </script>
 </body>
 </html>
