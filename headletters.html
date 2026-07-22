@@ -92,38 +92,36 @@
       <p class="subtitle" id="subtitleText"></p>
     </header>
 
-    <!-- Section 2: Head Letters Toggle Bar -->
-    <div class="controls-container">
-      <div class="sticky-toggle-bar">
-        <div class="headletter-toggle-group">
-          
-          <!-- Base / Default Option -->
-          <label class="headletter-option">
-            <input type="radio" name="headLetterSelect" value="none" checked>
-            <span id="labelBaseOnly"></span>
-          </label>
+	<!-- Section 2: Unified Sticky Two-Row Controls Component -->
+	    <site-controls>
+	      <div class="headletter-toggle-group" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+        
+	        <!-- Base / Default Option -->
+	        <label class="headletter-option">
+	          <input type="radio" name="headLetterSelect" value="none" checked>
+	          <span id="labelNone"></span>
+	        </label>
 
-          <!-- 1. Ra-go (ར) -->
-          <label class="headletter-option">
-            <input type="radio" name="headLetterSelect" value="ra">
-            <span class="headletter-symbol">ར</span>
-          </label>
+	        <!-- 1. Ra-go (ར) -->
+	        <label class="headletter-option">
+	          <input type="radio" name="headLetterSelect" value="ra">
+	          <span class="headletter-symbol">ར</span>
+	        </label>
 
-          <!-- 2. La-go (ལ) -->
-          <label class="headletter-option">
-            <input type="radio" name="headLetterSelect" value="la">
-            <span class="headletter-symbol">ལ</span>
-          </label>
+	        <!-- 2. La-go (ལ) -->
+	        <label class="headletter-option">
+	          <input type="radio" name="headLetterSelect" value="la">
+	          <span class="headletter-symbol">ལ</span>
+	        </label>
 
-          <!-- 3. Sa-go (ས) -->
-          <label class="headletter-option">
-            <input type="radio" name="headLetterSelect" value="sa">
-            <span class="headletter-symbol">ས</span>
-          </label>
+	        <!-- 3. Sa-go (ས) -->
+	        <label class="headletter-option">
+	          <input type="radio" name="headLetterSelect" value="sa">
+	          <span class="headletter-symbol">ས</span>
+	        </label>
 
-        </div>
-      </div>
-    </div>
+	      </div>
+	    </site-controls>
 
     <!-- Section 3: Syllables Grid -->
     <main class="grid-container" id="alphabetGrid"></main>
@@ -133,179 +131,186 @@
   </div>
 
   <script type="module">
-    import { createSyllableCard } from './js/shared-layout.js';
-    import { t } from './js/i18n.js';
-    import { tibetanAlphabet } from './js/syllables_data.js';
+      import { createSyllableCard } from './js/shared-layout.js';
+      import { t } from './js/i18n.js';
+      import { tibetanAlphabet } from './js/syllables_data.js';
+      import { bindAudioSpeed } from './js/audio-helper.js';
 
-    // Apply translations on load
-    document.getElementById('subtitleText').textContent = t('headLetters');
-    document.getElementById('labelBaseOnly').textContent = t('baseOnly');
-
-    // Page Title Audio Clip
-    const titleAudio = new Audio("audio/headletters/headletters_title.mp3");
-    titleAudio.preload = 'auto';
-
-    const titleAudioBtn = document.getElementById('titleAudioBtn');
-    let currentAudio = null;
-    let currentCard = null;
-
-    function stopAudio() {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-        if (currentCard) currentCard.classList.remove('playing');
-      }
-    }
-
-    if (titleAudioBtn) {
-      titleAudioBtn.addEventListener('click', () => {
-        stopAudio();
-        titleAudio.currentTime = 0;
-        titleAudio.play().catch(err => console.log("Title audio playback prevented or file missing"));
-        currentAudio = titleAudio;
+      // Apply translations on load
+  // Apply translations safely once the DOM / custom elements are fully settled
+      window.addEventListener('DOMContentLoaded', () => {
+        const subtitleElem = document.getElementById('subtitleText');
+        const baseOnlyElem = document.getElementById('labelNone');
+      
+        if (subtitleElem) subtitleElem.textContent = t('headLetters');
+        if (baseOnlyElem) baseOnlyElem.textContent = t('none');
       });
-    }
 
-    // Dedicated standalone audio for the head letter names
-    const headLetterAudio = {
-      ra: new Audio("audio/headletters/rago.mp3"),
-      la: new Audio("audio/headletters/lago.mp3"),
-      sa: new Audio("audio/headletters/sago.mp3")
-    };
+      // Page Title Audio Clip
+      const titleAudio = bindAudioSpeed(new Audio("audio/headletters/headletters_title.mp3"));
+      titleAudio.preload = 'auto';
 
-    Object.values(headLetterAudio).forEach(audio => {
-      audio.playbackRate = 1.45;
-    });
+      const titleAudioBtn = document.getElementById('titleAudioBtn');
+      let currentAudio = null;
+      let currentCard = null;
 
-    /* Head Letter Mappings (keeping rules isolated here) */
-    const headLetterData = {
-      ra: {
-        "01_ka":  { tib: "རྐ", soundShift: false },
-        "03_kaa": { tib: "རྒ", soundShift: true, tip: "Low ག shifts to High 'gaa'" },
-        "04_nga": { tib: "རྔ", soundShift: true, tip: "Low ང shifts to High nasal" },
-        "07_chaa":{ tib: "རྗ", soundShift: true, tip: "Low ཇ shifts to High 'chaa'" },
-        "08_nya": { tib: "རྙ", soundShift: true, tip: "Low ཉ shifts to High nasal" },
-        "09_ta":  { tib: "རྟ", soundShift: false },
-        "11_taa": { tib: "རྡ", soundShift: true, tip: "Low ད shifts to High 'taa'" },
-        "12_na":  { tib: "རྣ", soundShift: true, tip: "Low ན shifts to High nasal" },
-        "15_paa": { tib: "རྦ", soundShift: true, tip: "Low བ shifts to High 'paa'" },
-        "16_ma":  { tib: "རྨ", soundShift: true, tip: "Low མ shifts to High nasal" },
-        "17_tsa": { tib: "རྩ", soundShift: false },
-        "19_tsaa":{ tib: "རྫ", soundShift: true, tip: "Low ཛ shifts to High 'tsaa'" }
-      },
-      la: {
-        "01_ka":  { tib: "ལྐ", soundShift: false },
-        "03_kaa": { tib: "ལྒ", soundShift: true, tip: "Low ག shifts to High 'gaa'" },
-        "04_nga": { tib: "ལྔ", soundShift: true, tip: "Low ང shifts to High nasal" },
-        "05_cha": { tib: "ལྕ", soundShift: false },
-        "07_chaa":{ tib: "ལྗ", soundShift: true, tip: "Low ཇ shifts to High 'chaa'" },
-        "09_ta":  { tib: "ལྟ", soundShift: false },
-        "11_taa": { tib: "ལྡ", soundShift: true, tip: "Low ད shifts to High 'taa'" },
-        "13_pa":  { tib: "ལྤ", soundShift: false },
-        "15_paa": { tib: "ལྦ", soundShift: true, tip: "Low བ shifts to High 'paa'" },
-        "29_ha":  { tib: "ལྷ", soundShift: true, tip: "Shifts to voiceless 'L'" }
-      },
-      sa: {
-        "01_ka":  { tib: "སྐ", soundShift: false },
-        "03_kaa": { tib: "སྒ", soundShift: true, tip: "Low ག shifts to High 'gaa'" },
-        "04_nga": { tib: "སྔ", soundShift: true, tip: "Low ང shifts to High nasal" },
-        "08_nya": { tib: "སྙ", soundShift: true, tip: "Low ཉ shifts to High nasal" },
-        "09_ta":  { tib: "སྟ", soundShift: false },
-        "11_taa": { tib: "སྡ", soundShift: true, tip: "Low ད shifts to High 'taa'" },
-        "12_na":  { tib: "སྣ", soundShift: true, tip: "Low ན shifts to High nasal" },
-        "13_pa":  { tib: "སྤ", soundShift: false },
-        "15_paa": { tib: "སྦ", soundShift: true, tip: "Low བ shifts to High 'paa'" },
-        "16_ma":  { tib: "སྨ", soundShift: true, tip: "Low མ shifts to High nasal" },
-        "17_tsa": { tib: "སྩ", soundShift: false }
+      function stopAudio() {
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+          if (currentCard) currentCard.classList.remove('playing');
+        }
       }
-    };
 
-    const grid = document.getElementById('alphabetGrid');
-    const headLetterRadios = document.querySelectorAll('input[name="headLetterSelect"]');
-    let activeHeadLetter = "none";
-
-    function renderGrid() {
-      grid.innerHTML = '';
-
-      tibetanAlphabet.forEach(item => {
-        let displayTibetan = item.tib;
-        let audioPath = `audio/syllables/${item.id}.mp3`;
-        let hasShift = false;
-        let shiftExplanation = null;
-        let isDisabled = false;
-
-        if (activeHeadLetter !== "none") {
-			const currentMap = headLetterData[activeHeadLetter];
-			const comboData = currentMap ? currentMap[item.id] : null;
-
-			if (comboData) {
-				displayTibetan = comboData.tib;
-				hasShift = comboData.soundShift === true;
-				shiftExplanation = comboData.tip || null;
-
-				// If there is no sound shift, use the base syllable audio file!
-				if (!hasShift) {
-					audioPath = `audio/syllables/${item.id}.mp3`;
-				} else {
-					audioPath = `audio/headletters/${item.id}_${activeHeadLetter}.mp3`;
-				}
-			} else {
-				isDisabled = true; // Gray out unsupported letter combos
-			}
-        }
-
-        // Use your standardized component factory function!
-        const card = createSyllableCard({
-          id: item.id,
-          script: displayTibetan,
-          hasSoundShift: hasShift,
-          shiftExplanation: shiftExplanation,
-          isDisabled: isDisabled
-        });
-
-        // Attach audio & click behavior if the card is active/valid
-        if (!isDisabled) {
-          const audioObj = new Audio(audioPath);
-          audioObj.preload = 'auto';
-
-          card.addEventListener('click', () => {
-            stopAudio();
-            card.classList.add('playing');
-            audioObj.play().catch(error => console.error("Audio error:", audioPath));
-            currentAudio = audioObj;
-            currentCard = card;
-            audioObj.onended = () => card.classList.remove('playing');
-          });
-        }
-
-        grid.appendChild(card);
-      });
-    }
-
-    headLetterRadios.forEach(radio => {
-      const playHLNameAudio = (hlKey) => {
-        if (hlKey !== "none" && headLetterAudio[hlKey]) {
+      if (titleAudioBtn) {
+        titleAudioBtn.addEventListener('click', () => {
           stopAudio();
-          headLetterAudio[hlKey].currentTime = 0;
-          headLetterAudio[hlKey].play().catch(err => console.log("Audio play error:", err));
-          currentAudio = headLetterAudio[hlKey];
-        }
+          titleAudio.currentTime = 0;
+          titleAudio.play().catch(err => console.log("Title audio playback prevented or file missing"));
+          currentAudio = titleAudio;
+        });
+      }
+
+      // Dedicated standalone audio for the head letter names
+      const headLetterAudio = {
+        ra: bindAudioSpeed(new Audio("audio/headletters/rago.mp3")),
+        la: bindAudioSpeed(new Audio("audio/headletters/lago.mp3")),
+        sa: bindAudioSpeed(new Audio("audio/headletters/sago.mp3"))
       };
 
-      radio.addEventListener('change', (e) => {
-        activeHeadLetter = e.target.value;
-        playHLNameAudio(activeHeadLetter);
-        renderGrid();
-      });
+      /* Head Letter Mappings */
+/* Head Letter Mappings with explicit Romanization and Tones */
+	  const headLetterData = {
+	    ra: {
+	      "01_ka":  { tib: "རྐ", soundShift: false },
+	      "03_kaa": { tib: "རྒ", soundShift: true, toneKey: "tone_harder_sound", eng: "gaa" },
+	      "04_nga": { tib: "རྔ", soundShift: true, toneKey: "tone_high_tune" },
+	      "07_chaa":{ tib: "རྗ", soundShift: true, toneKey: "tone_harder_sound", eng: "jaa" },
+	      "08_nya": { tib: "རྙ", soundShift: true, toneKey: "tone_high_tune" },
+	      "09_ta":  { tib: "རྟ", soundShift: false },
+	      "11_taa": { tib: "རྡ", soundShift: true, toneKey: "tone_harder_sound", eng: "daa" },
+	      "12_na":  { tib: "རྣ", soundShift: true, toneKey: "tone_high_tune" },
+	      "15_paa": { tib: "རྦ", soundShift: true, toneKey: "tone_harder_sound", eng: "baa" },
+	      "16_ma":  { tib: "རྨ", soundShift: true, toneKey: "tone_high_tune" },
+	      "17_tsa": { tib: "རྩ", soundShift: false },
+	      "19_tsaa":{ tib: "རྫ", soundShift: true, toneKey: "tone_harder_sound", eng: "dzaa" }
+	    },
+	    la: {
+	      "01_ka":  { tib: "ལྐ", soundShift: false },
+	      "03_kaa": { tib: "ལྒ", soundShift: true, toneKey: "tone_harder_sound", eng: "gaa" },
+	      "04_nga": { tib: "ལྔ", soundShift: true, toneKey: "tone_high_tune" },
+	      "05_cha": { tib: "ལྕ", soundShift: false },
+	      "07_chaa":{ tib: "ལྗ", soundShift: true, toneKey: "tone_harder_sound", eng: "ljaa" },
+	      "09_ta":  { tib: "ལྟ", soundShift: false },
+	      "11_taa": { tib: "ལྡ", soundShift: true, toneKey: "tone_harder_sound", eng: "ldaa" },
+	      "13_pa":  { tib: "ལྤ", soundShift: false },
+	      "15_paa": { tib: "ལྦ", soundShift: true, toneKey: "tone_harder_sound", eng: "lbaa" },
+	      "29_ha":  { tib: "ལྷ", soundShift: true, toneKey: "tone_high_asp_sharp", eng: "lha" }
+	    },
+	    sa: {
+	      "01_ka":  { tib: "སྐ", soundShift: false },
+	      "03_kaa": { tib: "སྒ", soundShift: true, toneKey: "tone_harder_sound", eng: "gaa" },
+	      "04_nga": { tib: "སྔ", soundShift: true, toneKey: "tone_high_tune" },
+	      "08_nya": { tib: "སྙ", soundShift: true, toneKey: "tone_high_tune" },
+	      "09_ta":  { tib: "སྟ", soundShift: false },
+	      "11_taa": { tib: "སྡ", soundShift: true, toneKey: "tone_harder_sound", eng: "sdaa" },
+	      "12_na":  { tib: "སྣ", soundShift: true, toneKey: "tone_high_tune" },
+	      "13_pa":  { tib: "སྤ", soundShift: false },
+	      "15_paa": { tib: "སྦ", soundShift: true, toneKey: "tone_harder_sound", eng: "sbaa" },
+	      "16_ma":  { tib: "སྨ", soundShift: true, toneKey: "tone_high_tune" },
+	      "17_tsa": { tib: "སྩ", soundShift: false }
+	    }
+	  };
 
-      radio.addEventListener('click', (e) => {
-        if (e.target.value === activeHeadLetter) {
-          playHLNameAudio(activeHeadLetter);
-        }
-      });
-    });
+      const grid = document.getElementById('alphabetGrid');
+      const headLetterRadios = document.querySelectorAll('input[name="headLetterSelect"]');
+      let activeHeadLetter = "none";
+	  
 
-    renderGrid();
-  </script>
+	// Listen for changes from the radio buttons anywhere on the page (even inside shadow DOM if it bubbles)
+	document.addEventListener('change', (event) => {
+	  if (event.target && event.target.name === 'headLetterSelect') {
+	    activeHeadLetter = event.target.value;
+
+	    // Play standalone head letter audio if selected and available
+	    if (activeHeadLetter !== 'none' && headLetterAudio[activeHeadLetter]) {
+	      stopAudio();
+	      headLetterAudio[activeHeadLetter].currentTime = 0;
+	      headLetterAudio[activeHeadLetter].play().catch(err => console.log("Head letter audio error"));
+	      currentAudio = headLetterAudio[activeHeadLetter];
+	    }
+
+	    renderGrid();
+	  }
+	});
+
+	  function renderGrid() {
+	        grid.innerHTML = '';
+
+	        tibetanAlphabet.forEach(item => {
+	          let displayTibetan = item.tib;
+	          let audioPath = `audio/syllables/${item.id}.mp3`;
+	          let hasShift = false;
+	          let shiftExplanation = null;
+	          let isDisabled = false;
+
+	// Default to base item properties
+	          let displayRom = item.eng || '';
+	          let displayToneKey = item.toneKey || '';
+
+	          if (activeHeadLetter !== "none") {
+	            const currentMap = headLetterData[activeHeadLetter];
+	            const comboData = currentMap ? currentMap[item.id] : null;
+
+				if (comboData) {
+	              displayTibetan = comboData.tib;
+	              hasShift = comboData.soundShift === true;
+
+	              // Translate the tone key if present, otherwise null
+	              shiftExplanation = comboData.toneKey ? t(comboData.toneKey) : null;
+
+	              displayRom = (hasShift && comboData.eng) ? comboData.eng : item.eng;
+	              displayToneKey = (hasShift && comboData.toneKey) ? comboData.toneKey : item.toneKey;
+
+	              if (!hasShift) {
+	                audioPath = `audio/syllables/${item.id}.mp3`;
+	              } else {
+	                audioPath = `audio/headletters/${item.id}_${activeHeadLetter}.mp3`;
+	              }
+	            } else {
+	              isDisabled = true;
+	            }
+	          }
+
+			  const card = createSyllableCard({
+	              id: item.id,
+	              script: displayTibetan,
+	              romanization: displayRom,
+	              tone: hasShift ? shiftExplanation : (displayToneKey ? t(displayToneKey) : ''),
+	              hasSoundShift: hasShift,
+	              shiftExplanation: shiftExplanation,
+	              isDisabled: isDisabled
+	          });
+
+	          if (!isDisabled) {
+	            const audioObj = bindAudioSpeed(new Audio(audioPath));
+	            audioObj.preload = 'auto';
+
+	            card.addEventListener('click', () => {
+	              stopAudio();
+	              card.classList.add('playing');
+	              audioObj.play().catch(error => console.error("Audio error:", audioPath));
+	              currentAudio = audioObj;
+	              currentCard = card;
+	              audioObj.onended = () => card.classList.remove('playing');
+	            });
+	          }
+
+	          grid.appendChild(card);
+	        });
+	      }
+
+      renderGrid();
+    </script>
 </body>
 </html>

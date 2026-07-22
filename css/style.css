@@ -351,6 +351,17 @@ p.subtitle, header p {
   text-align: center;
   font-weight: 500;
 }
+/* When body has hide-romanization, hide romanization text elements inside cards */
+body.hide-romanization .syllable-card .romanization-text,
+body.hide-romanization .syllable-card .card-rom {
+  display: none !important;
+}
+
+/* When body has hide-tones, hide tone/tip elements inside cards */
+body.hide-tones .syllable-card .card-tone,
+body.hide-tones .syllable-card .shift-tip {
+  display: none !important;
+}
 
 /* Valid combo where the sound shifts (e.g., high tone / nasal change) */
 
@@ -436,6 +447,7 @@ p.subtitle, header p {
   text-decoration: underline;
 }
 /* 9. Head Letters */
+
 
 
 /* 99. Responsive Adjustments */

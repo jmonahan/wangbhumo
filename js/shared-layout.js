@@ -138,6 +138,73 @@ export function createSyllableCard({
   return card;
 }
 
+// Universal Controls Bar Component with 2-Row Layout & Global Speed Management
+class SiteControls extends HTMLElement {
+  connectedCallback() {
+    // Check if there is pre-existing child content (like your head letter pills) 
+    // before we overwrite innerHTML, so we can preserve and re-slot them!
+    const slottedContent = this.innerHTML;
+
+    this.innerHTML = `
+      <div class="controls-container" style="position: sticky; top: 0; z-index: 100; background: #fff;">
+        <div class="sticky-toggle-bar">
+		<!-- Row 1: Global Settings & Speed -->
+          <div class="global-controls-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; padding-bottom: 8px; border-bottom: 1px solid rgba(0,0,0,0.06); font-size: 0.9rem;">
+            <div class="global-toggles" style="display: flex; gap: 10px; align-items: center;">
+              <label style="opacity: 0.8; font-size: 0.85rem;">${t('hintsLabel') || 'Hints:'}</label>
+              <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
+                <input type="checkbox" id="globalToggleEng" checked> ${t('phonetics') || 'Phonetics'}
+              </label>
+              <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
+                <input type="checkbox" id="globalToggleTips" checked> ${t('tones') || 'Tones'}
+              </label>
+            </div>
+            <div class="global-speed" style="margin-left: 40px; display: inline-flex; align-items: center; gap: 10px;">
+              <label for="globalSpeedSelect" style="opacity: 0.8; font-size: 0.85rem;">${t('speedLabel') || 'Speed:'}</label>
+              <select id="globalSpeedSelect" style="background: #fff; border: 1px solid #ccc; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; cursor: pointer;">
+                <option value="1.0" selected>1.0x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="1.9">2x</option>
+              </select>
+            </div>
+          </div>
+          <!-- Row 2: Page-Specific Container -->
+          <div class="page-controls-row" style="margin-top: 8px;">
+            ${slottedContent}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Wire up global Romanization toggle
+    const engToggle = this.querySelector('#globalToggleEng');
+    engToggle?.addEventListener('change', (e) => {
+      document.body.classList.toggle('hide-romanization', !e.target.checked);
+    });
+
+    // Wire up global Tones/Tips toggle
+    const tipsToggle = this.querySelector('#globalToggleTips');
+    tipsToggle?.addEventListener('change', (e) => {
+      document.body.classList.toggle('hide-tones', !e.target.checked);
+    });
+
+    // Centralize Global Speed State
+    const speedSelect = this.querySelector('#globalSpeedSelect');
+    speedSelect?.addEventListener('change', (e) => {
+      const newSpeed = parseFloat(e.target.value);
+      window.globalPlaybackRate = newSpeed;
+      window.dispatchEvent(new CustomEvent('playbackRateChanged', { detail: { speed: newSpeed } }));
+    });
+  }
+}
+
+
+
+// Initialize default global playback rate tracker
+window.globalPlaybackRate = 1.0;
+
 // Register the custom HTML tags
 customElements.define('site-nav', SiteNav);
 customElements.define('site-footer', SiteFooter);
+customElements.define('site-controls', SiteControls);

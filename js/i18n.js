@@ -35,9 +35,17 @@ export const translations = {
     lowTone: "Low tone",
     aspirated: "High + Aspirated",
     nasal: "Low + Nasal",
+	tone_harder_sound: "Change: Harder Sound",
+	tone_high_tune: "Change: High Tune",
+	tone_high_asp_sharp: "High Aspiration, Sharp Vowel Ending",
     noVowel: "No Vowel",
 	headLetters: "Head Letters",
-    baseOnly: "Base Only",
+	none: "None",
+	// SiteControls Hints and Speed
+	hintsLabel: "Hints:",
+	phonetics: "Phonetics",
+	tones: "Tones",
+	speedLabel: "Audio Speed:",
   },
   fr: {
     siteTitle: "Compagnon d'étude tibétaine",
@@ -73,9 +81,18 @@ export const translations = {
     lowTone: "Ton bas",
     aspirated: "Haut + Aspiré",
     nasal: "Bas + Nasal",
+	tone_harder_sound: "Changement : Son plus dur",
+	tone_high_tune: "Changement : Ton haut",
+	tone_high_asp_sharp: "Forte aspiration, fin de voyelle pointue",
     noVowel: "Sans voyelle",
 	headLetters: "Lettres têtes",
-    baseOnly: "Base seule",
+	none: "Aucun",
+    // SiteControls Hints and Speed
+	hintsLabel: "Indices :",
+	phonetics: "Phonétique",
+	tones: "Tons",
+	speedLabel: "Audio Vitesse :",
+
   }
 };
 
