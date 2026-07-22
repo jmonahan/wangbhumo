@@ -263,11 +263,19 @@ p.subtitle, header p {
 }
 
 .control-group {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+	vertical-align: middle; 
+	  position: relative;
+	  bottom: 1px; /* Optional micro-adjustment for certain fonts */
 }
-
+.global-controls-row{
+	display: flex;
+	  align-items: center; /* Vertically centers the checkbox and label */
+	  gap: 50px;     
+	  text-align: center;      
+}
+.page-controls-row{
+	margin-top: 10px;
+}
 .controls-container label {
   font-family: system-ui, -apple-system, sans-serif;
   font-size: 0.85rem;
@@ -283,12 +291,16 @@ p.subtitle, header p {
   width: 16px;
   height: 16px;
   cursor: pointer;
+  vertical-align: middle; 
+    position: relative;
+    bottom: 1px; /* Optional micro-adjustment for certain fonts */
 }
 
 .vowel-option {
   display: inline;
   align-items: center;
-  margin-right: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
   padding: 15px 8px 15px 8px;
   background-color: #ffffff;
   border: 1px solid var(--gray-light, #e0e0e0);
@@ -303,6 +315,9 @@ p.subtitle, header p {
   margin-bottom: 10px;
   padding: 0px 8px 10px 8px;
   font-size: 2.5rem;
+}
+.vowel-selector-group{
+	text-align: center;
 }
 
 /* 7. Syllables Grid Layout & Cards */

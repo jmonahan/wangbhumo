@@ -161,7 +161,7 @@ class SiteControls extends HTMLElement {
 	    <div class="sticky-toggle-bar">
 	      <!-- Row 1: Global Settings & Speed -->
 	      <div class="global-controls-row">
-	        <div class="global-toggles">
+	        <span class="global-toggles">
 	          <label class="hints-label">${t('hintsLabel') || 'Hints:'}</label>
 	          <label class="toggle-label">
 	            <input type="checkbox" id="globalToggleEng"> ${t('phonetics') || 'Phonetics'}
@@ -169,8 +169,8 @@ class SiteControls extends HTMLElement {
 	          <label class="toggle-label">
 	            <input type="checkbox" id="globalToggleTips"> ${t('tones') || 'Tones'}
 	          </label>
-	        </div>
-	        <div class="global-speed">
+	        </span>
+	        <span class="global-speed">
 	          <label for="globalSpeedSelect" class="speed-label">${t('speedLabel') || 'Speed:'}</label>
 	          <select id="globalSpeedSelect" class="speed-select">
 	            <option value="1.0" selected>1.0x</option>
@@ -178,11 +178,11 @@ class SiteControls extends HTMLElement {
 	            <option value="1.5">1.5x</option>
 	            <option value="1.9">2x</option>
 	          </select>
-	        </div>
+	        </span>
 	      </div>
 	      <!-- Row 2: Rendered ONLY if page-specific content exists -->
 	      ${hasSlottedContent ? `
-	        <div class="page-controls-row">
+	        <div class="page-controls-row page-controls-row2">
 	          ${slottedContent}
 	        </div>
 	      ` : ''}

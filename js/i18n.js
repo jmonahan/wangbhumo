@@ -42,7 +42,7 @@ export const translations = {
 	headLetters: "Head Letters",
 	none: "None",
 	// SiteControls Hints and Speed
-	hintsLabel: "Hints:",
+	hintsLabel: "Show:",
 	phonetics: "Phonetics",
 	tones: "Tones",
 	speedLabel: "Audio Speed:",
@@ -88,7 +88,7 @@ export const translations = {
 	headLetters: "Lettres têtes",
 	none: "Aucun",
     // SiteControls Hints and Speed
-	hintsLabel: "Indices :",
+	hintsLabel: "Afficher :",
 	phonetics: "Phonétique",
 	tones: "Tons",
 	speedLabel: "Audio Vitesse :",
