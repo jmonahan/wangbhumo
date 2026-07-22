@@ -10,11 +10,11 @@ export const translations = {
     badgeReady: "Ready",
     
     vowelsTitle: "Vowels",
-    vowelsDesc: "Missing audio for two vowel + syllable combos - needs Gen la's approval",
+    vowelsDesc: "Combine vowels with the root syllables and hear the sound changes",
     badgeInReview: "In Review",
     
     headLettersTitle: "Head Letters",
-    headLettersDesc: "Add and remove head letters, see which syllables they attach to, and which have a sound change.",
+    headLettersDesc: "Add head letters to the root syllables, see which syllables have a sound change and which stay the same",
     badgeComingSoon: "Coming Soon",
     
     // Footer credits
@@ -56,11 +56,11 @@ export const translations = {
     badgeReady: "Prêt",
     
     vowelsTitle: "Voyelles",
-    vowelsDesc: "Audio manquant pour deux combinaisons voyelle + syllabe - nécessite l'approbation de Gen la",
+    vowelsDesc: "Combinez les voyelles avec les syllabes racines et écoutez les changements de sons.",
     badgeInReview: "En révision",
     
     headLettersTitle: "Lettres têtes",
-    headLettersDesc: "Ajoutez et supprimez des lettres têtes, voyez à quelles syllabes elles se rattachent et lesquelles modifient le son.",
+    headLettersDesc: "Ajoutez des lettres de tête aux syllabes racines, voyez quelles syllabes subissent un changement de son et lesquelles restent inchangées.",
     badgeComingSoon: "Bientôt disponible",
     
     // Footer credits
