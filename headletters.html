@@ -89,7 +89,7 @@
           </svg>
         </button>
       </h1>
-      <p class="subtitle">Head Letters</p>
+      <p class="subtitle" id="subtitleText"></p>
     </header>
 
     <!-- Section 2: Head Letters Toggle Bar -->
@@ -100,7 +100,7 @@
           <!-- Base / Default Option -->
           <label class="headletter-option">
             <input type="radio" name="headLetterSelect" value="none" checked>
-            <span>Base Only</span>
+            <span id="labelBaseOnly"></span>
           </label>
 
           <!-- 1. Ra-go (ར) -->
@@ -134,7 +134,12 @@
 
   <script type="module">
     import { createSyllableCard } from './js/shared-layout.js';
+    import { t } from './js/i18n.js';
     import { tibetanAlphabet } from './js/syllables_data.js';
+
+    // Apply translations on load
+    document.getElementById('subtitleText').textContent = t('headLetters');
+    document.getElementById('labelBaseOnly').textContent = t('baseOnly');
 
     // Page Title Audio Clip
     const titleAudio = new Audio("audio/headletters/headletters_title.mp3");
@@ -230,17 +235,23 @@
         let isDisabled = false;
 
         if (activeHeadLetter !== "none") {
-          const currentMap = headLetterData[activeHeadLetter];
-          const comboData = currentMap ? currentMap[item.id] : null;
+			const currentMap = headLetterData[activeHeadLetter];
+			const comboData = currentMap ? currentMap[item.id] : null;
 
-          if (comboData) {
-            displayTibetan = comboData.tib;
-            audioPath = `audio/headletters/${item.id}_${activeHeadLetter}.mp3`;
-            hasShift = comboData.soundShift === true;
-            shiftExplanation = comboData.tip || null;
-          } else {
-            isDisabled = true; // Gray out unsupported letter combos
-          }
+			if (comboData) {
+				displayTibetan = comboData.tib;
+				hasShift = comboData.soundShift === true;
+				shiftExplanation = comboData.tip || null;
+
+				// If there is no sound shift, use the base syllable audio file!
+				if (!hasShift) {
+					audioPath = `audio/syllables/${item.id}.mp3`;
+				} else {
+					audioPath = `audio/headletters/${item.id}_${activeHeadLetter}.mp3`;
+				}
+			} else {
+				isDisabled = true; // Gray out unsupported letter combos
+			}
         }
 
         // Use your standardized component factory function!

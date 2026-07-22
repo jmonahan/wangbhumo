@@ -111,7 +111,7 @@
 		      </svg>
 		    </button>
 		  </h1>
-      <p class="subtitle">Vowels</p>
+		  <p class="subtitle" id="subtitleText"></p>
     </header>
 
     <!-- Section 2: Vowels Toggle & Customization Bar -->
@@ -121,7 +121,7 @@
         <!-- Base / Default Option -->
         <label class="vowel-option">
           <input type="radio" name="vowelSelect" value="none" checked>
-          <span>No Vowel</span>
+		  <span id="labelNoVowel"></span>
         </label>
 
         <!-- 1. Gigu (i) -->
@@ -160,7 +160,13 @@
 
   <script type="module">
     import { createSyllableCard } from './js/shared-layout.js';
+	import { t } from './js/i18n.js'; // Import translation function
 	import { tibetanAlphabet } from './js/syllables_data.js';
+
+	
+	// Apply translations on load
+    document.getElementById('subtitleText').textContent = t('vowels');
+    document.getElementById('labelNoVowel').textContent = t('noVowel');
 
 	// Page Title Audio Clip
 	const titleAudio = new Audio("audio/vowels/vowels_title.mp3");

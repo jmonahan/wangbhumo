@@ -9,12 +9,12 @@
 </head>
 <body>
 
-  <!-- <site-nav></site-nav> -->
+  <site-nav homepage></site-nav>
 
   <div class="container">
     <header>
-      <h1>Tibetan Study Companion</h1>
-      <p class="subtitle">Interactive study guides and audio pronunciation practice<br>based off of Gen. Wangbhumo's Year 1 Tibetan Language textbook.</p>
+      <h1 id="homeTitle">Tibetan Study Companion</h1>
+      <p class="subtitle" id="homeSubtitleText">Interactive study guides and audio pronunciation practice<br>based off of Gen. Wangbhumo's Year 1 Tibetan Language textbook.</p>
     </header>
 
     <main class="module-grid">
@@ -22,11 +22,11 @@
       <a href="syllables.html" class="module-card">
         <div>
           <div class="module-title">
-            Root Syllables
-            <span class="badge badge-available">Ready</span>
+            <span id="card1Title">Root Syllables</span>
+            <span class="badge badge-available" id="badge1">Ready</span>
           </div>
           <p class="module-description">
-            གསལ་བྱེད་སུམ་ཅུ། - Interactive syllable grid for practicing your pronunciation
+            གསལ་བྱེད་སུམ་ཅུ། - <span id="card1Desc">Interactive syllable grid for practicing your pronunciation</span>
           </p>
         </div>
       </a>
@@ -35,12 +35,11 @@
       <a href="#" class="module-card disabled-card">
         <div>
           <div class="module-title">
-            Vowels
-            <span class="badge badge-coming-soon">In Review</span>
+            <span id="card2Title">Vowels</span>
+            <span class="badge badge-coming-soon" id="badge2">In Review</span>
           </div>
           <p class="module-description">
-            དབྱངས་བཞི། - <!-- Explore hearing vowel marks and their combination with the root syllables -->
-			Missing audio for two vowel + syllable combos - needs Gen la's approval
+            དབྱངས་བཞི། - <span id="card2Desc">Missing audio for two vowel + syllable combos - needs Gen la's approval</span>
           </p>
         </div>
       </a>
@@ -49,12 +48,11 @@
       <a href="#" class="module-card disabled-card">
         <div>
           <div class="module-title">
-            Head Letters
-            <span class="badge badge-coming-soon">Coming Soon</span>
+            <span id="card3Title">Head Letters</span>
+            <span class="badge badge-coming-soon" id="badge3">Coming Soon</span>
           </div>
           <p class="module-description">
-            མགོ་ཅན། - <!-- Explore hearing vowel marks and their combination with the root syllables -->
-			Add and remove head letters, see which syllables they attach to, and which have a sound change.
+            མགོ་ཅན། - <span id="card3Desc">Add and remove head letters, see which syllables they attach to, and which have a sound change.</span>
           </p>
         </div>
       </a>
@@ -62,6 +60,26 @@
 
     <site-footer></site-footer>
   </div>
+
+  <script type="module">
+    import { t } from './js/i18n.js';
+
+    // Apply translations to index page text elements
+    document.getElementById('homeTitle').textContent = t('siteTitle');
+    document.getElementById('homeSubtitleText').innerHTML = t('homeSubtitle');
+    
+    document.getElementById('card1Title').textContent = t('rootSyllables');
+    document.getElementById('badge1').textContent = t('badgeReady');
+    document.getElementById('card1Desc').textContent = t('rootSyllablesDesc');
+
+    document.getElementById('card2Title').textContent = t('vowelsTitle');
+    document.getElementById('badge2').textContent = t('badgeInReview');
+    document.getElementById('card2Desc').textContent = t('vowelsDesc');
+
+    document.getElementById('card3Title').textContent = t('headLettersTitle');
+    document.getElementById('badge3').textContent = t('badgeComingSoon');
+    document.getElementById('card3Desc').textContent = t('headLettersDesc');
+  </script>
 
 </body>
 </html>

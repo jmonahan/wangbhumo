@@ -2,7 +2,25 @@
 
 export const translations = {
   en: {
-    siteTitle: "Tibetan Study Companion",
+	siteTitle: "Tibetan Study Companion",
+    homeSubtitle: "Interactive study guides and audio pronunciation practice<br>based off of Gen. Wangbhumo's Year 1 Tibetan Language textbook.",
+    // Cards
+    rootSyllables: "Root Syllables",
+    rootSyllablesDesc: "Interactive syllable grid for practicing your pronunciation",
+    badgeReady: "Ready",
+    
+    vowelsTitle: "Vowels",
+    vowelsDesc: "Missing audio for two vowel + syllable combos - needs Gen la's approval",
+    badgeInReview: "In Review",
+    
+    headLettersTitle: "Head Letters",
+    headLettersDesc: "Add and remove head letters, see which syllables they attach to, and which have a sound change.",
+    badgeComingSoon: "Coming Soon",
+    
+    // Footer credits
+    voiceAudioCredit: "Voice audio recorded by Gen. Wangbhumo (Sarah College for Higher Tibetan Studies)",
+	codeUnder: "Code under",
+    audioUnder: "Audio under",
     home: "Home",
     syllables: "Syllables",
     vowels: "Vowels",
@@ -17,10 +35,30 @@ export const translations = {
     lowTone: "Low tone",
     aspirated: "High + Aspirated",
     nasal: "Low + Nasal",
-    noVowel: "No Vowel"
+    noVowel: "No Vowel",
+	headLetters: "Head Letters",
+    baseOnly: "Base Only",
   },
   fr: {
     siteTitle: "Compagnon d'étude tibétaine",
+	homeSubtitle: "Guides d'étude interactifs et pratique de la prononciation audio<br>basés sur le manuel de 1ère année de tibétain de Gen. Wangbhumo.",
+    // Cards
+    rootSyllables: "Syllabes racines",
+    rootSyllablesDesc: "Grille de syllabes interactive pour pratiquer votre prononciation",
+    badgeReady: "Prêt",
+    
+    vowelsTitle: "Voyelles",
+    vowelsDesc: "Audio manquant pour deux combinaisons voyelle + syllabe - nécessite l'approbation de Gen la",
+    badgeInReview: "En révision",
+    
+    headLettersTitle: "Lettres têtes",
+    headLettersDesc: "Ajoutez et supprimez des lettres têtes, voyez à quelles syllabes elles se rattachent et lesquelles modifient le son.",
+    badgeComingSoon: "Bientôt disponible",
+    
+    // Footer credits
+    voiceAudioCredit: "Audio vocal enregistré par Gen. Wangbhumo (Sarah College for Higher Tibetan Studies)",
+	codeUnder: "Code sous",
+    audioUnder: "Audio sous",
     home: "Accueil",
     syllables: "Syllabes",
     vowels: "Voyelles",
@@ -35,7 +73,9 @@ export const translations = {
     lowTone: "Ton bas",
     aspirated: "Haut + Aspiré",
     nasal: "Bas + Nasal",
-    noVowel: "Sans voyelle"
+    noVowel: "Sans voyelle",
+	headLetters: "Lettres têtes",
+    baseOnly: "Base seule",
   }
 };
 
