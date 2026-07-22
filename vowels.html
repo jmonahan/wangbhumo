@@ -9,87 +9,79 @@
 
   <style>
     /* Specific styles for Vowel Radio Controls */
-	.controls-container{
-		padding: 0px;
-	}
-	
-	.vowel-toggle-group {
-	  display: flex;
-	  gap: 8px;
-	  justify-content: center;
-	  flex-wrap: wrap;
-	}
-	.vowel-selector-group{
-	  line-height: 1.2;
-	}
-	
-	/* Hide the actual radio button visually while keeping it functional for JS & keyboard navigation */
-	.vowel-option input[type="radio"] {
-	  position: absolute;
-	  opacity: 0;
-	  width: 0;
-	  height: 0;
-	  pointer-events: none;
-	}
+    .vowel-toggle-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .vowel-selector-group {
+      line-height: 1.2;
+    }
+    
+    /* Hide the actual radio button visually while keeping it functional */
+    .vowel-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
 
-	/* Style the label as a standalone toggle button */
-	.vowel-option {
-	  display: inline;
-	  align-items: center;
-	  margin-right: 10px;
-	  padding: 15px 8px 15px 8px;
-	  background-color: #ffffff;
-	  border: 1px solid var(--gray-light, #e0e0e0);
-	  border-radius: 20px;
-	  cursor: pointer;
-	  font-size: 0.95rem;
-	  color: var(--text-dark, #2c3e50);
-	  transition: all 0.2s ease;
-	  user-select: none;
-	}
-	
-	/* height fix*/
-	.vowel-symbol{
-	  margin-bottom: 10px;
-	  padding: 0px 8px 10px 8px;
-	}
-	/* Remove margin from the final button so it doesn't push the right edge */
-	.vowel-option:last-child {
-	  margin-right: 0;
-	}
-	
-	.vowel-symbol{
-		font-size: 2.5rem;
-	}
+    /* Style the label as a standalone toggle button */
+    .vowel-option {
+      display: inline;
+      align-items: center;
+      margin-right: 10px;
+      padding: 15px 8px 15px 8px;
+      background-color: #ffffff;
+      border: 1px solid var(--gray-light, #e0e0e0);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--text-dark, #2c3e50);
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    
+    .vowel-symbol {
+      margin-bottom: 10px;
+      padding: 0px 8px 10px 8px;
+      font-size: 2.5rem;
+    }
 
-	.vowel-symbol-u{margin-top:-10px;}
+    .vowel-option:last-child {
+      margin-right: 0;
+    }
 
-	.vowel-symbol-i,
-	.vowel-symbol-e,
-	.vowel-symbol-o{
-		display: inline-block;
-		transform: translateY(15px);
-  	}
+    .vowel-symbol-u { margin-top: -10px; }
 
-	/* Hover state for unselected pills */
-	.vowel-option:hover {
-	  border-color: var(--accent-maroon, #800000);
-	  background-color: rgba(128, 0, 0, 0.03);
-	}
+    .vowel-symbol-i,
+    .vowel-symbol-e,
+    .vowel-symbol-o {
+      display: inline-block;
+      transform: translateY(15px);
+    }
 
-	/* ACTIVE/CHECKED STATE: When radio inside is checked, style the parent label */
-	.vowel-option:has(input[type="radio"]:checked),
-	.vowel-option input[type="radio"]:checked { 
-	  background-color: var(--accent-maroon, #800000);
-	  color: #ffffff;
-	  border-color: var(--accent-maroon, #800000);
-	}
+    /* Hover state for unselected pills */
+    .vowel-option:hover {
+      border-color: var(--accent-maroon, #800000);
+      background-color: rgba(128, 0, 0, 0.03);
+    }
 
-	.vowel-option:has(input:checked) {
-	  background-color: var(--accent-maroon, #800000);
-	  color: #ffffff;
-	  border-color: var(--accent-maroon, #800000);
-	}
+    /* ACTIVE/CHECKED STATE */
+    .vowel-option:has(input[type="radio"]:checked),
+    .vowel-option input[type="radio"]:checked { 
+      background-color: var(--accent-maroon, #800000);
+      color: #ffffff;
+      border-color: var(--accent-maroon, #800000);
+    }
+
+    .vowel-option:has(input:checked) {
+      background-color: var(--accent-maroon, #800000);
+      color: #ffffff;
+      border-color: var(--accent-maroon, #800000);
+    }
   </style>
 </head>
 <body>
@@ -100,28 +92,27 @@
   <div class="container">
     <!-- Section 1: Header -->
     <header>
-		<h1 class="title-with-audio">
-		    <span class="title-spacer" aria-hidden="true"></span>
-		    <span class="title-text">དབྱངས་བཞི།</span>
-		    <button type="button" class="audio-btn-inline" id="titleAudioBtn" aria-label="Listen to 'Vowels' pronunciation" title="Listen">
-		      <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-		        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-		        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-		        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-		      </svg>
-		    </button>
-		  </h1>
-		  <p class="subtitle" id="subtitleText"></p>
+      <h1 class="title-with-audio">
+        <span class="title-spacer" aria-hidden="true"></span>
+        <span class="title-text">དབྱངས་བཞི།</span>
+        <button type="button" class="audio-btn-inline" id="titleAudioBtn" aria-label="Listen to 'Vowels' pronunciation" title="Listen">
+          <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+        </button>
+      </h1>
+      <p class="subtitle" id="subtitleText"></p>
     </header>
 
-    <!-- Section 2: Vowels Toggle & Customization Bar -->
-    <div class="controls-container">
-		<div class="sticky-toggle-bar"><div class="vowel-selector-group">
-        
+    <!-- Unified Shared Controls Bar with Slotted Vowel Selectors -->
+    <site-controls>
+      <div class="vowel-selector-group">
         <!-- Base / Default Option -->
         <label class="vowel-option">
           <input type="radio" name="vowelSelect" value="none" checked>
-		  <span id="labelNoVowel"></span>
+          <span id="labelNoVowel"></span>
         </label>
 
         <!-- 1. Gigu (i) -->
@@ -147,9 +138,8 @@
           <input type="radio" name="vowelSelect" value="o">
           <span class="vowel-symbol vowel-symbol-o">&#x25CC;&#x0F7C;</span>
         </label>
-
-      </div></div>
-    </div>
+      </div>
+    </site-controls>
 
     <!-- Section 3: Syllables Grid -->
     <main class="grid-container" id="alphabetGrid"></main>
@@ -160,28 +150,28 @@
 
   <script type="module">
     import { createSyllableCard } from './js/shared-layout.js';
-	import { t } from './js/i18n.js'; // Import translation function
-	import { tibetanAlphabet } from './js/syllables_data.js';
+    import { t } from './js/i18n.js';
+    import { tibetanAlphabet } from './js/syllables_data.js';
 
-	
-	// Apply translations on load
+    // Apply translations on load
     document.getElementById('subtitleText').textContent = t('vowels');
     document.getElementById('labelNoVowel').textContent = t('noVowel');
 
-	// Page Title Audio Clip
-	const titleAudio = new Audio("audio/vowels/vowels_title.mp3");
-	titleAudio.preload = 'auto';
-	titleAudio.playbackRate = 1.5;
+    // Page Title Audio Clip
+    const titleAudio = new Audio("audio/vowels/vowels_title.mp3");
+    titleAudio.preload = 'auto';
+    let playbackRate = window.globalPlaybackRate || 1.5;
+    titleAudio.playbackRate = playbackRate;
 
-	const titleAudioBtn = document.getElementById('titleAudioBtn');
-	if (titleAudioBtn) {
-	  titleAudioBtn.addEventListener('click', () => {
-	    stopAudio(); 
-	    titleAudio.currentTime = 0;
-	    titleAudio.play().catch(err => console.log("Title audio playback prevented or file missing"));
-	    currentAudio = titleAudio;
-	  });
-	}
+    const titleAudioBtn = document.getElementById('titleAudioBtn');
+    if (titleAudioBtn) {
+      titleAudioBtn.addEventListener('click', () => {
+        stopAudio(); 
+        titleAudio.currentTime = 0;
+        titleAudio.play().catch(err => console.log("Title audio playback prevented or file missing"));
+        currentAudio = titleAudio;
+      });
+    }
 
     // Dictionary of Tibetan Unicode Combining Vowel Characters
     const vowelMarks = {
@@ -200,9 +190,9 @@
       o: new Audio("audio/vowels/naro.mp3")
     };
 
-	Object.values(vowelAudio).forEach(audio => {
-	  audio.playbackRate = 1.5;
-	});
+    Object.values(vowelAudio).forEach(audio => {
+      audio.playbackRate = playbackRate;
+    });
 
     const grid = document.getElementById('alphabetGrid');
     const vowelRadios = document.querySelectorAll('input[name="vowelSelect"]');
@@ -210,6 +200,16 @@
     let activeVowel = "none";
     let currentAudio = null;
     let currentCard = null;
+
+    // Listen for global playback rate changes from site-controls bar
+    window.addEventListener('playbackRateChanged', (e) => {
+      playbackRate = e.detail.speed;
+      titleAudio.playbackRate = playbackRate;
+      Object.values(vowelAudio).forEach(audio => audio.playbackRate = playbackRate);
+      if (currentAudio) {
+        currentAudio.playbackRate = playbackRate;
+      }
+    });
 
     // Helper to stop any playing audio
     function stopAudio() {
@@ -219,19 +219,66 @@
         if (currentCard) currentCard.classList.remove('playing');
       }
     }
+	
+// Helper function to transform base romanization, applying a glide for 'aa' roots
+    function getVowelRomanization(baseEng, vowel) {
+      if (vowel === "none") return baseEng;
+      
+      // Special case for the letter འ (stored as "aa" in baseEng)
+      if (baseEng === "aa") {
+        const specialVowelMap = { i: "ai", u: "au", e: "ae", o: "ao" };
+        return specialVowelMap[vowel] || baseEng;
+      }
 
-    // Function to render / update the 30 grid cards using the component
+      // Check if it's a double 'aa' root (elongated/voiced series)
+      const isDoubleRoot = baseEng.endsWith('aa');
+
+      // Strip trailing 'aa' or 'a' from the base root
+      let root = baseEng;
+      if (isDoubleRoot) {
+        root = root.slice(0, -2);
+      } else if (root.endsWith('a')) {
+        root = root.slice(0, -1);
+      }
+      
+      // Standard vowels vs. elongated 'aa' vowel mappings
+      let vowelSuffixes;
+      if (isDoubleRoot) {
+        // Adds a glide/elongation for the double-root series (e.g., kyi, kyu, kye, kyo)
+        vowelSuffixes = {
+          i: "ī",
+          u: "ū",
+          e: "é",
+          o: "ō"
+        };
+      } else {
+        // Standard single vowels for regular roots (e.g., ki, ku, ke, ko)
+        vowelSuffixes = {
+          i: "i",
+          u: "u",
+          e: "e",
+          o: "o"
+        };
+      }
+
+      return root + (vowelSuffixes[vowel] || "");
+    }
+
+    // Function to render / update the grid cards using the shared component
+// Function to render / update the grid cards using the shared component
     function renderGrid() {
       grid.innerHTML = ''; // Clear current grid
 
       tibetanAlphabet.forEach(item => {
-        // Dynamically attach the active Unicode vowel character to the Tibetan base letter
         const displayTibetan = item.tib + vowelMarks[activeVowel];
+        const updatedRomanization = getVowelRomanization(item.eng, activeVowel);
         
-        // Use the shared component factory function
+        // Use the shared component factory function with dynamically updated phonetics
         const card = createSyllableCard({
           id: item.id,
-          script: displayTibetan
+          script: displayTibetan,
+          romanization: updatedRomanization,
+          tone: t(item.toneKey)
         });
 
         // Determine audio path based on active vowel
@@ -244,6 +291,7 @@
 
         const audioObj = new Audio(audioPath);
         audioObj.preload = 'auto';
+        audioObj.playbackRate = playbackRate;
 
         // Card Click Handler
         card.addEventListener('click', () => {
@@ -267,28 +315,28 @@
     }
 
     // Radio Button Listener - Switches Vowels
-	vowelRadios.forEach(radio => {
-	  const playVowelAudio = (vowelKey) => {
-	    if (vowelKey !== "none" && vowelAudio[vowelKey]) {
-	      stopAudio(); 
-	      vowelAudio[vowelKey].currentTime = 0; 
-	      vowelAudio[vowelKey].play().catch(err => console.log("Audio play error:", err));
-	      currentAudio = vowelAudio[vowelKey];
-	    }
-	  };
+    vowelRadios.forEach(radio => {
+      const playVowelAudio = (vowelKey) => {
+        if (vowelKey !== "none" && vowelAudio[vowelKey]) {
+          stopAudio(); 
+          vowelAudio[vowelKey].currentTime = 0; 
+          vowelAudio[vowelKey].play().catch(err => console.log("Audio play error:", err));
+          currentAudio = vowelAudio[vowelKey];
+        }
+      };
 
-	  radio.addEventListener('change', (e) => {
-	    activeVowel = e.target.value;
-	    playVowelAudio(activeVowel);
-	    renderGrid();
-	  });
+      radio.addEventListener('change', (e) => {
+        activeVowel = e.target.value;
+        playVowelAudio(activeVowel);
+        renderGrid();
+      });
 
-	  radio.addEventListener('click', (e) => {
-	    if (e.target.value === activeVowel) {
-	      playVowelAudio(activeVowel);
-	    }
-	  });
-	});
+      radio.addEventListener('click', (e) => {
+        if (e.target.value === activeVowel) {
+          playVowelAudio(activeVowel);
+        }
+      });
+    });
 
     // Initial Render
     renderGrid();

@@ -141,23 +141,25 @@ export function createSyllableCard({
 // Universal Controls Bar Component with 2-Row Layout & Global Speed Management
 class SiteControls extends HTMLElement {
   connectedCallback() {
-    // Check if there is pre-existing child content (like your head letter pills) 
-    // before we overwrite innerHTML, so we can preserve and re-slot them!
-	const slottedContent = this.innerHTML.trim();
-	const hasSlottedContent = slottedContent.length > 0;
+    const slottedContent = this.innerHTML.trim();
+    const hasSlottedContent = slottedContent.length > 0;
+
+    // Always start with both hints (phonetics and tones) hidden/unchecked on every page load
+    document.body.classList.add('hide-romanization');
+    document.body.classList.add('hide-tones');
 
     this.innerHTML = `
       <div class="controls-container" style="position: sticky; top: 0; z-index: 100; background: #fff;">
         <div class="sticky-toggle-bar">
-		<!-- Row 1: Global Settings & Speed -->
+          <!-- Row 1: Global Settings & Speed -->
           <div class="global-controls-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; font-size: 0.9rem;">
             <div class="global-toggles" style="display: flex; gap: 10px; align-items: center;">
               <label style="opacity: 0.8; font-size: 0.85rem;">${t('hintsLabel') || 'Hints:'}</label>
               <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
-                <input type="checkbox" id="globalToggleEng" checked> ${t('phonetics') || 'Phonetics'}
+                <input type="checkbox" id="globalToggleEng"> ${t('phonetics') || 'Phonetics'}
               </label>
               <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
-                <input type="checkbox" id="globalToggleTips" checked> ${t('tones') || 'Tones'}
+                <input type="checkbox" id="globalToggleTips"> ${t('tones') || 'Tones'}
               </label>
             </div>
             <div class="global-speed" style="margin-left: 40px; display: inline-flex; align-items: center; gap: 10px;">
@@ -170,23 +172,23 @@ class SiteControls extends HTMLElement {
               </select>
             </div>
           </div>
-		  <!-- Row 2: Rendered ONLY if page-specific content exists -->
-	        ${hasSlottedContent ? `
-	          <div class="page-controls-row" style="margin-top: 8px; padding-top: 8px;">
-	            ${slottedContent}
-	          </div>
-	        ` : ''}
+          <!-- Row 2: Rendered ONLY if page-specific content exists -->
+          ${hasSlottedContent ? `
+            <div class="page-controls-row" style="margin-top: 8px; padding-top: 8px;">
+              ${slottedContent}
+            </div>
+          ` : ''}
         </div>
       </div>
     `;
 
-    // Wire up global Romanization toggle
+    // Wire up global Romanization toggle (uncheck/hidden by default)
     const engToggle = this.querySelector('#globalToggleEng');
     engToggle?.addEventListener('change', (e) => {
       document.body.classList.toggle('hide-romanization', !e.target.checked);
     });
 
-    // Wire up global Tones/Tips toggle
+    // Wire up global Tones/Tips toggle (uncheck/hidden by default)
     const tipsToggle = this.querySelector('#globalToggleTips');
     tipsToggle?.addEventListener('change', (e) => {
       document.body.classList.toggle('hide-tones', !e.target.checked);
