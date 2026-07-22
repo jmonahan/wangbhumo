@@ -67,7 +67,7 @@
   <div class="container">
     <header>
       <h1>གསལ་བྱེད་སུམ་ཅུ།</h1>
-      <p class="subtitle">30 Syllables</p>
+	  <p class="subtitle" id="subtitleText"></p>
     </header>
 
     <!-- Customization / Settings Bar -->
@@ -78,13 +78,13 @@
           <!-- Checkbox 1: Pronunciation Hint -->
           <label class="toggle-option">
             <input type="checkbox" id="toggleEng">
-            <span>Show Pronunciation Tip (ENG)</span>
+            <span id="labelToggleEng"></span>
           </label>
 
           <!-- Checkbox 2: Tone & Aspiration -->
           <label class="toggle-option">
             <input type="checkbox" id="toggleTips" checked>
-            <span>Show Tone & Aspiration</span>
+			<span id="labelToggleTips"></span>
           </label>
 
         </div>
@@ -99,81 +99,102 @@
   </div>
 
   <script type="module">
-    import { createSyllableCard } from './js/shared-layout.js';
-	import { tibetanAlphabet } from './js/syllables_data.js';
+      import { createSyllableCard } from './js/shared-layout.js';
+      import { t } from './js/i18n.js';
+      import { tibetanAlphabet } from './js/syllables_data.js';
 
-    const grid = document.getElementById('alphabetGrid');
-    const toggleEng = document.getElementById('toggleEng');
-    const toggleTips = document.getElementById('toggleTips');
+      // Function to apply localized text to static elements on the page
+      function updatePageText() {
+        const subtitleEl = document.getElementById('subtitleText');
+        const labelEngEl = document.getElementById('labelToggleEng');
+        const labelTipsEl = document.getElementById('labelToggleTips');
+
+        if (subtitleEl) subtitleEl.textContent = t('syllablesSubtitle');
+        if (labelEngEl) labelEngEl.textContent = t('showPronunciation');
+        if (labelTipsEl) labelTipsEl.textContent = t('showTone');
+      }
+
+      // Run text updates on initial load
+      updatePageText();
+
+      const toggleEng = document.getElementById('toggleEng');
+      const toggleTips = document.getElementById('toggleTips');
     
-    let currentAudio = null;
-    let currentCard = null;
+      let currentAudio = null;
+      let currentCard = null;
 
-    // Render cards using the shared component template
-    tibetanAlphabet.forEach(item => {
-      const card = createSyllableCard({
-        id: item.id,
-        script: item.tib,
-        romanization: item.eng,
-        tone: item.tip
-      });
-
-      // Handle initial visibility classes based on checkbox states
-      const romanizationEl = card.querySelector('.romanization-text');
-      const toneEl = card.querySelector('.card-tone');
-      
-      if (!toggleEng.checked && romanizationEl) romanizationEl.classList.add('hidden');
-      if (!toggleTips.checked && toneEl) toneEl.classList.add('hidden');
-
-      const audioObj = new Audio(item.audio);
-      audioObj.preload = 'auto';
-
-      card.addEventListener('click', () => {
-        if (currentAudio) {
-          currentAudio.pause();
-          currentAudio.currentTime = 0;
-          if (currentCard) currentCard.classList.remove('playing');
-        }
-
-        card.classList.add('playing');
-        audioObj.play().catch(error => {
-          console.error("Audio playback interrupted or blocked:", error);
+      // Render cards using the shared component template
+      tibetanAlphabet.forEach(item => {
+        const card = createSyllableCard({
+          id: item.id,
+          script: item.tib,
+          romanization: item.eng,
+          tone: t(item.toneKey) // Pulls localized string from i18n.js
         });
 
-        currentAudio = audioObj;
-        currentCard = card;
+        // Handle initial visibility classes based on checkbox states
+        const romanizationEl = card.querySelector('.romanization-text');
+        const toneEl = card.querySelector('.card-tone');
+      
+        if (toggleEng && !toggleEng.checked && romanizationEl) romanizationEl.classList.add('hidden');
+        if (toggleTips && !toggleTips.checked && toneEl) toneEl.classList.add('hidden');
 
-        audioObj.onended = () => {
-          card.classList.remove('playing');
-        };
-      });
+        const audioObj = new Audio(`audio/syllables/${item.id}.mp3`);
+        audioObj.preload = 'auto';
 
-      grid.appendChild(card);
-    });
+        card.addEventListener('click', () => {
+          if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            if (currentCard) currentCard.classList.remove('playing');
+          }
 
-    // Toggle visibility of the English hints
-    toggleEng.addEventListener('change', (e) => {
-      const hints = document.querySelectorAll('.romanization-text');
-      hints.forEach(hint => {
-        if (e.target.checked) {
-          hint.classList.remove('hidden');
-        } else {
-          hint.classList.add('hidden');
+          card.classList.add('playing');
+          audioObj.play().catch(error => {
+            console.error("Audio playback interrupted or blocked:", error);
+          });
+
+          currentAudio = audioObj;
+          currentCard = card;
+
+          audioObj.onended = () => {
+            card.classList.remove('playing');
+          };
+        });
+
+        const grid = document.getElementById('alphabetGrid');
+        if (grid) {
+          grid.appendChild(card);
         }
       });
-    });
 
-    // Toggle visibility of the Tone & Aspiration tips
-    toggleTips.addEventListener('change', (e) => {
-      const tips = document.querySelectorAll('.card-tone');
-      tips.forEach(tip => {
-        if (e.target.checked) {
-          tip.classList.remove('hidden');
-        } else {
-          tip.classList.add('hidden');
-        }
-      });
-    });
-  </script>
+      // Toggle visibility of the English hints
+      if (toggleEng) {
+        toggleEng.addEventListener('change', (e) => {
+          const hints = document.querySelectorAll('.romanization-text');
+          hints.forEach(hint => {
+            if (e.target.checked) {
+              hint.classList.remove('hidden');
+            } else {
+              hint.classList.add('hidden');
+            }
+          });
+        });
+      }
+
+      // Toggle visibility of the Tone & Aspiration tips
+      if (toggleTips) {
+        toggleTips.addEventListener('change', (e) => {
+          const tips = document.querySelectorAll('.card-tone');
+          tips.forEach(tip => {
+            if (e.target.checked) {
+              tip.classList.remove('hidden');
+            } else {
+              tip.classList.add('hidden');
+            }
+          });
+        });
+      }
+    </script>
 </body>
 </html>
