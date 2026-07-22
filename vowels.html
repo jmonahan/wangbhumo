@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tibetan Vowels Study Guide</title>
   <link rel="stylesheet" href="style.css">
-  <script src="shared-layout.js"></script>
+	<script type="module" src="shared-layout.js"></script>
   <style>
     /* Specific styles for Vowel Radio Controls */
 	.controls-container{
@@ -122,7 +122,7 @@
 		      </svg>
 		    </button>
 		  </h1>
-      <p class="subtitle">Tibetan Vowels</p>
+      <p class="subtitle">Vowels</p>
     </header>
 
     <!-- Section 2: Vowels Toggle & Customization Bar -->
@@ -173,6 +173,7 @@
 	// Page Title Audio Clip
 	const titleAudio = new Audio("audio/vowels/vowels_title.mp3");
 	titleAudio.preload = 'auto';
+	titleAudio.playbackRate = 1.5;
 
 	const titleAudioBtn = document.getElementById('titleAudioBtn');
 	if (titleAudioBtn) {

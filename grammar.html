@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tibetan Grammar Terms</title>
+    <!-- Single master stylesheet link using your new architecture -->
+    <link rel="stylesheet" href="style.css">
+	<script type="module" src="shared-layout.js"></script>
+    <style>
+        .glossary-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .glossary-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .glossary-header h1 {
+            color: #630018;
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        .glossary-header p {
+            color: var(--text-muted, #666666);
+        }
+        .term-card {
+            background-color: #ffffff;
+            border: 1px solid #e2ded9;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .term-info {
+            flex: 1;
+        }
+        .term-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #630018;
+            margin-bottom: 6px;
+        }
+        .term-definition {
+            font-size: 0.95rem;
+            color: var(--text-dark, #333333);
+            line-height: 1.4;
+        }
+        .term-tibetan {
+            font-size: 1.5rem;
+            color: #333333;
+            text-align: right;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Shared Universal Navigation -->
+    <site-nav></site-nav>
+
+    <div class="glossary-container">
+        <div class="glossary-header">
+            <h1>Tibetan Grammar Terms</h1>
+            <p>Quick reference guide for core linguistic and structural definitions.</p>
+        </div>
+
+        <div class="term-card">
+            <div class="term-info">
+                <div class="term-title">Syllable</div>
+                <div class="term-definition">The fundamental phonetic and written unit in Tibetan script, typically centered around a root letter with optional vowels, prefixes, and suffixes, separated by a tsek (་).</div>
+            </div>
+            <div class="term-tibetan">ཚིག་བརྩེགས</div>
+        </div>
+
+        <div class="term-card">
+            <div class="term-info">
+                <div class="term-title">Vowel</div>
+                <div class="term-definition">Dependent vowel signs (dbyangs) written above or below the root letter to modify its inherent 'a' sound (e.g., i, u, e, o).</div>
+            </div>
+            <div class="term-tibetan">དབྱངས</div>
+        </div>
+
+        <div class="term-card">
+            <div class="term-info">
+                <div class="term-title">Head Letter</div>
+                <div class="term-definition">Superfixed letters (mgo yig) that sit vertically stacked on top of certain root letters (e.g., ra, la, sa).</div>
+            </div>
+            <div class="term-tibetan">མགོ་ཅན</div>
+        </div>
+
+        <div class="term-card">
+            <div class="term-info">
+                <div class="term-title">Prefix</div>
+                <div class="term-definition">Letters attached to the left side of a root letter (sngon 'jug) that influence the tonal category and pronunciation of the syllable.</div>
+            </div>
+            <div class="term-tibetan">སྔོན་འཇུག</div>
+        </div>
+
+        <div class="term-card">
+            <div class="term-info">
+                <div class="term-title">Suffix</div>
+                <div class="term-definition">Letters attached to the right side of the root stack (rjes 'jug) that close the syllable.</div>
+            </div>
+            <div class="term-tibetan">རྗེས་འཇུག</div>
+        </div>
+
+        <div class="term-card">
+            <div class="term-info">
+                <div class="term-title">Noun</div>
+                <div class="term-definition">A word representing a person, place, thing, or idea, which takes specific grammatical case particles in Tibetan.</div>
+            </div>
+            <div class="term-tibetan">མིང་ཚིག</div>
+        </div>
+
+        <div class="term-card">
+            <div class="term-info">
+                <div class="term-title">Verb</div>
+                <div class="term-definition">An action or state of being word, which typically anchors the end of a Tibetan clause or sentence and inflects across different time tenses.</div>
+            </div>
+            <div class="term-tibetan">བྱ་ཚིག</div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+/* Syllable Card General Container */
+.syllable-card {
+  position: relative; /* Allows absolute positioning for the sparkle icon */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 8px;
+  border: 1px solid #e2ded9;
+  border-radius: 12px;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+/* Header & Footer Layouts */
+.card-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  padding: 10px 0;
+}
+
+/* Card Footer Container */
+/* Footer Container - Centered */
+.card-footer {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.footer-text-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+}
+
+/* Romanization Style (Dark Red / Maroon) */
+.romanization-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #630018; /* Dark red accent */
+  line-height: 1.1;
+}
+
+/* Tone Pill Badge Style */
+.card-tone {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #5c4335;
+  background-color: #f5efe6; /* Subtle beige background */
+  padding: 3px 10px;
+  border-radius: 12px;
+  line-height: 1.2;
+}
+
+/* AUTOMATIC COLLAPSE FOR EMPTY SLOTS */
+.romanization-text:empty,
+.card-tone:empty,
+.footer-text-group:empty {
+  display: none;
+}
+
+/* Sparkle Icon - Positioned in the bottom right corner */
+.shift-icon {
+  display: none;
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 14px;
+  height: 14px;
+  stroke: #d4af37;
+  pointer-events: none;
+}
+
+.syllable-card.sound-shift .shift-icon {
+  display: block;
+}
+
+/* Sound Shift Styling */
+.syllable-card.sound-shift {
+  border: 2px solid #d4af37;
+  background-color: rgba(212, 175, 55, 0.12);
+}
+
+/* Sparkle Icon Visibility Toggle */
+.shift-icon {
+  display: none;
+  position: absolute;
+  top: 10px;         /* Positioned at the top */
+  right: 10px;       /* Positioned at the right */
+  width: 16px;
+  height: 16px;
+  stroke: #d4af37;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.syllable-card.sound-shift .shift-icon {
+  display: block;
+}

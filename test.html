@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Syllable Card Component Test</title>
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="card.css">
+
+  <style>
+    /* Page layout for quick testing */
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 2rem;
+      background-color: #f8f9fa;
+    }
+
+    h1 {
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 1rem;
+      max-width: 600px;
+    }
+
+    /* Optional disabled card visual styling */
+    .syllable-card.disabled {
+      opacity: 0.35;
+      pointer-events: none;
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+	<div class="speed-control-group">
+	  <label for="globalSpeedSelect">Playback Speed: </label>
+	  <select id="globalSpeedSelect">
+	    <option value="1.0">1.0x (Normal)</option>
+	    <option value="1.25">1.25x</option>
+	    <option value="1.5" selected>1.5x</option>
+	    <option value="2.0">2.0x</option>
+	  </select>
+	</div>
+
+  <h1>Syllable Card Component Test</h1>
+  <p>Testing option 2 (:empty collapsing), sound shifts, and minimal slots.</p>
+
+  <!-- Container for JS rendered cards -->
+  <div id="testGrid" class="test-grid"></div>
+
+  <!-- Load script as ESM module to support import/export -->
+  <!-- Load script as ESM module to support import/export -->
+    <script type="module">
+      import { createSyllableCard } from './shared-layout.js';
+
+      const grid = document.getElementById('testGrid');
+
+      // Keep track of active audio and card for clean stopping/highlighting
+      let currentAudio = null;
+      let currentCard = null;
+
+      // 1. Keep track of the current global speed (defaulting to 1.5)
+      let globalPlaybackRate = 1.5;
+
+      const speedSelect = document.getElementById('globalSpeedSelect');
+      if (speedSelect) {
+        speedSelect.addEventListener('change', (e) => {
+          globalPlaybackRate = parseFloat(e.target.value);
+          // If audio is currently playing, update its speed live!
+          if (currentAudio) {
+            currentAudio.playbackRate = globalPlaybackRate;
+          }
+        });
+      }
+
+      // Optional: Title audio test element
+      const titleAudio = new Audio("audio/vowels/vowels_title.mp3");
+      titleAudio.preload = 'auto';
+      titleAudio.playbackRate = 1.5;
+
+      // Define test cases with their corresponding audio paths
+      const testCardsData = [
+        {
+          config: { id: '01_ka', script: 'ཀ', romanization: 'ka', tone: 'High tone' },
+          audioSrc: 'audio/syllables/01_ka.mp3'
+        },
+        {
+          config: { id: '03_ga_ra', script: 'རྒ', romanization: 'gaa', tone: 'Low → High', hasSoundShift: true, shiftExplanation: 'Ra-go raises tone from low to high' },
+          audioSrc: 'audio/syllables/03_kaa.mp3'
+        },
+        {
+          config: { id: '02_kha_disabled', script: 'ཁ', romanization: 'kha', tone: 'High + Aspirated', isDisabled: true },
+          audioSrc: 'audio/syllables/02_kha.mp3'
+        },
+        {
+          config: { id: 'vowel_a', script: 'ཨི' },
+          audioSrc: 'audio/vowels/vowel_i.mp3' // Fallback or placeholder path
+        }
+      ];
+
+      // Render cards and attach click-to-play audio logic
+      testCardsData.forEach(item => {
+        const card = createSyllableCard(item.config);
+      
+        const audioObj = new Audio(item.audioSrc);
+        audioObj.preload = 'auto';
+
+        card.addEventListener('click', () => {
+          if (card.classList.contains('disabled')) return;
+
+          // Stop any currently playing audio
+          if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            if (currentCard) currentCard.classList.remove('playing');
+          }
+
+          // Apply current global speed right before playing
+          audioObj.playbackRate = globalPlaybackRate;
+
+          card.classList.add('playing');
+          audioObj.play().catch(error => {
+            console.warn("Audio playback note (file might be missing in test folder):", error);
+          });
+
+          currentAudio = audioObj;
+          currentCard = card;
+
+          audioObj.onended = () => {
+            card.classList.remove('playing');
+          };
+        });
+
+        grid.appendChild(card);
+      });
+    </script>
+</body>
+</html>

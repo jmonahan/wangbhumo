@@ -1,6 +1,11 @@
 // Universal Navigation Bar
 class SiteNav extends HTMLElement {
   connectedCallback() {
+	  // Check if explicitly told to show via attribute OR if we are running locally
+	  const showDev = this.hasAttribute('show-dev') || 
+                    window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1';  
+	  
     this.innerHTML = `
       <nav class="site-nav">
         <div class="nav-container">
@@ -8,8 +13,17 @@ class SiteNav extends HTMLElement {
           <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="syllables.html">Syllables</a>
-	        <a href="vowels.html">Vowels</a>
-            <a href="headletters.html">Head Letters</a>
+					
+				${showDev ? `
+					<!-- These links only show up during local dev or if 'show-dev' is present -->
+					<span class="dev-divider" style="border-left: 1px solid #ccc; margin: 0 4px;"></span>
+					<span class="nav-dev" style=" opacity: .5;">
+					<a href="vowels.html">Vowels</a>
+					<a href="headletters.html">Head Letters</a>
+					<a href="grammar.html">Grammar</a>
+					</span>
+				` : ''}
+
           </div>
         </div>
       </nav>
@@ -31,6 +45,57 @@ class SiteFooter extends HTMLElement {
       </footer>
     `;
   }
+}
+
+/**
+ * Creates a standardized Syllable Card DOM element.
+ * 
+ * @param {Object} config - Card configuration parameters
+ * @param {string} config.id - Unique ID (e.g. "01_ka")
+ * @param {string} config.script - Tibetan glyph to render (e.g. "ཀ" or "རྐ")
+ * @param {string} [config.romanization] - Phonetic/English guide (e.g. "ka", "gaa")
+ * @param {string} [config.tone] - Tone label/tip (e.g. "High tone", "Low → High")
+ * @param {boolean} [config.hasSoundShift=false] - Whether sound shift star is active
+ * @param {string} [config.shiftExplanation] - Tooltip explanation for the sound shift
+ * @param {boolean} [config.isDisabled=false] - Grayed out / unselectable state
+ * @returns {HTMLDivElement} Configured syllable card element
+ */
+export function createSyllableCard({
+  id,
+  script = '',
+  romanization = null,
+  tone = null,
+  hasSoundShift = false,
+  shiftExplanation = null,
+  isDisabled = false
+}) {
+  const card = document.createElement('div');
+  
+  // Apply state classes
+  card.className = `syllable-card ${hasSoundShift ? 'sound-shift' : ''} ${isDisabled ? 'disabled' : ''}`;
+  card.dataset.id = id;
+
+  /* 
+   * CRITICAL FOR CSS :empty SELECTOR:
+   * Do not insert whitespace/line breaks between tags for conditional content!
+   */
+	card.innerHTML = `
+    <div class="card-body">
+      <span class="tibetan-script">${script}</span>
+    </div>
+    
+    <div class="card-footer">
+      <div class="footer-text-group">
+        <span class="romanization-text">${romanization || ''}</span>
+        <span class="card-tone">${tone || ''}</span>
+      </div>
+		<svg class="shift-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${shiftExplanation ? `title="${shiftExplanation}"` : ''}>
+		  <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"></path>
+		</svg>
+    </div>
+  `;
+
+  return card;
 }
 
 // Register the custom HTML tags
