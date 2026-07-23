@@ -104,6 +104,28 @@
     .next-btn:hover {
       opacity: 0.9;
     }
+
+    /* Dead-center positioning and backdrop blur for native dialog */
+    #successModal {
+      border: none;
+      border-radius: 16px;
+      padding: 35px 30px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      background: var(--card-bg, #ffffff);
+      color: var(--text-color, #333);
+      
+      margin: auto;
+      position: fixed;
+      inset: 0;
+    }
+
+    #successModal::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+    }
   </style>
 </head>
 <body>
@@ -120,7 +142,6 @@
     <main>
       <div class="quiz-card">
         <h2 id="quizCardHeading">Tap to Listen</h2>
-        <div id="playback-speed-indicator" style="font-size: 0.75rem; color: #666; margin-top: 20px;" data-speed-label="Playback Speed: "></div>
         
         <!-- Big Play Audio Button -->
         <button type="button" class="audio-quiz-btn" id="playPromptBtn" aria-label="Play audio prompt">
@@ -130,9 +151,20 @@
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
           </svg>
         </button>
+		<div id="playback-speed-indicator" style="font-size: 0.75rem; color: #666; margin-top: 20px;" data-speed-label="Playback Speed: "></div>
 
         <!-- Multiple Choice Grid (6 options) -->
         <div class="options-grid" id="optionsGrid"></div>
+		
+		<!-- Success Celebration Modal -->
+		<dialog id="successModal">
+		  <div style="font-size: 3rem; margin-bottom: 10px;">🎉</div>
+		  <h3 style="color: #28a745; margin-bottom: 10px;">Spot On!</h3>
+		  <p id="successModalText" style="color: #555; margin-bottom: 20px;">You nailed that sound!</p>
+		  <button type="button" id="modalNextBtn" style="background: var(--accent-maroon, #800000); color: white; border: none; padding: 12px 25px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; font-weight: bold;">
+		    Next Round! ✨
+		  </button>
+		</dialog>
 
         <!-- Feedback & Action Buttons -->
         <div class="quiz-feedback" id="quizFeedback"></div>
@@ -175,6 +207,8 @@
 
      let currentQuestion = null;
      let currentAudioObj = null;
+     let playCount = 0;
+     let audioTimeout = null; // Tracks active delay timer to clear it if needed
 
      const playPromptBtn = document.getElementById('playPromptBtn');
      const optionsGrid = document.getElementById('optionsGrid');
@@ -182,7 +216,50 @@
      const nextQuestionBtn = document.getElementById('nextQuestionBtn');
      const skipQuestionBtn = document.getElementById('skipQuestionBtn');
 
+     const successModal = document.getElementById('successModal');
+     const modalNextBtn = document.getElementById('modalNextBtn');
+
+     function playAudioWithLoopLimit(maxLoops = 3) {
+       if (!currentAudioObj) return;
+       
+       // Clear any pending timeout if user hits replay mid-delay
+       if (audioTimeout) {
+         clearTimeout(audioTimeout);
+         audioTimeout = null;
+       }
+
+       playCount = 0;
+       currentAudioObj.pause();
+       currentAudioObj.currentTime = 0;
+       currentAudioObj.onended = null;
+       
+       currentAudioObj.onended = () => {
+         playCount++;
+         if (playCount < maxLoops) {
+           // 1000ms = 1 second delay between loops
+           audioTimeout = setTimeout(() => {
+             if (currentAudioObj) {
+               currentAudioObj.currentTime = 0;
+               currentAudioObj.play().catch(err => console.log("Loop playback error:", err));
+             }
+           }, 1150);
+         }
+       };
+
+       currentAudioObj.play().catch(err => console.log("Autoplay prevented:", err));
+     }
+
      function loadNewQuestion() {
+            if (successModal.open) {
+              successModal.close();
+            }
+
+            // Clear any lingering audio delay timers from previous question
+            if (audioTimeout) {
+              clearTimeout(audioTimeout);
+              audioTimeout = null;
+            }
+
 	        quizFeedback.textContent = '';
 	        nextQuestionBtn.style.display = 'none';
 	        optionsGrid.innerHTML = '';
@@ -203,25 +280,20 @@
 
 	        // RULE 1: Last 3 rows (Index 20 to 29) -> OVERRIDES 4th column rule
 	        if (baseAlphabetIndex >= 20) {
-	          // Restricted pool: ONLY items in the last 3 rows
 	          const finalSectionItems = tibetanAlphabet.slice(20).map(i => i.id);
 	          refinedPoolBaseIds.push(...finalSectionItems);
 
-	          // Sibling Rule: Safe boundary handling for the tail end of the alphabet
 	          let leftIdx1 = baseAlphabetIndex - 1;
 	          let leftIdx2 = baseAlphabetIndex - 2;
 	          let rightIdx1 = baseAlphabetIndex + 1;
 
-	          // If we are at the absolute end (like ཨ), grab the two preceding items safely
 	          if (!tibetanAlphabet[rightIdx1]) {
 	            if (tibetanAlphabet[leftIdx1]) mustHaveBaseIds.push(tibetanAlphabet[leftIdx1].id);
 	            if (tibetanAlphabet[leftIdx2]) mustHaveBaseIds.push(tibetanAlphabet[leftIdx2].id);
 	          } else if (leftIdx1 < 20) {
-	            // Near the start of the final section block, grab right siblings
 	            if (tibetanAlphabet[baseAlphabetIndex + 1]) mustHaveBaseIds.push(tibetanAlphabet[baseAlphabetIndex + 1].id);
 	            if (tibetanAlphabet[baseAlphabetIndex + 2]) mustHaveBaseIds.push(tibetanAlphabet[baseAlphabetIndex + 2].id);
 	          } else {
-	            // Normal middle case of the final block: grab immediate left and right
 	            if (tibetanAlphabet[leftIdx1]) mustHaveBaseIds.push(tibetanAlphabet[leftIdx1].id);
 	            if (tibetanAlphabet[rightIdx1]) mustHaveBaseIds.push(tibetanAlphabet[rightIdx1].id);
 	          }
@@ -250,8 +322,6 @@
 	        }
 
 	        // --- POPULATE OPTIONS ---
-
-	        // A. First, guarantee our "Must Have" siblings get added
 	        if (mustHaveBaseIds.length > 0) {
 	          const priorityDistractors = masterPool.filter(item => 
 	            item.vowel === currentQuestion.vowel && 
@@ -265,7 +335,6 @@
 	          }
 	        }
 
-	        // B. Fill the rest of the 6 options from the heavily restricted category pool
 	        const smartDistractors = masterPool.filter(item => 
 	          item.id !== currentQuestion.id && 
 	          item.vowel === currentQuestion.vowel && 
@@ -279,7 +348,6 @@
 	          }
 	        }
 
-	        // C. Fallback restricted strictly to the final section block if pool is tight, instead of random global characters
 	        const restrictedFallbackPool = masterPool.filter(item => 
 	          item.vowel === currentQuestion.vowel && refinedPoolBaseIds.includes(item.baseId)
 	        );
@@ -290,7 +358,6 @@
 	          }
 	        }
 
-	        // Final absolute fallback just in case
 	        const absoluteVowelPool = masterPool.filter(item => item.vowel === currentQuestion.vowel);
 	        while (options.length < 6 && absoluteVowelPool.length > options.length) {
 	          const randItem = absoluteVowelPool[Math.floor(Math.random() * absoluteVowelPool.length)];
@@ -299,7 +366,6 @@
 	          }
 	        }
 
-	        // Final shuffle so the correct answer isn't always in position 1
 	        options.sort(() => Math.random() - 0.5);
 
 	        // 3. Setup Audio object & Random Playback Speed
@@ -324,7 +390,8 @@
 	          speedIndicator.textContent = `${speedLabelText}${randomSpeedText}x`;
 	        }
 
-	        currentAudioObj.play().catch(err => console.log("Autoplay prevented:", err));
+	        // Automatically loop audio 3 times with 1s pauses on question load
+	        playAudioWithLoopLimit(3);
 
 	        // 4. Render choice buttons
 	        options.forEach(opt => {
@@ -340,12 +407,21 @@
 
      function handleAnswerSelection(selectedOpt, clickedBtn, correctOpt) {
        if (selectedOpt.id === correctOpt.id) {
+         if (audioTimeout) {
+           clearTimeout(audioTimeout);
+           audioTimeout = null;
+         }
+         if (currentAudioObj) {
+           currentAudioObj.pause();
+           currentAudioObj.onended = null;
+         }
+
          clickedBtn.classList.add('correct');
          quizFeedback.textContent = t('quizCorrectMsg') || "Correct! Great job.";
          quizFeedback.style.color = "#28a745";
         
          document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
-         nextQuestionBtn.style.display = 'inline-block';
+         successModal.showModal();
        } else {
          clickedBtn.classList.add('incorrect');
          clickedBtn.disabled = true;
@@ -355,13 +431,10 @@
      }
 
      playPromptBtn.addEventListener('click', () => {
-       if (currentAudioObj) {
-         currentAudioObj.currentTime = 0;
-         currentAudioObj.play().catch(err => console.log("Playback error:", err));
-       }
+       playAudioWithLoopLimit(3);
      });
 
-     nextQuestionBtn.addEventListener('click', loadNewQuestion);
+     modalNextBtn.addEventListener('click', loadNewQuestion);
      skipQuestionBtn.addEventListener('click', loadNewQuestion);
 
      // Initialize first quiz question

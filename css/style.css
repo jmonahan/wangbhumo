@@ -414,6 +414,30 @@ body.hide-tones .syllable-card .shift-tip {
   100% { transform: scale(1); }
 }
 
+/* XX. Modal HMLT Native Modal component */
+	#successModal {
+		border: none;
+		border-radius: 16px;
+		padding: 35px 30px;
+		text-align: center;
+		max-width: 400px;
+		width: 90%;
+		box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+		background: var(--card-bg, #ffffff);
+		color: var(--text-color, #333);
+
+		/* Force native dialog centering */
+		margin: auto;
+		position: fixed;
+		inset: 0;
+	}
+
+	/* Style the native backdrop overlay */
+	#successModal::backdrop {
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(3px);
+	}
+
 /* 8. Universal Footer (<site-footer>) */
 .site-footer {
   text-align: center;
