@@ -9,7 +9,8 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	width: 100%;
+	width: 900px;
+	margin: 0 auto;
 }
 
 
@@ -136,6 +137,12 @@
 @media (max-width: 768px) {
   .nav-hamburger {
     display: block;
+  }
+  .nav-container {
+  	display: flex;
+  	justify-content: space-between;
+  	align-items: center;
+  	width: 100%;
   }
 
   /* Hidden by default on mobile until opened */
