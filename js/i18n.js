@@ -99,17 +99,31 @@ export const translations = {
 // Retrieve saved language from localStorage or default to English
 let currentLang = localStorage.getItem('siteLang') || 'en';
 
-export function setLanguage(lang) {
-  currentLang = lang;
-  localStorage.setItem('siteLang', lang);
-  // Reload the page so all components and grids update cleanly with the new language
-  window.location.reload();
-}
+// export function setLanguage(lang) {
+//   currentLang = lang;
+//   localStorage.setItem('siteLang', lang);
+//   // Reload the page so all components and grids update cleanly with the new language
+//   window.location.reload();
+// }
+
+
 
 export function getLang() {
-  return currentLang;
+  const urlParams = new URLSearchParams(window.location.search);
+  const langParam = urlParams.get('lang');
+
+  if (langParam && (langParam === 'en' || langParam === 'fr')) {
+    localStorage.setItem('lang', langParam); // Save it so it sticks for future navigation
+    return langParam;
+  }
+
+  return localStorage.getItem('lang') || 'en';
 }
 
+export function setLanguage(lang) {
+  localStorage.setItem('lang', lang);
+  // plus whatever code reloads/updates text on your page
+}
 export function t(key) {
   return translations[currentLang][key] || translations['en'][key] || key;
 }

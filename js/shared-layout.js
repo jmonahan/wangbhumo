@@ -214,6 +214,7 @@ class SiteControls extends HTMLElement {
 
 
 
+
 // Initialize default global playback rate tracker
 window.globalPlaybackRate = 1.0;
 
