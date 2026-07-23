@@ -8,6 +8,9 @@
   <script type="module" src="js/shared-layout.js"></script>
 
   <style>
+	.subtitle.quiz-instructions{
+		font-size: 1.3rem;
+	}
     .quiz-card {
       background: var(--card-bg, #ffffff);
       border: 1px solid var(--border-color, #e0e0e0);
@@ -24,13 +27,13 @@
       color: white;
       border: none;
       border-radius: 50%;
-      width: 80px;
-      height: 80px;
+      width: 150px;
+      height: 150px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      margin: 20px 0;
+      margin: 10px 0 20px 0;
       transition: transform 0.2s, background-color 0.2s;
     }
 
@@ -111,12 +114,13 @@
   <div class="container">
     <header>
       <h1 id="quizHeaderTitle">Practice Quiz</h1>
-      <p class="subtitle" id="quizHeaderSubtitle">Listen to the audio and choose the correct syllable or combination.</p>
+      <p class="subtitle quiz-instructions" id="quizHeaderSubtitle">Listen to the audio and pick the written syllable</p>
     </header>
 
     <main>
       <div class="quiz-card">
-        <h3 id="quizCardHeading">Listen & Select</h3>
+        <h2 id="quizCardHeading">Tap to Listen</h2>
+        <div id="playback-speed-indicator" style="font-size: 0.75rem; color: #666; margin-top: 20px;" data-speed-label="Playback Speed: "></div>
         
         <!-- Big Play Audio Button -->
         <button type="button" class="audio-quiz-btn" id="playPromptBtn" aria-label="Play audio prompt">
@@ -126,14 +130,14 @@
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
           </svg>
         </button>
-        <div id="playback-speed-indicator" style="font-size: 0.85rem; color: #666; margin-top: 6px;" data-speed-label="Playback Speed: "></div>
+
         <!-- Multiple Choice Grid (6 options) -->
         <div class="options-grid" id="optionsGrid"></div>
 
         <!-- Feedback & Action Buttons -->
         <div class="quiz-feedback" id="quizFeedback"></div>
         <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
-          <button type="button" class="skip-btn" id="skipQuestionBtn" style="background: #6c757d; color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 6px; cursor: pointer;">Skip</button>
+          <button type="button" class="skip-btn" id="skipQuestionBtn" style="color: #777; border: none; padding: 10px 20px; font-size: .85rem; border-radius: 6px; cursor: pointer; background: none;">Skip</button>
           <button type="button" class="next-btn" id="nextQuestionBtn" style="margin-top: 0; display: none;">Next Question</button>
         </div>
       </div>
