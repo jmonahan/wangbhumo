@@ -305,14 +305,19 @@
 	        currentAudioObj = new Audio(currentQuestion.audioPath);
 	        currentAudioObj.preload = 'auto';
 
-	        const speedOptions = [1.0, 1.5, 2.0];
+	        const speedOptions = [1.0, 1.5, 1.9];
 	        const randomSpeed = speedOptions[Math.floor(Math.random() * speedOptions.length)];
 	        currentAudioObj.playbackRate = randomSpeed;
+
+			var randomSpeedText = randomSpeed;
+			if (randomSpeed == 1.9){
+				randomSpeedText = 2.0;
+			}
 
 	        const speedIndicator = document.getElementById('playback-speed-indicator');
 	        if (speedIndicator) {
 	          const speedLabelText = speedIndicator.getAttribute('data-speed-label') || "Playback Speed: ";
-	          speedIndicator.textContent = `${speedLabelText}${randomSpeed}x`;
+	          speedIndicator.textContent = `${speedLabelText}${randomSpeedText}x`;
 	        }
 
 	        currentAudioObj.play().catch(err => console.log("Autoplay prevented:", err));
