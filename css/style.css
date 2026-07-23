@@ -414,11 +414,7 @@ body.hide-tones .syllable-card .shift-tip {
 
 /* Valid combo where the sound shifts (e.g., high tone / nasal change) */
 
-.syllable-card.sound-shift {
-  border: 1px solid var(--accent-gold, #d4af37); 
-/*  background-color: rgba(212, 175, 55, 0.05); */
-  font-weight: bold;
-}
+
 
 /* Optional hover state for highlighted cards */
 .syllable-card.sound-shift:hover {
@@ -448,11 +444,6 @@ body.hide-tones .syllable-card .shift-tip {
   display: block !important;
 }
 
-/* Styling for sound shift cards */
-.syllable-card.sound-shift {
-  border: 1px solid #d4af37;
-/*  background-color: rgba(212, 175, 55, 0.12);*/
-}
 
 .syllable-card.sound-shift:hover .shift-icon {
   opacity: 1;

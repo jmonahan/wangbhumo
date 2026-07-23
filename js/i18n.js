@@ -64,6 +64,7 @@ export const translations = {
 	studyOptionsTitle: "Study Options",
     showHintLabel: "Show Hint:",
     audioSpeedLabel: "Audio Speed:",
+	syllableSoundChanges: "Has sound change",
   },
   fr: {
     siteTitle: "Compagnon d'étude tibétaine",
@@ -128,6 +129,7 @@ export const translations = {
 	studyOptionsTitle: "Options d'étude",
     showHintLabel: "Afficher l'indice :",
     audioSpeedLabel: "Vitesse audio :",
+    syllableSoundChanges: "Changement de son",
   }
 };
 

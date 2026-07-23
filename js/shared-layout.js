@@ -163,6 +163,9 @@ export function createSyllableCard({
   // Apply state classes
   card.className = `syllable-card ${hasSoundShift ? 'sound-shift' : ''} ${isDisabled ? 'disabled' : ''}`;
   card.dataset.id = id;
+  if (hasSoundShift) {
+    card.title = t('syllableSoundChanges');
+  }
 
   card.innerHTML = `
     <div class="card-body">
@@ -174,7 +177,7 @@ export function createSyllableCard({
         <span class="romanization-text">${romanization || ''}</span>
         <span class="card-tone">${tone || ''}</span>
       </div>
-		<svg class="shift-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${shiftExplanation ? `title="${shiftExplanation}"` : ''}>
+		<svg class="shift-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 		  <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"></path>
 		</svg>
     </div>
