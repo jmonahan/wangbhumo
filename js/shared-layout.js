@@ -40,6 +40,7 @@ class SiteNav extends HTMLElement {
             <div class="nav-links">
               <a href="index.html">${t('home')}</a>
               <a href="syllables.html">${t('syllables')}</a>
+              <a href="quiz.html">${t('quizTitle')}</a>
 			
               ${showDev ? `
                 <span class="dev-divider" style="border-left: 1px solid #ccc; margin: 0 4px;"></span>
