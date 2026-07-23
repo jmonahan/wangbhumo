@@ -105,6 +105,48 @@
       opacity: 0.9;
     }
 
+    /* Sparkle Container & Animation */
+    .sparkle-container {
+      position: relative;
+      display: inline-block;
+      margin: 10px 0 15px 0;
+    }
+
+    .success-syllable-badge {
+      font-size: 3.5rem;
+      background: rgba(128, 0, 0, 0.05);
+      border: 2px solid var(--accent-maroon, #800000);
+      border-radius: 16px;
+      padding: 10px 25px;
+      display: inline-block;
+      color: var(--accent-maroon, #800000);
+      position: relative;
+      z-index: 2;
+    }
+
+    .sparkle {
+      position: absolute;
+      font-size: 1.5rem;
+      animation: sparkleBurst 1.2s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    .sparkle:nth-child(1) { top: -10px; left: -15px; animation-delay: 0s; }
+    .sparkle:nth-child(2) { top: -15px; right: -15px; animation-delay: 0.3s; }
+    .sparkle:nth-child(3) { bottom: -10px; left: -10px; animation-delay: 0.6s; }
+    .sparkle:nth-child(4) { bottom: -15px; right: -10px; animation-delay: 0.9s; }
+
+    @keyframes sparkleBurst {
+      0% {
+        transform: scale(0.6) rotate(0deg);
+        opacity: 0.4;
+      }
+      100% {
+        transform: scale(1.2) rotate(20deg);
+        opacity: 1;
+      }
+    }
+
     /* Dead-center positioning and backdrop blur for native dialog */
     #successModal {
       border: none;
@@ -165,8 +207,8 @@
             <span class="sparkle">🌟</span>
 		    <div class="success-syllable-badge" id="modalSyllableDisplay"></div>
           </div>
-		  <h3 style="color: #28a745; margin-bottom: 8px;">Spot On!</h3>
-		  <p id="successModalText" style="color: #555; margin-bottom: 20px;">You nailed that sound!</p>
+		  <h3 id="successModalHeading" style="color: #28a745; margin-bottom: 8px;">Spot On!</h3>
+		  <p id="successModalText" style="color: #555; margin-bottom: 20px; line-height: 1.4;">You nailed that sound!</p>
 		  <button type="button" id="modalNextBtn" style="background: var(--accent-maroon, #800000); color: white; border: none; padding: 12px 25px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; font-weight: bold;">
 		    Next Round! ✨
 		  </button>
@@ -214,6 +256,7 @@
      let currentQuestion = null;
      let currentAudioObj = null;
      let playCount = 0;
+     let guessCount = 0; // Tracks incorrect guesses per question
      let audioTimeout = null; // Tracks active delay timer to clear it if needed
 
      const playPromptBtn = document.getElementById('playPromptBtn');
@@ -228,7 +271,6 @@
      function playAudioWithLoopLimit(maxLoops = 3) {
        if (!currentAudioObj) return;
        
-       // Clear any pending timeout if user hits replay mid-delay
        if (audioTimeout) {
          clearTimeout(audioTimeout);
          audioTimeout = null;
@@ -242,7 +284,6 @@
        currentAudioObj.onended = () => {
          playCount++;
          if (playCount < maxLoops) {
-           // 1000ms = 1 second delay between loops
            audioTimeout = setTimeout(() => {
              if (currentAudioObj) {
                currentAudioObj.currentTime = 0;
@@ -260,11 +301,13 @@
               successModal.close();
             }
 
-            // Clear any lingering audio delay timers from previous question
             if (audioTimeout) {
               clearTimeout(audioTimeout);
               audioTimeout = null;
             }
+
+            // Reset guess count for the new round
+            guessCount = 0;
 
 	        quizFeedback.textContent = '';
 	        nextQuestionBtn.style.display = 'none';
@@ -282,9 +325,8 @@
 	        const colIdx = baseAlphabetIndex % 4;
 
 	        let refinedPoolBaseIds = [];
-	        let mustHaveBaseIds = []; // Priority list for siblings
+	        let mustHaveBaseIds = []; 
 
-	        // RULE 1: Last 3 rows (Index 20 to 29) -> OVERRIDES 4th column rule
 	        if (baseAlphabetIndex >= 20) {
 	          const finalSectionItems = tibetanAlphabet.slice(20).map(i => i.id);
 	          refinedPoolBaseIds.push(...finalSectionItems);
@@ -304,13 +346,11 @@
 	            if (tibetanAlphabet[rightIdx1]) mustHaveBaseIds.push(tibetanAlphabet[rightIdx1].id);
 	          }
 	        } 
-	        // RULE 2: 4th Column but NOT in the last 3 rows
 	        else if (colIdx === 3) {
 	          for (let i = 3; i < tibetanAlphabet.length; i += 4) {
 	            if (tibetanAlphabet[i]) refinedPoolBaseIds.push(tibetanAlphabet[i].id);
 	          }
 	        } 
-	        // RULE 3: First 5 rows, First 3 columns
 	        else {
 	          for (let r = 0; r <= 4; r++) {
 	            if (tibetanAlphabet[r * 4]) refinedPoolBaseIds.push(tibetanAlphabet[r * 4].id);
@@ -327,7 +367,6 @@
 	          }
 	        }
 
-	        // --- POPULATE OPTIONS ---
 	        if (mustHaveBaseIds.length > 0) {
 	          const priorityDistractors = masterPool.filter(item => 
 	            item.vowel === currentQuestion.vowel && 
@@ -396,7 +435,6 @@
 	          speedIndicator.textContent = `${speedLabelText}${randomSpeedText}x`;
 	        }
 
-	        // Automatically loop audio 3 times with 1s pauses on question load
 	        playAudioWithLoopLimit(3);
 
 	        // 4. Render choice buttons
@@ -412,32 +450,72 @@
      }
 
 	 function handleAnswerSelection(selectedOpt, clickedBtn, correctOpt) {
-        if (selectedOpt.id === correctOpt.id) {
-          if (audioTimeout) {
-            clearTimeout(audioTimeout);
-            audioTimeout = null;
-          }
-          if (currentAudioObj) {
-            currentAudioObj.pause();
-            currentAudioObj.onended = null;
-          }
+         if (selectedOpt.id === correctOpt.id) {
+           if (audioTimeout) {
+             clearTimeout(audioTimeout);
+             audioTimeout = null;
+           }
+           if (currentAudioObj) {
+             currentAudioObj.pause();
+             currentAudioObj.onended = null;
+           }
 
-          clickedBtn.classList.add('correct');
-          quizFeedback.textContent = t('quizCorrectMsg') || "Correct! Great job.";
-          quizFeedback.style.color = "#28a745";
-    
-          // Populate the correct Tibetan syllable inside the modal badge
-          document.getElementById('modalSyllableDisplay').textContent = correctOpt.tib;
+           clickedBtn.classList.add('correct');
+           quizFeedback.textContent = t('quizCorrectMsg') || "Correct! Great job.";
+           quizFeedback.style.color = "#28a745";
 
-          document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
-          successModal.showModal();
-        } else {
-          clickedBtn.classList.add('incorrect');
-          clickedBtn.disabled = true;
-          quizFeedback.textContent = t('quizIncorrectMsg') || "Not quite, try again!";
-          quizFeedback.style.color = "#dc3545";
-        }
-      }
+           // Populate the correct Tibetan syllable inside the modal badge
+           document.getElementById('modalSyllableDisplay').textContent = correctOpt.tib;
+
+           // Configure modal text based on guess count
+           const modalHeading = document.getElementById('successModalHeading');
+           const modalText = document.getElementById('successModalText');
+
+           if (guessCount <= 1) {
+             // 1 or 2 total guesses (0 or 1 incorrect attempts before correct selection)
+             modalHeading.textContent = "Spot On!";
+             modalHeading.style.color = "#28a745";
+             modalText.textContent = "You nailed that sound!";
+           } else {
+             // 3 or more attempts total
+             modalHeading.textContent = "You got it!";
+             modalHeading.style.color = "#d97706"; // Warm encouraging amber/gold tone
+
+             // Determine tone tip based on source data toneKey (checking baseId or id)
+             let toneTip = "the tone (high or low) if there is aspiration.";
+             const targetBaseId = correctOpt.baseId || correctOpt.id;
+             const baseItem = tibetanAlphabet.find(i => i.id === targetBaseId);
+        
+             if (baseItem && baseItem.toneKey) {
+               switch (baseItem.toneKey) {
+                 case 'highTone':
+                   toneTip = "a high, crisp tone.";
+                   break;
+                 case 'aspirated':
+                   toneTip = "a high tone with a strong puff of air.";
+                   break;
+                 case 'lowTone':
+                   toneTip = "a lower, deeper tone.";
+                   break;
+                 case 'nasal':
+                   toneTip = "a lower tone with a nasal sound.";
+                   break;
+               }
+             }
+
+             modalText.textContent = `Remember to listen for ${toneTip}`;
+           }
+
+           document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+           successModal.showModal();
+         } else {
+           guessCount++;
+           clickedBtn.classList.add('incorrect');
+           clickedBtn.disabled = true;
+           quizFeedback.textContent = t('quizIncorrectMsg') || "Not quite, try again!";
+           quizFeedback.style.color = "#dc3545";
+         }
+       }
 
      playPromptBtn.addEventListener('click', () => {
        playAudioWithLoopLimit(3);
