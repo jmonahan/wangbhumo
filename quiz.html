@@ -59,7 +59,7 @@
       border: 2px solid var(--border-color, #ddd);
       border-radius: 8px;
       padding: 15px;
-      font-size: 1.2rem;
+      font-size: 1.4rem;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -233,12 +233,14 @@
      import { getAllVowelCombinations } from './js/vowels_data.js';
 
      // Apply translations to layout texts
+// Apply translations to layout texts
      document.getElementById('pageTitle').textContent = t('quizPageTitle') || "Tibetan Study Companion - Quiz";
      document.getElementById('quizHeaderTitle').textContent = t('quizHeaderTitle') || "Practice Quiz";
      document.getElementById('quizHeaderSubtitle').textContent = t('quizHeaderSubtitle') || "Listen to the audio and choose the correct syllable or combination.";
      document.getElementById('quizCardHeading').textContent = t('quizCardHeading') || "Listen & Select";
      document.getElementById('skipQuestionBtn').textContent = t('quizSkipBtn') || "Skip";
      document.getElementById('nextQuestionBtn').textContent = t('quizNextBtn') || "Next Question";
+     document.getElementById('modalNextBtn').textContent = t('quizModalNextBtn') || "Next Round! ✨";
 
      // Combine root syllables and all vowel combinations into one rich item pool
      const rootItems = tibetanAlphabet.map(item => ({
@@ -267,6 +269,8 @@
 
      const successModal = document.getElementById('successModal');
      const modalNextBtn = document.getElementById('modalNextBtn');
+	 
+	 
 
      function playAudioWithLoopLimit(maxLoops = 3) {
        if (!currentAudioObj) return;
@@ -450,72 +454,72 @@
      }
 
 	 function handleAnswerSelection(selectedOpt, clickedBtn, correctOpt) {
-         if (selectedOpt.id === correctOpt.id) {
-           if (audioTimeout) {
-             clearTimeout(audioTimeout);
-             audioTimeout = null;
-           }
-           if (currentAudioObj) {
-             currentAudioObj.pause();
-             currentAudioObj.onended = null;
-           }
+	      if (selectedOpt.id === correctOpt.id) {
+	        if (audioTimeout) {
+	          clearTimeout(audioTimeout);
+	          audioTimeout = null;
+	        }
+	        if (currentAudioObj) {
+	          currentAudioObj.pause();
+	          currentAudioObj.onended = null;
+	        }
 
-           clickedBtn.classList.add('correct');
-           quizFeedback.textContent = t('quizCorrectMsg') || "Correct! Great job.";
-           quizFeedback.style.color = "#28a745";
+	        clickedBtn.classList.add('correct');
+	        quizFeedback.textContent = t('quizCorrectMsg') || "Correct! Great job.";
+	        quizFeedback.style.color = "#28a745";
 
-           // Populate the correct Tibetan syllable inside the modal badge
-           document.getElementById('modalSyllableDisplay').textContent = correctOpt.tib;
+	        // Populate the correct Tibetan syllable inside the modal badge
+	        document.getElementById('modalSyllableDisplay').textContent = correctOpt.tib;
 
-           // Configure modal text based on guess count
-           const modalHeading = document.getElementById('successModalHeading');
-           const modalText = document.getElementById('successModalText');
+	        // Configure modal text based on guess count
+	        const modalHeading = document.getElementById('successModalHeading');
+	        const modalText = document.getElementById('successModalText');
 
-           if (guessCount <= 1) {
-             // 1 or 2 total guesses (0 or 1 incorrect attempts before correct selection)
-             modalHeading.textContent = "Spot On!";
-             modalHeading.style.color = "#28a745";
-             modalText.textContent = "You nailed that sound!";
-           } else {
-             // 3 or more attempts total
-             modalHeading.textContent = "You got it!";
-             modalHeading.style.color = "#d97706"; // Warm encouraging amber/gold tone
+	        if (guessCount <= 1) {
+	          // 1 or 2 total guesses (0 or 1 incorrect attempts before correct selection)
+	          modalHeading.textContent = t('quizModalSpotOnHeading') || "Spot On!";
+	          modalHeading.style.color = "#28a745";
+	          modalText.textContent = t('quizModalSpotOnText') || "You nailed that sound!";
+	        } else {
+	          // 3 or more attempts total
+	          modalHeading.textContent = t('quizModalGotItHeading') || "You got it!";
+	          modalHeading.style.color = "#d97706"; // Warm encouraging amber/gold tone
 
-             // Determine tone tip based on source data toneKey (checking baseId or id)
-             let toneTip = "the tone (high or low) if there is aspiration.";
-             const targetBaseId = correctOpt.baseId || correctOpt.id;
-             const baseItem = tibetanAlphabet.find(i => i.id === targetBaseId);
-        
-             if (baseItem && baseItem.toneKey) {
-               switch (baseItem.toneKey) {
-                 case 'highTone':
-                   toneTip = "a high, crisp tone.";
-                   break;
-                 case 'aspirated':
-                   toneTip = "a high tone with a strong puff of air.";
-                   break;
-                 case 'lowTone':
-                   toneTip = "a lower, deeper tone.";
-                   break;
-                 case 'nasal':
-                   toneTip = "a lower tone with a nasal sound.";
-                   break;
-               }
-             }
+	          // Determine tone tip based on source data toneKey (checking baseId or id)
+	          let toneTip = t('quizToneTipDefault') || "the tone (high or low) if there is aspiration.";
+	          const targetBaseId = correctOpt.baseId || correctOpt.id;
+	          const baseItem = tibetanAlphabet.find(i => i.id === targetBaseId);
 
-             modalText.textContent = `Remember to listen for ${toneTip}`;
-           }
+	          if (baseItem && baseItem.toneKey) {
+	            switch (baseItem.toneKey) {
+	              case 'highTone':
+	                toneTip = t('quizToneTipHigh') || "a high, crisp tone.";
+	                break;
+	              case 'aspirated':
+	                toneTip = t('quizToneTipAspirated') || "a high tone with a strong puff of air.";
+	                break;
+	              case 'lowTone':
+	                toneTip = t('quizToneTipLow') || "a lower, deeper tone.";
+	                break;
+	              case 'nasal':
+	                toneTip = t('quizToneTipNasal') || "a lower tone with a nasal sound.";
+	                break;
+	            }
+	          }
 
-           document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
-           successModal.showModal();
-         } else {
-           guessCount++;
-           clickedBtn.classList.add('incorrect');
-           clickedBtn.disabled = true;
-           quizFeedback.textContent = t('quizIncorrectMsg') || "Not quite, try again!";
-           quizFeedback.style.color = "#dc3545";
-         }
-       }
+	          modalText.textContent = `${t('quizModalRememberListen') || "Remember to listen for"} ${toneTip}`;
+	        }
+
+	        document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+	        successModal.showModal();
+	      } else {
+	        guessCount++;
+	        clickedBtn.classList.add('incorrect');
+	        clickedBtn.disabled = true;
+	        quizFeedback.textContent = t('quizIncorrectMsg') || "Not quite, try again!";
+	        quizFeedback.style.color = "#dc3545";
+	      }
+	    }
 
      playPromptBtn.addEventListener('click', () => {
        playAudioWithLoopLimit(3);

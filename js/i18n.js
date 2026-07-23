@@ -51,6 +51,16 @@ export const translations = {
 	quizTitle: "Quiz",
 	badgeNew: "New!",
 	quizDesc: "Audio based quiz. Listen to the sound and pick the right answer.",
+	quizModalNextBtn: "Next Round! ✨",
+	quizModalSpotOnHeading: "Spot On!",
+	quizModalSpotOnText: "You nailed that sound!",
+	quizModalGotItHeading: "You got it!",
+	quizModalRememberListen: "Remember to listen for",
+	quizToneTipDefault: "the specific tone for this letter.",
+	quizToneTipHigh: "a high, crisp tone.",
+	quizToneTipAspirated: "a high tone with a strong puff of air.",
+	quizToneTipLow: "a lower, deeper tone.",
+	quizToneTipNasal: "a lower tone with a nasal sound."
   },
   fr: {
     siteTitle: "Compagnon d'étude tibétaine",
@@ -102,6 +112,16 @@ export const translations = {
 	quizTitle: "Quiz",
 	badgeNew: "Nouveau !",
 	quizDesc: "Quiz basé sur l'audio. Écoutez le son et choisissez la bonne réponse.",
+	quizModalNextBtn: "Tour suivant ! ✨",
+	quizModalSpotOnHeading: "Parfait !",
+	quizModalSpotOnText: "Vous avez trouvé le bon son !",
+	quizModalGotItHeading: "Vous l'avez !",
+	quizModalRememberListen: "Pensez à écouter",
+	quizToneTipDefault: "le ton spécifique pour cette lettre.",
+	quizToneTipHigh: "un ton haut et clair.",
+	quizToneTipAspirated: "un ton haut avec un fort souffle d'air.",
+	quizToneTipLow: "un ton plus bas et profond.",
+	quizToneTipNasal: "un ton plus bas avec un son nasal."
   }
 };
 
