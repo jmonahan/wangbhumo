@@ -194,23 +194,10 @@ p.subtitle, header p {
 	position: sticky;
 	top: 0;
 	z-index: 100; 
-	
-	background-color: #fff;
-	border: 1px solid #e8e2d9;
-    padding: 10px;
-	margin: 0 auto 24px auto;
-	max-width: 900px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 12px;
-	
-/*	box-shadow: 0 3px 8px rgba(212, 175, 55, 0.2);
-	  box-shadow: 0 1px 6px rgba(44, 26, 4, 0.25);*/
-}
-.sticky-toggle-bar{
+	margin-bottom: 24px;
 	
 }
+
 .controls-container-title{
 	font-size: 0.75rem;
 	font-weight: 700;
@@ -223,15 +210,6 @@ p.subtitle, header p {
 	vertical-align: middle; 
 	  position: relative;
 	  bottom: 1px; /* Optional micro-adjustment for certain fonts */
-}
-.global-controls-row{
-	display: flex;
-	  align-items: center; /* Vertically centers the checkbox and label */
-	  gap: 50px;     
-	  text-align: center;      
-}
-.page-controls-row{
-	margin-top: 10px;
 }
 .controls-container label {
   font-family: system-ui, -apple-system, sans-serif;
@@ -252,6 +230,85 @@ p.subtitle, header p {
     position: relative;
     bottom: 1px; /* Optional micro-adjustment for certain fonts */
 }
+
+.sticky-toggle-bar {
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  gap: 15px; 
+  flex-wrap: wrap; 
+  border: 1px solid var(--border-color, #e0e0e0); 
+  border-radius: 2px; 
+  background: var(--card-bg, #ffffff); 
+  position: relative;
+  top: 0;
+  left: 0;
+  padding: 5px 0px;
+  margin: 0 auto;
+  
+}
+
+/* Left side: The page-specific selector buttons */
+.page-controls-row {
+	display: flex; 
+	align-items: center; 
+	gap: 8px; 
+	flex-wrap: wrap; 
+	flex: 1;
+	width: 100%;
+	        justify-content: center;
+}
+
+/* Right side / Bottom row: The Study Options trigger */
+.study-options-trigger {
+	position: absolute;
+	right: 5px;
+	bottom: 5px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 2px;
+  padding: 2px 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: bottom;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: inherit;
+  transition: background 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.study-options-trigger:hover {
+  border-color: var(--accent-maroon, #800000);
+  background: rgba(128, 0, 0, 0.03);
+}
+
+/* Mobile Breakpoint: Make the Study Options button drop to full width underneath */
+@media (max-width: 768px) {
+	.sticky-toggle-bar {
+	    flex-direction: column;
+	    align-items: stretch !important;
+		padding-bottom: 28px;
+	  }
+  
+	  .page-controls-row {
+	    width: 100%;
+	    justify-content: center;
+	  }
+
+	  .study-options-trigger {
+	    width: 100%;
+	    margin-left: 0 !important;
+	    text-align: center;
+		right: 0;
+		bottom: 0;
+		border: 0;
+		border-top: 1px solid #eee;
+	  }
+}
+
+
 
 .vowel-option {
   display: inline;

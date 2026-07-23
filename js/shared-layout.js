@@ -189,62 +189,93 @@ class SiteControls extends HTMLElement {
     const slottedContent = this.innerHTML.trim();
     const hasSlottedContent = slottedContent.length > 0;
 
-    // Always start with both hints (phonetics and tones) hidden/unchecked on every page load
+    // Always start with both hints hidden by default
     document.body.classList.add('hide-romanization');
     document.body.classList.add('hide-tones');
 
-	this.innerHTML = `
-	  <div class="controls-container">
-	    <div class="sticky-toggle-bar">
-	      <!-- Row 1: Global Settings & Speed -->
-	      <div class="global-controls-row">
-	        <span class="global-toggles">
-	          <label class="hints-label">${t('hintsLabel') || 'Hints:'}</label>
-	          <label class="toggle-label">
-	            <input type="checkbox" id="globalToggleEng"> ${t('phonetics') || 'Phonetics'}
-	          </label>
-	          <label class="toggle-label">
-	            <input type="checkbox" id="globalToggleTips"> ${t('tones') || 'Tones'}
-	          </label>
-	        </span>
-	        <span class="global-speed">
-	          <label for="globalSpeedSelect" class="speed-label">${t('speedLabel') || 'Speed:'}</label>
-	          <select id="globalSpeedSelect" class="speed-select">
-	            <option value="1.0" selected>1.0x</option>
-	            <option value="1.25">1.25x</option>
-	            <option value="1.5">1.5x</option>
-	            <option value="1.9">2x</option>
-	          </select>
-	        </span>
-	      </div>
-	      <!-- Row 2: Rendered ONLY if page-specific content exists -->
-	      ${hasSlottedContent ? `
-	        <div class="page-controls-row page-controls-row2">
-	          ${slottedContent}
-	        </div>
-	      ` : ''}
-	    </div>
-	  </div>
-	`;
+    if (hasSlottedContent) {
+		this.innerHTML = `
+        <div class="controls-container">
+          <!-- This wrapper creates the single outer white box for everything -->
+          <div class="sticky-toggle-bar" style="">
+            
+            <!-- Page-specific selectors (Vowels, etc.) -->
+            <div class="page-controls-row" style="">
+              ${slottedContent}
+            </div>
+            
+            <!-- Study Options Button (Lives INSIDE the white box, floats right on desktop, drops to row 2 on mobile) -->
+            <button type="button" id="studyOptionsBtn" class="study-options-trigger" style="">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+              <span>Study Options</span>
+            </button>
 
-    // Wire up global Romanization toggle (uncheck/hidden by default)
-    const engToggle = this.querySelector('#globalToggleEng');
-    engToggle?.addEventListener('change', (e) => {
-      document.body.classList.toggle('hide-romanization', !e.target.checked);
+          </div>
+        </div>
+
+        <!-- Native Dialog Settings Popup -->
+        <dialog id="controlsSettingsDialog" style="border: none; border-radius: 12px; padding: 20px 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); background: var(--card-bg, #ffffff); color: var(--text-color, #333); max-width: 320px; width: 90%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color, #eee); padding-bottom: 10px;">
+            <h3 style="margin: 0; font-size: 1.1rem;">Study Options</h3>
+            <button type="button" id="closeSettingsModal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit;">&times;</button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-weight: bold; font-size: 0.9rem;">Hints:</label>
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="globalToggleEng"> Phonetics
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="globalToggleTips"> Tones
+              </label>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color, #eee); padding-top: 12px;">
+              <label for="globalSpeedSelect" style="font-weight: bold; font-size: 0.9rem;">Speed:</label>
+              <select id="globalSpeedSelect" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color, #ccc); background: var(--bg-color, #fff); color: inherit;">
+                <option value="1.0" selected>1.0x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="1.9">2x</option>
+              </select>
+            </div>
+          </div>
+        </dialog>
+      `;
+    }
+
+    // Wire up Modal behavior
+    const studyOptionsBtn = this.querySelector('#studyOptionsBtn');
+    const settingsDialog = this.querySelector('#controlsSettingsDialog');
+    const closeDialogBtn = this.querySelector('#closeSettingsModal');
+
+    if (studyOptionsBtn && settingsDialog) {
+      studyOptionsBtn.addEventListener('click', () => settingsDialog.showModal());
+      closeDialogBtn?.addEventListener('click', () => settingsDialog.close());
+      settingsDialog.addEventListener('click', (e) => {
+        const rect = settingsDialog.getBoundingClientRect();
+        if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+          settingsDialog.close();
+        }
+      });
+    }
+
+    // Wire up global toggles & speed sync
+    this.querySelectorAll('#globalToggleEng').forEach(el => {
+      el.addEventListener('change', (e) => document.body.classList.toggle('hide-romanization', !e.target.checked));
     });
-
-    // Wire up global Tones/Tips toggle (uncheck/hidden by default)
-    const tipsToggle = this.querySelector('#globalToggleTips');
-    tipsToggle?.addEventListener('change', (e) => {
-      document.body.classList.toggle('hide-tones', !e.target.checked);
+    this.querySelectorAll('#globalToggleTips').forEach(el => {
+      el.addEventListener('change', (e) => document.body.classList.toggle('hide-tones', !e.target.checked));
     });
-
-    // Centralize Global Speed State
-    const speedSelect = this.querySelector('#globalSpeedSelect');
-    speedSelect?.addEventListener('change', (e) => {
-      const newSpeed = parseFloat(e.target.value);
-      window.globalPlaybackRate = newSpeed;
-      window.dispatchEvent(new CustomEvent('playbackRateChanged', { detail: { speed: newSpeed } }));
+    this.querySelectorAll('#globalSpeedSelect').forEach(el => {
+      el.addEventListener('change', (e) => {
+        window.globalPlaybackRate = parseFloat(e.target.value);
+        window.dispatchEvent(new CustomEvent('playbackRateChanged', { detail: { speed: window.globalPlaybackRate } }));
+      });
     });
   }
 }
