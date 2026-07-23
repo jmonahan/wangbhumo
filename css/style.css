@@ -85,6 +85,15 @@ body {
     display: flex;
     gap: 1.2rem;
 }
+.lang-switcher select{
+	background: transparent; 
+	border: 1px solid currentColor; 
+	color: #FFF; 
+	padding: 4px 8px; 
+	border-radius: 6px; 
+	cursor: pointer; 
+	font-size: 0.85rem;
+}
 
 /* 4. Shared Header & Title Styling */
 header {

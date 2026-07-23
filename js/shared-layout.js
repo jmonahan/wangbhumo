@@ -40,12 +40,13 @@ class SiteNav extends HTMLElement {
             <div class="nav-links">
               <a href="index.html">${t('home')}</a>
               <a href="syllables.html">${t('syllables')}</a>
+			  <a href="vowels.html">${t('vowels')}</a>
               <a href="quiz.html">${t('quizTitle')}</a>
 			
               ${showDev ? `
                 <span class="dev-divider" style="border-left: 1px solid #ccc; margin: 0 4px;"></span>
                 <span class="nav-dev" style="opacity: .5;">
-                    <a href="vowels.html">${t('vowels')}</a>
+
                     <a href="headletters.html">${t('headLetters')}</a>
                     <a href="grammar.html">${t('grammar')}</a>
                 </span>
@@ -53,9 +54,9 @@ class SiteNav extends HTMLElement {
 
               <!-- Language Dropdown Switcher -->
               <div class="lang-switcher" style="margin-left: 15px; display: inline-flex; align-items: center;">
-                <select id="langSelect" aria-label="Language Selector" style="background: transparent; border: 1px solid currentColor; color: inherit; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
-                  <option value="en">English</option>
-                  <option value="fr">Français</option>
+                <select id="langSelect" aria-label="Language Selector">
+                  <option value="en">EN</option>
+                  <option value="fr">FR</option>
                 </select>
               </div>
 
