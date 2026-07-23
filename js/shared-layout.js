@@ -24,8 +24,8 @@ class SiteNav extends HTMLElement {
           <div class="nav-container" style="justify-content: flex-end;">
             <div class="lang-switcher" style="display: inline-flex; align-items: center; padding: 15px;">
               <select id="langSelect" aria-label="Language Selector" style="background: transparent; border: 1px solid currentColor; color: inherit; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
-                <option value="en">English</option>
-                <option value="fr">Français</option>
+                <option value="en">EN</option>
+                <option value="fr">FR</option>
               </select>
             </div>
           </div>
