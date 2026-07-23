@@ -158,8 +158,14 @@
 		
 		<!-- Success Celebration Modal -->
 		<dialog id="successModal">
-		  <div style="font-size: 3rem; margin-bottom: 10px;">🎉</div>
-		  <h3 style="color: #28a745; margin-bottom: 10px;">Spot On!</h3>
+		  <div class="sparkle-container">
+            <span class="sparkle">✨</span>
+            <span class="sparkle">⭐</span>
+            <span class="sparkle">✨</span>
+            <span class="sparkle">🌟</span>
+		    <div class="success-syllable-badge" id="modalSyllableDisplay"></div>
+          </div>
+		  <h3 style="color: #28a745; margin-bottom: 8px;">Spot On!</h3>
 		  <p id="successModalText" style="color: #555; margin-bottom: 20px;">You nailed that sound!</p>
 		  <button type="button" id="modalNextBtn" style="background: var(--accent-maroon, #800000); color: white; border: none; padding: 12px 25px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; font-weight: bold;">
 		    Next Round! ✨
@@ -405,30 +411,33 @@
 	        });
      }
 
-     function handleAnswerSelection(selectedOpt, clickedBtn, correctOpt) {
-       if (selectedOpt.id === correctOpt.id) {
-         if (audioTimeout) {
-           clearTimeout(audioTimeout);
-           audioTimeout = null;
-         }
-         if (currentAudioObj) {
-           currentAudioObj.pause();
-           currentAudioObj.onended = null;
-         }
+	 function handleAnswerSelection(selectedOpt, clickedBtn, correctOpt) {
+        if (selectedOpt.id === correctOpt.id) {
+          if (audioTimeout) {
+            clearTimeout(audioTimeout);
+            audioTimeout = null;
+          }
+          if (currentAudioObj) {
+            currentAudioObj.pause();
+            currentAudioObj.onended = null;
+          }
 
-         clickedBtn.classList.add('correct');
-         quizFeedback.textContent = t('quizCorrectMsg') || "Correct! Great job.";
-         quizFeedback.style.color = "#28a745";
-        
-         document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
-         successModal.showModal();
-       } else {
-         clickedBtn.classList.add('incorrect');
-         clickedBtn.disabled = true;
-         quizFeedback.textContent = t('quizIncorrectMsg') || "Not quite, try again!";
-         quizFeedback.style.color = "#dc3545";
-       }
-     }
+          clickedBtn.classList.add('correct');
+          quizFeedback.textContent = t('quizCorrectMsg') || "Correct! Great job.";
+          quizFeedback.style.color = "#28a745";
+    
+          // Populate the correct Tibetan syllable inside the modal badge
+          document.getElementById('modalSyllableDisplay').textContent = correctOpt.tib;
+
+          document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+          successModal.showModal();
+        } else {
+          clickedBtn.classList.add('incorrect');
+          clickedBtn.disabled = true;
+          quizFeedback.textContent = t('quizIncorrectMsg') || "Not quite, try again!";
+          quizFeedback.style.color = "#dc3545";
+        }
+      }
 
      playPromptBtn.addEventListener('click', () => {
        playAudioWithLoopLimit(3);
