@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="bo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tibetan Study Companion - Quiz</title>
+  <link rel="stylesheet" href="css/all.css">
+  <script type="module" src="js/shared-layout.js"></script>
+
+  <style>
+    .quiz-card {
+      background: var(--card-bg, #ffffff);
+      border: 1px solid var(--border-color, #e0e0e0);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 600px;
+      margin: 40px auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .audio-quiz-btn {
+      background: var(--accent-maroon, #800000);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin: 20px 0;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .audio-quiz-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .audio-quiz-btn svg {
+      width: 40px;
+      height: 40px;
+      stroke: white;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .quiz-option {
+      background: var(--bg-color, #f9f9f9);
+      border: 2px solid var(--border-color, #ddd);
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-option:hover:not(:disabled) {
+      border-color: var(--accent-maroon, #800000);
+      background: rgba(128, 0, 0, 0.03);
+    }
+
+    .quiz-option.correct {
+      background-color: #d4edda !important;
+      border-color: #28a745 !important;
+      color: #155724;
+    }
+
+    .quiz-option.incorrect {
+      background-color: #f8d7da !important;
+      border-color: #dc3545 !important;
+      color: #721c24;
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .quiz-feedback {
+      margin-top: 20px;
+      font-weight: bold;
+      min-height: 30px;
+    }
+
+    .next-btn {
+      margin-top: 20px;
+      background: var(--accent-maroon, #800000);
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .next-btn:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Shared Universal Navigation -->
+  <site-nav></site-nav>
+
+  <div class="container">
+    <header>
+      <h1>Practice Quiz</h1>
+      <p class="subtitle">Listen to the audio and choose the correct syllable or combination.</p>
+    </header>
+
+    <main>
+      <div class="quiz-card">
+        <h3>Listen & Select</h3>
+        
+        <!-- Big Play Audio Button -->
+        <button type="button" class="audio-quiz-btn" id="playPromptBtn" aria-label="Play audio prompt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+        </button>
+<div id="playback-speed-indicator" style="font-size: 0.85rem; color: #666; margin-top: 6px;"></div>
+        <!-- Multiple Choice Grid (4 options) -->
+        <div class="options-grid" id="optionsGrid"></div>
+
+        <!-- Feedback & Action Buttons -->
+        <div class="quiz-feedback" id="quizFeedback"></div>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+          <button type="button" class="skip-btn" id="skipQuestionBtn" style="background: #6c757d; color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 6px; cursor: pointer;">Skip</button>
+          <button type="button" class="next-btn" id="nextQuestionBtn" style="margin-top: 0; display: none;">Next Question</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Shared Universal Footer -->
+    <site-footer></site-footer>
+  </div>
+
+<script type="module">
+     import { tibetanAlphabet } from './js/syllables_data.js';
+     import { getAllVowelCombinations } from './js/vowels_data.js';
+
+     // Combine root syllables and all vowel combinations into one rich item pool
+     const rootItems = tibetanAlphabet.map(item => ({
+       id: item.id,
+       baseId: item.id,
+       vowel: "none",
+       tib: item.tib,
+       eng: item.eng,
+       audioPath: `audio/syllables/${item.id}.mp3`
+     }));
+    
+     const vowelItems = getAllVowelCombinations();
+     const masterPool = [...rootItems, ...vowelItems];
+
+     let currentQuestion = null;
+     let currentAudioObj = null;
+
+     const playPromptBtn = document.getElementById('playPromptBtn');
+     const optionsGrid = document.getElementById('optionsGrid');
+     const quizFeedback = document.getElementById('quizFeedback');
+     const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+     const skipQuestionBtn = document.getElementById('skipQuestionBtn');
+
+	 function loadNewQuestion() {
+	        quizFeedback.textContent = '';
+	        nextQuestionBtn.style.display = 'none';
+	        optionsGrid.innerHTML = '';
+
+	        // 1. Pick a random correct item from the master pool
+	        const correctIndex = Math.floor(Math.random() * masterPool.length);
+	        currentQuestion = masterPool[correctIndex];
+
+	        // 2. Strict Constraint-Based Distractor Selection (Targeting 6 options total)
+	        const options = [currentQuestion];
+      
+	        const baseAlphabetIndex = tibetanAlphabet.findIndex(item => item.id === currentQuestion.baseId);
+	        const rowIdx = Math.floor(baseAlphabetIndex / 4);
+	        const colIdx = baseAlphabetIndex % 4;
+
+	        let refinedPoolBaseIds = [];
+	        let mustHaveBaseIds = []; // Priority list for siblings
+
+	        // RULE 1: Last 3 rows (Index 20 to 29) -> OVERRIDES 4th column rule
+	        if (baseAlphabetIndex >= 20) {
+	          // Restricted pool: ONLY items in the last 3 rows
+	          const finalSectionItems = tibetanAlphabet.slice(20).map(i => i.id);
+	          refinedPoolBaseIds.push(...finalSectionItems);
+
+	          // Sibling Rule: Safe boundary handling for the tail end of the alphabet
+	          let leftIdx1 = baseAlphabetIndex - 1;
+	          let leftIdx2 = baseAlphabetIndex - 2;
+	          let rightIdx1 = baseAlphabetIndex + 1;
+
+	          // If we are at the absolute end (like ཨ), grab the two preceding items safely
+	          if (!tibetanAlphabet[rightIdx1]) {
+	            if (tibetanAlphabet[leftIdx1]) mustHaveBaseIds.push(tibetanAlphabet[leftIdx1].id);
+	            if (tibetanAlphabet[leftIdx2]) mustHaveBaseIds.push(tibetanAlphabet[leftIdx2].id);
+	          } else if (leftIdx1 < 20) {
+	            // Near the start of the final section block, grab right siblings
+	            if (tibetanAlphabet[baseAlphabetIndex + 1]) mustHaveBaseIds.push(tibetanAlphabet[baseAlphabetIndex + 1].id);
+	            if (tibetanAlphabet[baseAlphabetIndex + 2]) mustHaveBaseIds.push(tibetanAlphabet[baseAlphabetIndex + 2].id);
+	          } else {
+	            // Normal middle case of the final block: grab immediate left and right
+	            if (tibetanAlphabet[leftIdx1]) mustHaveBaseIds.push(tibetanAlphabet[leftIdx1].id);
+	            if (tibetanAlphabet[rightIdx1]) mustHaveBaseIds.push(tibetanAlphabet[rightIdx1].id);
+	          }
+	        } 
+	        // RULE 2: 4th Column but NOT in the last 3 rows
+	        else if (colIdx === 3) {
+	          for (let i = 3; i < tibetanAlphabet.length; i += 4) {
+	            if (tibetanAlphabet[i]) refinedPoolBaseIds.push(tibetanAlphabet[i].id);
+	          }
+	        } 
+	        // RULE 3: First 5 rows, First 3 columns
+	        else {
+	          for (let r = 0; r <= 4; r++) {
+	            if (tibetanAlphabet[r * 4]) refinedPoolBaseIds.push(tibetanAlphabet[r * 4].id);
+	            if (tibetanAlphabet[(r * 4) + 1]) refinedPoolBaseIds.push(tibetanAlphabet[(r * 4) + 1].id);
+	            if (tibetanAlphabet[(r * 4) + 2]) refinedPoolBaseIds.push(tibetanAlphabet[(r * 4) + 2].id);
+	          }
+
+	          const rowStart = rowIdx * 4;
+	          for (let c = 0; c <= 2; c++) {
+	            let siblingIndex = rowStart + c;
+	            if (siblingIndex !== baseAlphabetIndex && tibetanAlphabet[siblingIndex]) {
+	              mustHaveBaseIds.push(tibetanAlphabet[siblingIndex].id);
+	            }
+	          }
+	        }
+
+	        // --- POPULATE OPTIONS ---
+
+	        // A. First, guarantee our "Must Have" siblings get added
+	        if (mustHaveBaseIds.length > 0) {
+	          const priorityDistractors = masterPool.filter(item => 
+	            item.vowel === currentQuestion.vowel && 
+	            mustHaveBaseIds.includes(item.baseId)
+	          );
+         
+	          for (const distractor of priorityDistractors) {
+	            if (options.length < 6 && !options.some(opt => opt.id === distractor.id)) {
+	              options.push(distractor);
+	            }
+	          }
+	        }
+
+	        // B. Fill the rest of the 6 options from the heavily restricted category pool
+	        const smartDistractors = masterPool.filter(item => 
+	          item.id !== currentQuestion.id && 
+	          item.vowel === currentQuestion.vowel && 
+	          refinedPoolBaseIds.includes(item.baseId)
+	        );
+
+	        smartDistractors.sort(() => Math.random() - 0.5);
+	        for (const distractor of smartDistractors) {
+	          if (options.length < 6 && !options.some(opt => opt.id === distractor.id)) {
+	            options.push(distractor);
+	          }
+	        }
+
+	        // C. Fallback restricted strictly to the final section block if pool is tight, instead of random global characters
+	        const restrictedFallbackPool = masterPool.filter(item => 
+	          item.vowel === currentQuestion.vowel && refinedPoolBaseIds.includes(item.baseId)
+	        );
+	        while (options.length < 6 && restrictedFallbackPool.length > options.length) {
+	          const randItem = restrictedFallbackPool[Math.floor(Math.random() * restrictedFallbackPool.length)];
+	          if (!options.some(opt => opt.id === randItem.id)) {
+	            options.push(randItem);
+	          }
+	        }
+
+	        // Final absolute fallback just in case
+	        const absoluteVowelPool = masterPool.filter(item => item.vowel === currentQuestion.vowel);
+	        while (options.length < 6 && absoluteVowelPool.length > options.length) {
+	          const randItem = absoluteVowelPool[Math.floor(Math.random() * absoluteVowelPool.length)];
+	          if (!options.some(opt => opt.id === randItem.id)) {
+	            options.push(randItem);
+	          }
+	        }
+
+	        // Final shuffle so the correct answer isn't always in position 1
+	        options.sort(() => Math.random() - 0.5);
+
+	        // 3. Setup Audio object & Random Playback Speed
+	        if (currentAudioObj) {
+	          currentAudioObj.pause();
+	        }
+	        currentAudioObj = new Audio(currentQuestion.audioPath);
+	        currentAudioObj.preload = 'auto';
+
+	        const speedOptions = [1.0, 1.5, 2.0];
+	        const randomSpeed = speedOptions[Math.floor(Math.random() * speedOptions.length)];
+	        currentAudioObj.playbackRate = randomSpeed;
+
+	        const speedIndicator = document.getElementById('playback-speed-indicator');
+	        if (speedIndicator) {
+	          speedIndicator.textContent = `Playback Speed: ${randomSpeed}x`;
+	        }
+
+	        currentAudioObj.play().catch(err => console.log("Autoplay prevented:", err));
+
+	        // 4. Render choice buttons
+	        options.forEach(opt => {
+	          const btn = document.createElement('button');
+	          btn.type = 'button';
+	          btn.className = 'quiz-option';
+	          btn.textContent = opt.tib;
+        
+	          btn.addEventListener('click', () => handleAnswerSelection(opt, btn, currentQuestion));
+	          optionsGrid.appendChild(btn);
+	        });
+	 }
+
+     function handleAnswerSelection(selectedOpt, clickedBtn, correctOpt) {
+       if (selectedOpt.id === correctOpt.id) {
+         clickedBtn.classList.add('correct');
+         quizFeedback.textContent = "Correct! Great job.";
+         quizFeedback.style.color = "#28a745";
+        
+         document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+         nextQuestionBtn.style.display = 'inline-block';
+       } else {
+         clickedBtn.classList.add('incorrect');
+         clickedBtn.disabled = true;
+         quizFeedback.textContent = "Not quite, try again!";
+         quizFeedback.style.color = "#dc3545";
+       }
+     }
+
+     playPromptBtn.addEventListener('click', () => {
+       if (currentAudioObj) {
+         currentAudioObj.currentTime = 0;
+         currentAudioObj.play().catch(err => console.log("Playback error:", err));
+       }
+     });
+
+     nextQuestionBtn.addEventListener('click', loadNewQuestion);
+     
+     // Hook up the skip button once globally outside the render loop
+     skipQuestionBtn.addEventListener('click', loadNewQuestion);
+
+     // Initialize first quiz question
+     loadNewGroup: loadNewQuestion();
+   </script>
+ 
+ 
+ 
+ 
+</body>
+</html>
