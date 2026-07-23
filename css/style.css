@@ -40,60 +40,8 @@ body {
   padding: 2rem 1rem;
 }
 
-/* 3. Universal Navigation Bar (<site-nav>) */
-.site-nav {
-  background-color: var(--accent-maroon);
-  padding: 0.8rem 1.5rem;
-  box-shadow: 0 2px 8px rgba(44, 26, 4, 0.15);
-}
-
-.nav-container {
-  max-width: 900px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nav-brand {
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 1.1rem;
-  font-family: system-ui, -apple-system, sans-serif;
-  letter-spacing: 0.02em;
-}
-
-.nav-links {
-  display: flex;
-  gap: 1.2rem;
-}
-
-.nav-links a {
-  color: rgba(255, 255, 255, 0.9);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.95rem;
-  font-family: system-ui, -apple-system, sans-serif;
-  transition: color 0.2s ease-in-out;
-}
-
-.nav-links a:hover {
-  color: var(--accent-gold);
-}
-.nav-links .nav-dev{
-    display: flex;
-    gap: 1.2rem;
-}
-.lang-switcher select{
-	background: transparent; 
-	border: 1px solid currentColor; 
-	color: #FFF; 
-	padding: 4px 8px; 
-	border-radius: 6px; 
-	cursor: pointer; 
-	font-size: 0.85rem;
-}
+/* 3. Nav */
+/* MOVED TO nav.css */
 
 /* 4. Shared Header & Title Styling */
 header {
@@ -503,9 +451,7 @@ body.hide-tones .syllable-card .shift-tip {
   h1 {
     font-size: 3rem;
   }
-  .nav-links a{
-	  font-size: .75rem;
-  }
+  
   .tibetan-script {
     font-size: 2.8rem;
   }

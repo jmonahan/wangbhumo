@@ -7,15 +7,14 @@ class SiteNav extends HTMLElement {
     const isHomepage = this.hasAttribute('homepage');
 	
     // Check if explicitly told to show via attribute OR if we are running locally
+    const hostname = window.location.hostname;
 
-	 const hostname = window.location.hostname;
-
-	 // Check if it's localhost or a standard local network IP
-	 const showDev = hostname === 'localhost' || 
-	               hostname === '127.0.0.1' || 
-	               hostname.startsWith('10.') || 
-	               hostname.startsWith('192.168.') ||
-	               hostname.startsWith('172.'); // Covers all standard local IP ranges
+    // Check if it's localhost or a standard local network IP
+    const showDev = hostname === 'localhost' || 
+                  hostname === '127.0.0.1' || 
+                  hostname.startsWith('10.') || 
+                  hostname.startsWith('192.168.') ||
+                  hostname.startsWith('172.'); // Covers all standard local IP ranges
 
     if (isHomepage) {
       // Render ONLY the language dropdown for the homepage
@@ -32,21 +31,31 @@ class SiteNav extends HTMLElement {
         </nav>
       `;
     } else {
-      // Render the full navigation bar for all other pages (syllables, vowels, etc.)
-      this.innerHTML = `
+      // Render the full navigation bar for all other pages with native mobile popover support
+this.innerHTML = `
         <nav class="site-nav">
           <div class="nav-container">
             <a href="index.html" class="nav-brand">${t('siteTitle')}</a>
-            <div class="nav-links">
+            
+            <!-- Native Mobile Hamburger Button -->
+            <button type="button" class="nav-hamburger" popovertarget="navLinksContainer" aria-label="Toggle navigation menu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+
+            <!-- Navigation Links Container (Normal on desktop, popover drawer on mobile) -->
+            <div class="nav-links" id="navLinksContainer">
               <a href="index.html">${t('home')}</a>
               <a href="syllables.html">${t('syllables')}</a>
-			  <a href="vowels.html">${t('vowels')}</a>
+              <a href="vowels.html">${t('vowels')}</a>
               <a href="quiz.html">${t('quizTitle')}</a>
 			
               ${showDev ? `
                 <span class="dev-divider" style="border-left: 1px solid #ccc; margin: 0 4px;"></span>
-                <span class="nav-dev" style="opacity: .5;">
-
+                <span class="nav-dev" style="opacity: .5; display: inline-flex; gap: inherit; align-items: center;">
                     <a href="headletters.html">${t('headLetters')}</a>
                     <a href="grammar.html">${t('grammar')}</a>
                 </span>
@@ -64,6 +73,33 @@ class SiteNav extends HTMLElement {
           </div>
         </nav>
       `;
+  	  // Automatically apply popover capability on mobile viewport execution
+      const linksContainer = this.querySelector('#navLinksContainer');
+      if (linksContainer) {
+        if (window.innerWidth <= 768) {
+          linksContainer.setAttribute('popover', '');
+        }
+
+        linksContainer.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => {
+            if (linksContainer.hasAttribute('popover') && linksContainer.matches(':popover-open')) {
+              linksContainer.hidePopover();
+            }
+          });
+        });
+      }
+    }
+
+    // Auto-close native popover when a link inside it is tapped on mobile
+    const linksContainer = this.querySelector('#navLinksContainer');
+    if (linksContainer) {
+      linksContainer.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          if (linksContainer.matches(':popover-open')) {
+            linksContainer.hidePopover();
+          }
+        });
+      });
     }
 
     // Set the dropdown to match the active language helper function getLang()
@@ -81,7 +117,6 @@ class SiteNav extends HTMLElement {
         window.location.reload();
       });
     });
-	
   }
 }
 

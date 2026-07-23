@@ -1,0 +1,181 @@
+/* Navigation container baseline */
+
+/* 3. Universal Navigation Bar (<site-nav>) */
+.site-nav {
+ 
+}
+
+.nav-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+
+.nav-links a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-links a:hover {
+  color: var(--accent-gold);
+}
+.nav-links .nav-dev{
+    display: flex;
+    gap: 1.2rem;
+}
+.lang-switcher select{
+	background: transparent; 
+	border: 1px solid currentColor; 
+	color: #FFF; 
+	padding: 4px 8px; 
+	border-radius: 6px; 
+	cursor: pointer; 
+	font-size: 0.85rem;
+}
+
+.site-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: left;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  position: relative;
+  background-color: var(--accent-maroon);
+  padding: 0.8rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(44, 26, 4, 0.15);
+}
+
+.nav-brand {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* Desktop Links ************************************************/
+.nav-links {
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+}
+
+/* Hamburger button (hidden on desktop) */
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.nav-hamburger svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--text-color, #333);
+}
+
+/* Mobile Responsiveness using the Native Popover API */
+@media (max-width: 768px) {
+  .nav-hamburger {
+    display: block;
+  }
+
+  /* The native popover container */
+  .nav-links {
+    display: none; /* hidden by default */
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 75vw;
+    max-width: 300px;
+    height: 100dvh;
+    flex-direction: column;
+    background-color: var(--accent-maroon);
+    box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+    padding: 4rem 2rem 2rem 2rem;
+    gap: 1.5rem;
+    align-items: flex-start;
+    z-index: 1000;
+    border: none;
+    border-left: 1px solid var(--border-color, #e0e0e0);
+  }
+
+  /* Native pseudo-class triggered automatically by the browser when open */
+  .nav-links:popover-open {
+    display: flex;
+  }
+  .nav-links a{
+	  font-size: 1.2rem;
+  }
+}
+
+/* Hide hamburger button by default on desktop */
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  text-align: right;
+}
+
+.nav-hamburger svg {
+  width: 26px;
+  height: 26px;
+  stroke: #fff;
+}
+
+/* Mobile Layout Adaptation */
+@media (max-width: 768px) {
+  .nav-hamburger {
+    display: block;
+  }
+
+  /* Hidden by default on mobile until opened */
+  .nav-links {
+    display: none; 
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 75vw;
+    max-width: 280px;
+    height: 100dvh;
+    flex-direction: column;
+
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+    padding: 4.5rem 2rem 2rem 2rem;
+    gap: 1.2rem;
+    align-items: flex-start;
+    z-index: 1000;
+    border: none;
+    border-left: 1px solid var(--border-color, #e0e0e0);
+    margin: 0;
+  }
+
+  /* Triggered by the Native Popover API */
+  .nav-links:popover-open {
+    display: flex;
+  }
+
+  .nav-dev {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .dev-divider {
+    display: none;
+  }
+
+  .nav-links .lang-switcher {
+    margin-left: 0 !important;
+    margin-top: 0.5rem;
+  }
+}
