@@ -23,10 +23,10 @@
         <div>
           <div class="module-title">
             <span id="card1Title">Root Syllables</span>
-            <span class="badge badge-available" id="badge1">Ready</span>
+            <!-- <span class="badge badge-available" id="badge1"></span> -->
           </div>
           <p class="module-description">
-            གསལ་བྱེད་སུམ་ཅུ། - <span id="card1Desc">Interactive syllable grid for practicing your pronunciation</span>
+            གསལ་བྱེད་སུམ་ཅུ། - <span id="card1Desc"></span>
           </p>
         </div>
       </a>
@@ -39,7 +39,7 @@
             <span class="badge badge-coming-soon" id="badge2">In Review</span>
           </div>
           <p class="module-description">
-            དབྱངས་བཞི། - <span id="card2Desc">Missing audio for two vowel + syllable combos - needs Gen la's approval</span>
+            དབྱངས་བཞི། - <span id="card2Desc"></span>
           </p>
         </div>
       </a>
@@ -52,7 +52,20 @@
             <span class="badge badge-coming-soon" id="badge3">Coming Soon</span>
           </div>
           <p class="module-description">
-            མགོ་ཅན། - <span id="card3Desc">Add and remove head letters, see which syllables they attach to, and which have a sound change.</span>
+            མགོ་ཅན། - <span id="card3Desc"></span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Quiz Module -->
+      <a href="quiz.html" class="module-card">
+        <div>
+          <div class="module-title">
+            <span id="card4Title">Quiz</span>
+            <span class="badge badge-available" id="badge4">New!</span>
+          </div>
+          <p class="module-description">
+            <span id="card4Desc">Audio based quiz. Listen to the sound and pick the right answer.</span>
           </p>
         </div>
       </a>
@@ -69,7 +82,6 @@
     document.getElementById('homeSubtitleText').innerHTML = t('homeSubtitle');
     
     document.getElementById('card1Title').textContent = t('rootSyllables');
-    document.getElementById('badge1').textContent = t('badgeReady');
     document.getElementById('card1Desc').textContent = t('rootSyllablesDesc');
 
     document.getElementById('card2Title').textContent = t('vowelsTitle');
@@ -79,6 +91,10 @@
     document.getElementById('card3Title').textContent = t('headLettersTitle');
     document.getElementById('badge3').textContent = t('badgeComingSoon');
     document.getElementById('card3Desc').textContent = t('headLettersDesc');
+
+    document.getElementById('card4Title').textContent = t('quizTitle');
+    document.getElementById('badge4').textContent = t('badgeNew');
+    document.getElementById('card4Desc').textContent = t('quizDesc');
   </script>
 
 </body>

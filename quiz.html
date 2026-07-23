@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="bo">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tibetan Study Companion - Quiz</title>
+  <title id="pageTitle">Tibetan Study Companion - Quiz</title>
   <link rel="stylesheet" href="css/all.css">
   <script type="module" src="js/shared-layout.js"></script>
 
@@ -110,13 +110,13 @@
 
   <div class="container">
     <header>
-      <h1>Practice Quiz</h1>
-      <p class="subtitle">Listen to the audio and choose the correct syllable or combination.</p>
+      <h1 id="quizHeaderTitle">Practice Quiz</h1>
+      <p class="subtitle" id="quizHeaderSubtitle">Listen to the audio and choose the correct syllable or combination.</p>
     </header>
 
     <main>
       <div class="quiz-card">
-        <h3>Listen & Select</h3>
+        <h3 id="quizCardHeading">Listen & Select</h3>
         
         <!-- Big Play Audio Button -->
         <button type="button" class="audio-quiz-btn" id="playPromptBtn" aria-label="Play audio prompt">
@@ -126,8 +126,8 @@
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
           </svg>
         </button>
-<div id="playback-speed-indicator" style="font-size: 0.85rem; color: #666; margin-top: 6px;"></div>
-        <!-- Multiple Choice Grid (4 options) -->
+        <div id="playback-speed-indicator" style="font-size: 0.85rem; color: #666; margin-top: 6px;" data-speed-label="Playback Speed: "></div>
+        <!-- Multiple Choice Grid (6 options) -->
         <div class="options-grid" id="optionsGrid"></div>
 
         <!-- Feedback & Action Buttons -->
@@ -143,9 +143,18 @@
     <site-footer></site-footer>
   </div>
 
-<script type="module">
+  <script type="module">
+     import { t } from './js/i18n.js';
      import { tibetanAlphabet } from './js/syllables_data.js';
      import { getAllVowelCombinations } from './js/vowels_data.js';
+
+     // Apply translations to layout texts
+     document.getElementById('pageTitle').textContent = t('quizPageTitle') || "Tibetan Study Companion - Quiz";
+     document.getElementById('quizHeaderTitle').textContent = t('quizHeaderTitle') || "Practice Quiz";
+     document.getElementById('quizHeaderSubtitle').textContent = t('quizHeaderSubtitle') || "Listen to the audio and choose the correct syllable or combination.";
+     document.getElementById('quizCardHeading').textContent = t('quizCardHeading') || "Listen & Select";
+     document.getElementById('skipQuestionBtn').textContent = t('quizSkipBtn') || "Skip";
+     document.getElementById('nextQuestionBtn').textContent = t('quizNextBtn') || "Next Question";
 
      // Combine root syllables and all vowel combinations into one rich item pool
      const rootItems = tibetanAlphabet.map(item => ({
@@ -169,7 +178,7 @@
      const nextQuestionBtn = document.getElementById('nextQuestionBtn');
      const skipQuestionBtn = document.getElementById('skipQuestionBtn');
 
-	 function loadNewQuestion() {
+     function loadNewQuestion() {
 	        quizFeedback.textContent = '';
 	        nextQuestionBtn.style.display = 'none';
 	        optionsGrid.innerHTML = '';
@@ -302,7 +311,8 @@
 
 	        const speedIndicator = document.getElementById('playback-speed-indicator');
 	        if (speedIndicator) {
-	          speedIndicator.textContent = `Playback Speed: ${randomSpeed}x`;
+	          const speedLabelText = speedIndicator.getAttribute('data-speed-label') || "Playback Speed: ";
+	          speedIndicator.textContent = `${speedLabelText}${randomSpeed}x`;
 	        }
 
 	        currentAudioObj.play().catch(err => console.log("Autoplay prevented:", err));
@@ -317,12 +327,12 @@
 	          btn.addEventListener('click', () => handleAnswerSelection(opt, btn, currentQuestion));
 	          optionsGrid.appendChild(btn);
 	        });
-	 }
+     }
 
      function handleAnswerSelection(selectedOpt, clickedBtn, correctOpt) {
        if (selectedOpt.id === correctOpt.id) {
          clickedBtn.classList.add('correct');
-         quizFeedback.textContent = "Correct! Great job.";
+         quizFeedback.textContent = t('quizCorrectMsg') || "Correct! Great job.";
          quizFeedback.style.color = "#28a745";
         
          document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
@@ -330,7 +340,7 @@
        } else {
          clickedBtn.classList.add('incorrect');
          clickedBtn.disabled = true;
-         quizFeedback.textContent = "Not quite, try again!";
+         quizFeedback.textContent = t('quizIncorrectMsg') || "Not quite, try again!";
          quizFeedback.style.color = "#dc3545";
        }
      }
@@ -343,16 +353,11 @@
      });
 
      nextQuestionBtn.addEventListener('click', loadNewQuestion);
-     
-     // Hook up the skip button once globally outside the render loop
      skipQuestionBtn.addEventListener('click', loadNewQuestion);
 
      // Initialize first quiz question
-     loadNewGroup: loadNewQuestion();
+     loadNewQuestion();
    </script>
- 
- 
- 
- 
+
 </body>
 </html>
