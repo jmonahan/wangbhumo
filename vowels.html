@@ -29,10 +29,6 @@
       pointer-events: none;
     }
 
-    /* Style the label as a standalone toggle button */
-
-    
-
     .vowel-option:last-child {
       margin-right: 0;
     }
@@ -134,7 +130,7 @@
   <script type="module">
     import { createSyllableCard } from './js/shared-layout.js';
     import { t } from './js/i18n.js';
-    import { tibetanAlphabet } from './js/syllables_data.js';
+    import { getAllVowelCombinations, vowelAudio } from './js/vowels_data.js';
 
     // Apply translations on load
     document.getElementById('subtitleText').textContent = t('vowels');
@@ -156,23 +152,7 @@
       });
     }
 
-    // Dictionary of Tibetan Unicode Combining Vowel Characters
-    const vowelMarks = {
-      none: "",
-      i: "\u0F72", // ི Gigu
-      u: "\u0F74", // ུ Zhabkyu
-      e: "\u0F7A", // ེ Dengbu
-      o: "\u0F7C"  // ོ Naro
-    };
-
-    // Dedicated standalone audio for the 4 vowel names
-    const vowelAudio = {
-      i: new Audio("audio/vowels/kigu.mp3"),
-      u: new Audio("audio/vowels/shabkyoo.mp3"),
-      e: new Audio("audio/vowels/dengpo.mp3"),
-      o: new Audio("audio/vowels/naro.mp3")
-    };
-
+    // Set initial playback rates for dedicated vowel standalone audio
     Object.values(vowelAudio).forEach(audio => {
       audio.playbackRate = playbackRate;
     });
@@ -183,6 +163,9 @@
     let activeVowel = "none";
     let currentAudio = null;
     let currentCard = null;
+
+    // Fetch all dynamically generated combinations from our new data file
+    const allCombinations = getAllVowelCombinations();
 
     // Listen for global playback rate changes from site-controls bar
     window.addEventListener('playbackRateChanged', (e) => {
@@ -202,77 +185,24 @@
         if (currentCard) currentCard.classList.remove('playing');
       }
     }
-	
-// Helper function to transform base romanization, applying a glide for 'aa' roots
-    function getVowelRomanization(baseEng, vowel) {
-      if (vowel === "none") return baseEng;
-      
-      // Special case for the letter འ (stored as "aa" in baseEng)
-      if (baseEng === "aa") {
-        const specialVowelMap = { i: "ai", u: "au", e: "ae", o: "ao" };
-        return specialVowelMap[vowel] || baseEng;
-      }
 
-      // Check if it's a double 'aa' root (elongated/voiced series)
-      const isDoubleRoot = baseEng.endsWith('aa');
-
-      // Strip trailing 'aa' or 'a' from the base root
-      let root = baseEng;
-      if (isDoubleRoot) {
-        root = root.slice(0, -2);
-      } else if (root.endsWith('a')) {
-        root = root.slice(0, -1);
-      }
-      
-      // Standard vowels vs. elongated 'aa' vowel mappings
-      let vowelSuffixes;
-      if (isDoubleRoot) {
-        // Adds a glide/elongation for the double-root series (e.g., kyi, kyu, kye, kyo)
-        vowelSuffixes = {
-          i: "ī",
-          u: "ū",
-          e: "é",
-          o: "ō"
-        };
-      } else {
-        // Standard single vowels for regular roots (e.g., ki, ku, ke, ko)
-        vowelSuffixes = {
-          i: "i",
-          u: "u",
-          e: "e",
-          o: "o"
-        };
-      }
-
-      return root + (vowelSuffixes[vowel] || "");
-    }
-
-    // Function to render / update the grid cards using the shared component
-// Function to render / update the grid cards using the shared component
+    // Function to render / update the grid cards based on the selected vowel filter
     function renderGrid() {
       grid.innerHTML = ''; // Clear current grid
 
-      tibetanAlphabet.forEach(item => {
-        const displayTibetan = item.tib + vowelMarks[activeVowel];
-        const updatedRomanization = getVowelRomanization(item.eng, activeVowel);
-        
-        // Use the shared component factory function with dynamically updated phonetics
+      // Filter combinations matching the active vowel state
+      const filteredItems = allCombinations.filter(item => item.vowel === activeVowel);
+
+      filteredItems.forEach(item => {
+        // Use the shared component factory function
         const card = createSyllableCard({
           id: item.id,
-          script: displayTibetan,
-          romanization: updatedRomanization,
+          script: item.tib,
+          romanization: item.eng,
           tone: t(item.toneKey)
         });
 
-        // Determine audio path based on active vowel
-        let audioPath = "";
-        if (activeVowel === "none") {
-          audioPath = `audio/syllables/${item.id}.mp3`;
-        } else {
-          audioPath = `audio/vowels/${item.id}_${activeVowel}.mp3`;
-        }
-
-        const audioObj = new Audio(audioPath);
+        const audioObj = new Audio(item.audioPath);
         audioObj.preload = 'auto';
         audioObj.playbackRate = playbackRate;
 
@@ -282,7 +212,7 @@
 
           card.classList.add('playing');
           audioObj.play().catch(error => {
-            console.error("Audio playback interrupted or file missing:", audioPath);
+            console.error("Audio playback interrupted or file missing:", item.audioPath);
           });
 
           currentAudio = audioObj;
