@@ -472,6 +472,11 @@ body.hide-tones .syllable-card .shift-tip {
 }
 
 /* XX. Modal HMLT Native Modal component */
+/* Style the native dialog backdrop with a blur effect */
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+}
 #successModal {
 	border: none;
 	border-radius: 16px;

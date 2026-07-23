@@ -184,6 +184,7 @@ export function createSyllableCard({
 }
 
 // Universal Controls Bar Component with 2-Row Layout & Global Speed Management
+// Universal Controls Bar Component with 2-Row Layout & Global Speed Management
 class SiteControls extends HTMLElement {
   connectedCallback() {
     const slottedContent = this.innerHTML.trim();
@@ -212,39 +213,69 @@ class SiteControls extends HTMLElement {
                 <rect x="14" y="14" width="7" height="7"></rect>
                 <rect x="3" y="14" width="7" height="7"></rect>
               </svg>
-              <span>Study Options</span>
+              <span>${t('studyOptionsTitle')}</span>
             </button>
 
           </div>
         </div>
 
-        <!-- Native Dialog Settings Popup -->
-        <dialog id="controlsSettingsDialog" style="border: none; border-radius: 12px; padding: 20px 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); background: var(--card-bg, #ffffff); color: var(--text-color, #333); max-width: 320px; width: 90%;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color, #eee); padding-bottom: 10px;">
-            <h3 style="margin: 0; font-size: 1.1rem;">Study Options</h3>
-            <button type="button" id="closeSettingsModal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit;">&times;</button>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 15px;">
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <label style="font-weight: bold; font-size: 0.9rem;">Hints:</label>
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                <input type="checkbox" id="globalToggleEng"> Phonetics
-              </label>
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                <input type="checkbox" id="globalToggleTips"> Tones
-              </label>
+	  <!-- Native Dialog Settings Popup -->
+	  <dialog id="controlsSettingsDialog" style="position: fixed; inset: 0; margin: auto; border: none; border-radius: 12px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); background: var(--card-bg, #ffffff); color: var(--text-color, #333); max-width: 320px; width: 90%;">
+	    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color, #eee); padding-bottom: 10px;">
+	      <h3 style="margin: 0; font-size: 1.1rem;">${t('studyOptionsTitle')}</h3>
+	      <button type="button" id="closeSettingsModal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit;">&times;</button>
+	    </div>
+	    <div style="display: flex; flex-direction: column; gap: 15px;">
+	      <div style="display: flex; flex-direction: column; gap: 8px;">
+	        <label style="font-weight: bold; font-size: 0.9rem;">${t('showHintLabel')}</label>
+	        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+	          <input type="checkbox" id="globalToggleEng"> ${t('phonetics')}
+	        </label>
+	        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+	          <input type="checkbox" id="globalToggleTips"> ${t('tones')}
+	        </label>
+	      </div>
+	      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color, #eee); padding-top: 12px;">
+	        <label for="globalSpeedSelect" style="font-weight: bold; font-size: 0.9rem;">${t('audioSpeedLabel')}</label>
+	        <select id="globalSpeedSelect" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color, #ccc); background: var(--bg-color, #fff); color: inherit;">
+	          <option value="1.0" selected>1.0x</option>
+	          <option value="1.25">1.25x</option>
+	          <option value="1.5">1.5x</option>
+	          <option value="1.9">2x</option>
+	        </select>
+	      </div>
+	    </div>
+	  </dialog>
+      `;
+    } else {
+      // SCENARIO B: Config-only page (like syllables.html) -> Render the full inline bar with i18n support
+      this.innerHTML = `
+        <div class="controls-container">
+          <div class="sticky-toggle-bar" style="display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; border: 1px solid var(--border-color, #e0e0e0); border-radius: 12px; background: var(--card-bg, #ffffff); padding: 12px 20px;">
+            <div class="global-controls-row" style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 15px;">
+              <span class="global-toggles" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                  <input type="checkbox" id="globalToggleEng"> ${t('phonetics')}
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                  <input type="checkbox" id="globalToggleTips"> ${t('tones')}
+                </label>
+              </span>
+              <span class="global-speed" style="display: flex; align-items: center; gap: 8px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <select id="globalSpeedSelect" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color, #ccc); background: var(--bg-color, #fff); color: inherit;">
+                  <option value="1.0" selected>1.0x</option>
+                  <option value="1.25">1.25x</option>
+                  <option value="1.5">1.5x</option>
+                  <option value="1.9">2x</option>
+                </select>
+              </span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color, #eee); padding-top: 12px;">
-              <label for="globalSpeedSelect" style="font-weight: bold; font-size: 0.9rem;">Speed:</label>
-              <select id="globalSpeedSelect" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color, #ccc); background: var(--bg-color, #fff); color: inherit;">
-                <option value="1.0" selected>1.0x</option>
-                <option value="1.25">1.25x</option>
-                <option value="1.5">1.5x</option>
-                <option value="1.9">2x</option>
-              </select>
-            </div>
           </div>
-        </dialog>
+        </div>
       `;
     }
 

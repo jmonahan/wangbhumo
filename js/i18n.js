@@ -60,7 +60,10 @@ export const translations = {
 	quizToneTipHigh: "a high, crisp tone.",
 	quizToneTipAspirated: "a high tone with a strong puff of air.",
 	quizToneTipLow: "a lower, deeper tone.",
-	quizToneTipNasal: "a lower tone with a nasal sound."
+	quizToneTipNasal: "a lower tone with a nasal sound.",
+	studyOptionsTitle: "Study Options",
+    showHintLabel: "Show Hint:",
+    audioSpeedLabel: "Audio Speed:",
   },
   fr: {
     siteTitle: "Compagnon d'étude tibétaine",
@@ -121,7 +124,10 @@ export const translations = {
 	quizToneTipHigh: "un ton haut et clair.",
 	quizToneTipAspirated: "un ton haut avec un fort souffle d'air.",
 	quizToneTipLow: "un ton plus bas et profond.",
-	quizToneTipNasal: "un ton plus bas avec un son nasal."
+	quizToneTipNasal: "un ton plus bas avec un son nasal.",
+	studyOptionsTitle: "Options d'étude",
+    showHintLabel: "Afficher l'indice :",
+    audioSpeedLabel: "Vitesse audio :",
   }
 };
 
