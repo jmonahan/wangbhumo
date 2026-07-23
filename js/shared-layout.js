@@ -212,6 +212,28 @@ class SiteControls extends HTMLElement {
   }
 }
 
+// Automatically catch ?lang= parameters on load, apply them, and clear the URL
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const langParam = urlParams.get('lang');
+
+  if (langParam && (langParam === 'en' || langParam === 'fr')) {
+    const currentStoredLang = localStorage.getItem('siteLang');
+    
+    // If the requested language differs from storage, update storage and reload
+    if (langParam !== currentStoredLang) {
+      localStorage.setItem('siteLang', langParam);
+      window.location.reload();
+    } else {
+      // If it's already set correctly, strip the query param from the URL 
+      // so manual dropdown changes won't conflict with it on subsequent reloads
+      urlParams.delete('lang');
+      const newQuery = urlParams.toString();
+      const newPath = window.location.pathname + (newQuery ? '?' + newQuery : '') + window.location.hash;
+      window.history.replaceState({}, '', newPath);
+    }
+  }
+});
 
 
 
