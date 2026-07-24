@@ -28,7 +28,16 @@
   filter: grayscale(100%);
   pointer-events: none; /* Prevents audio playback on click */
 }
-
+.disabled .tibetan-script{
+	font-size: 1.8rem !important;
+	margin-bottom: 0px;
+}
+.disabled .card-body{
+	padding: 0;
+}
+.disabled .card-footer {
+	display: none;
+}
 
 /* Card Footer Container */
 /* Footer Container - Centered */
@@ -115,3 +124,4 @@
 .syllable-card.sound-shift .shift-icon {
   display: block;
 }
+
