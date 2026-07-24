@@ -18,7 +18,7 @@
     </header>
 
     <main class="module-grid">
-      <!-- Syllables Module -->
+
       <a href="syllables.html" class="module-card">
         <div>
           <div class="module-title">
@@ -31,12 +31,10 @@
         </div>
       </a>
 
-      <!-- Vowels Module Placeholder -->
       <a href="vowels.html" class="module-card">
         <div>
           <div class="module-title">
             <span id="card2Title">Vowels</span>
-            <span class="badge badge-coming-soon" id="badge2">New!</span>
           </div>
           <p class="module-description">
             དབྱངས་བཞི། - <span id="card2Desc"></span>
@@ -44,15 +42,27 @@
         </div>
       </a>
 	  
-      <!-- Head Letters Module Placeholder -->
-      <a href="#" class="module-card disabled-card">
+      <a href="headletters.html" class="module-card">
         <div>
           <div class="module-title">
             <span id="card3Title">Head Letters</span>
-            <span class="badge badge-coming-soon" id="badge3">Coming Soon</span>
+            <span class="badge badge-available" id="badge3">New!</span>
           </div>
           <p class="module-description">
-            མགོ་ཅན། - <span id="card3Desc"></span>
+            མགོ་ཅན། - <span id="headLettersDesc"></span>
+          </p>
+        </div>
+      </a>
+	  
+      <!-- Attached Letters Module Placeholder -->
+      <a href="#" class="module-card disabled-card">
+        <div>
+          <div class="module-title">
+            <span id="attachedCardTitle"></span>
+            <span class="badge badge-coming-soon" id="attachedBadge">Coming Soon</span>
+          </div>
+          <p class="module-description">
+            འདོགས་ཅན། - <span id="attachedLettersDesc"></span>
           </p>
         </div>
       </a>
@@ -85,12 +95,17 @@
     document.getElementById('card1Desc').textContent = t('rootSyllablesDesc');
 
     document.getElementById('card2Title').textContent = t('vowelsTitle');
-    document.getElementById('badge2').textContent = t('badgeNew');
+    // document.getElementById('badge2').textContent = t('badgeNew');
     document.getElementById('card2Desc').textContent = t('vowelsDesc');
 
     document.getElementById('card3Title').textContent = t('headLettersTitle');
-    document.getElementById('badge3').textContent = t('badgeComingSoon');
-    document.getElementById('card3Desc').textContent = t('headLettersDesc');
+    document.getElementById('badge3').textContent = t('badgeNew');
+    document.getElementById('headLettersDesc').textContent = t('headLettersDesc');
+
+    document.getElementById('attachedCardTitle').textContent = t('attachedLettersTitle');
+    document.getElementById('attachedBadge').textContent = t('badgeComingSoon');
+    document.getElementById('attachedLettersDesc').textContent = t('attachedLettersDesc');	
+	
 
     document.getElementById('card4Title').textContent = t('quizTitle');
     document.getElementById('badge4').textContent = t('badgeNew');
