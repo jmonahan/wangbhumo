@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="bo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tibetan Attached Letters Study Guide</title>
+  <link rel="stylesheet" href="css/all.css">
+  <script type="module" src="js/shared-layout.js"></script>
+  <style>
+    /* Specific styles for Attached Letter Radio Controls */
+    .attachedletter-toggle-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Hide the actual radio button visually while keeping it functional */
+    .attachedletter-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    /* Style the label as a standalone toggle button */
+    .attachedletter-option {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 6px;
+      padding: 10px 16px;
+      background-color: #ffffff;
+      border: 1px solid var(--gray-light, #e0e0e0);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--text-dark, #2c3e50);
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .attachedletter-option:last-child {
+      margin-right: 0;
+    }
+
+    .attachedletter-symbol {
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    /* Hover state for unselected pills */
+    .attachedletter-option:hover {
+      border-color: var(--accent-maroon, #800000);
+      background-color: rgba(128, 0, 0, 0.03);
+    }
+
+    /* ACTIVE/CHECKED STATE */
+    .attachedletter-option:has(input[type="radio"]:checked),
+    .attachedletter-option input[type="radio"]:checked {
+      background-color: var(--accent-maroon, #800000);
+      color: #ffffff;
+      border-color: var(--accent-maroon, #800000);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Shared Universal Navigation -->
+  <site-nav></site-nav>
+
+  <div class="container">
+    <!-- Section 1: Header -->
+    <header>
+      <h1 class="title-with-audio">
+        <!-- Truly centered text -->
+        <span class="title-text">འོག་འཇུག</span>
+      </h1>
+      <p class="subtitle" id="subtitleText"></p>
+    </header>
+
+    <!-- Section 2: Unified Sticky Two-Row Controls Component -->
+    <site-controls>
+      <div class="attachedletter-toggle-group" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+        
+        <!-- Base / Default Option -->
+        <label class="attachedletter-option">
+          <input type="radio" name="attachedLetterSelect" value="none" checked>
+          <span id="labelNone"></span>
+        </label>
+
+        <!-- 1. Ya-ta (ྱ) -->
+        <label class="attachedletter-option">
+          <input type="radio" name="attachedLetterSelect" value="ya">
+          <span class="attachedletter-symbol">ྱ</span>
+        </label>
+
+        <!-- 2. Ra-ta (ྲ) -->
+        <label class="attachedletter-option">
+          <input type="radio" name="attachedLetterSelect" value="ra">
+          <span class="attachedletter-symbol">ྲ</span>
+        </label>
+
+        <!-- 3. La-ta (ླ) -->
+        <label class="attachedletter-option">
+          <input type="radio" name="attachedLetterSelect" value="la">
+          <span class="attachedletter-symbol">ླ</span>
+        </label>
+
+        <!-- 4. Wa-zur (ྭ) -->
+        <label class="attachedletter-option">
+          <input type="radio" name="attachedLetterSelect" value="wa">
+          <span class="attachedletter-symbol">ྭ</span>
+        </label>
+
+      </div>
+    </site-controls>
+
+    <!-- Section 3: Syllables Grid -->
+    <main class="grid-container" id="alphabetGrid"></main>
+
+    <!-- Shared Universal Footer -->
+    <site-footer></site-footer>
+  </div>
+
+  <script type="module">
+      import { createSyllableCard } from './js/shared-layout.js';
+      import { t } from './js/i18n.js';
+      import { tibetanAlphabet } from './js/syllables_data.js';
+      import { attachedLettersData } from './js/attachedletters_data.js';
+      import { bindAudioSpeed } from './js/audio-helper.js';
+
+      // Apply translations safely once the DOM / custom elements are fully settled
+      window.addEventListener('DOMContentLoaded', () => {
+        const subtitleElem = document.getElementById('subtitleText');
+        const baseOnlyElem = document.getElementById('labelNone');
+      
+        if (subtitleElem) subtitleElem.textContent = t('attachedLetters') || 'Attached Letters';
+        if (baseOnlyElem) baseOnlyElem.textContent = t('none');
+      });
+
+      // Page Title Audio Clip
+      const titleAudio = bindAudioSpeed(new Audio("audio/attachedletters/attachedletters_title.mp3"));
+      titleAudio.preload = 'auto';
+
+      let currentAudio = null;
+      let currentCard = null;
+
+      function stopAudio() {
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+          if (currentCard) currentCard.classList.remove('playing');
+        }
+      }
+
+      // Dedicated standalone audio for the attached letter names
+      const attachedLetterAudio = {
+        ya: bindAudioSpeed(new Audio("audio/attachedletters/yata.mp3")),
+        ra: bindAudioSpeed(new Audio("audio/attachedletters/rata.mp3")),
+        la: bindAudioSpeed(new Audio("audio/attachedletters/lata.mp3")),
+        wa: bindAudioSpeed(new Audio("audio/attachedletters/wazur.mp3"))
+      };
+
+      const grid = document.getElementById('alphabetGrid');
+      let activeAttachedLetter = "none";
+
+      // Listen for changes from the radio buttons anywhere on the page
+      document.addEventListener('change', (event) => {
+        if (event.target && event.target.name === 'attachedLetterSelect') {
+          activeAttachedLetter = event.target.value;
+
+          // Play standalone attached letter audio if selected and available
+          if (activeAttachedLetter !== 'none' && attachedLetterAudio[activeAttachedLetter]) {
+            stopAudio();
+            attachedLetterAudio[activeAttachedLetter].currentTime = 0;
+            attachedLetterAudio[activeAttachedLetter].play().catch(err => console.log("Attached letter audio error"));
+            currentAudio = attachedLetterAudio[activeAttachedLetter];
+          }
+
+          renderGrid();
+        }
+      });
+
+      function renderGrid() {
+        grid.innerHTML = '';
+
+        tibetanAlphabet.forEach(item => {
+          let displayTibetan = item.tib;
+          let audioPath = `audio/syllables/${item.id}.mp3`;
+          let hasShift = false;
+          let shiftExplanation = null;
+          let isDisabled = false;
+
+          // Default to base item properties
+          let displayRom = item.eng || '';
+          let displayToneKey = item.toneKey || '';
+
+          if (activeAttachedLetter !== "none") {
+            const currentMap = attachedLettersData[activeAttachedLetter];
+            const comboData = currentMap ? currentMap[item.id] : null;
+
+            if (comboData) {
+              displayTibetan = comboData.tib;
+              hasShift = comboData.soundShift === true;
+
+              // Translate the tone key if present, otherwise null
+              shiftExplanation = comboData.toneKey ? t(comboData.toneKey) : null;
+
+              displayRom = (hasShift && comboData.eng) ? comboData.eng : item.eng;
+              displayToneKey = (hasShift && comboData.toneKey) ? comboData.toneKey : item.toneKey;
+
+              if (!hasShift) {
+                audioPath = `audio/syllables/${item.id}.mp3`;
+              } else {
+                audioPath = comboData.audioPath || `audio/attachedletters/${item.id}_${activeAttachedLetter}.mp3`;
+              }
+            } else {
+              isDisabled = true;
+            }
+          }
+
+          const card = createSyllableCard({
+              id: item.id,
+              script: displayTibetan,
+              romanization: displayRom,
+              tone: hasShift ? shiftExplanation : (displayToneKey ? t(displayToneKey) : ''),
+              hasSoundShift: hasShift,
+              shiftExplanation: shiftExplanation,
+              isDisabled: isDisabled
+          });
+
+          if (!isDisabled) {
+            const audioObj = bindAudioSpeed(new Audio(audioPath));
+            audioObj.preload = 'auto';
+
+            card.addEventListener('click', () => {
+              stopAudio();
+              card.classList.add('playing');
+              audioObj.play().catch(error => console.error("Audio error:", audioPath));
+              currentAudio = audioObj;
+              currentCard = card;
+              audioObj.onended = () => card.classList.remove('playing');
+            });
+          }
+
+          grid.appendChild(card);
+        });
+      }
+
+      renderGrid();
+  </script>
+</body>
+</html>

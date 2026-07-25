@@ -57,7 +57,7 @@ this.innerHTML = `
               ${showDev ? `
                 <span class="dev-divider" style="border-left: 1px solid #ccc; margin: 0 4px;"></span>
                 <span class="nav-dev" style="opacity: .5; display: inline-flex; gap: inherit; align-items: center;">
-
+				    <a href="attachedletters.html">Attached Letters</a>
                     <a href="grammar.html">${t('grammar')}</a>
                 </span>
               ` : ''}
