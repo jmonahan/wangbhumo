@@ -62,10 +62,12 @@ export const translations = {
 	quizToneTipAspirated: "a high tone with a strong puff of air.",
 	quizToneTipLow: "a lower, deeper tone.",
 	quizToneTipNasal: "a lower tone with a nasal sound.",
+    lataJokeMessage: "All the options were right! Most ལ attached letters sound like 'la'",
 	studyOptionsTitle: "Study Options",
     showHintLabel: "Show Hint:",
     audioSpeedLabel: "Audio Speed:",
 	syllableSoundChanges: "Has sound change",
+	prefixesTitle: "Prefixes",
   },
   fr: {
     siteTitle: "Compagnon d'étude tibétaine",
@@ -128,10 +130,12 @@ export const translations = {
 	quizToneTipAspirated: "un ton haut avec un fort souffle d'air.",
 	quizToneTipLow: "un ton plus bas et profond.",
 	quizToneTipNasal: "un ton plus bas avec un son nasal.",
+	lataJokeMessage: "Toutes les options étaient correctes ! La plupart des lettres souscrites en ལ se prononcent 'la'",
 	studyOptionsTitle: "Options d'étude",
     showHintLabel: "Afficher l'indice :",
     audioSpeedLabel: "Vitesse audio :",
     syllableSoundChanges: "Changement de son",
+	prefixesTitle: "Préfixes",
   }
 };
 

@@ -25,6 +25,7 @@ import { tibetanAlphabet } from './syllables_data.js';
 import { getAllVowelCombinations } from './vowels_data.js';
 import { headLettersData } from './headletters_data.js';
 import { attachedLettersData } from './attachedletters_data.js';
+import { t } from './i18n.js'; 
 
 /**
  * Registry of available quiz categories. 
@@ -206,108 +207,108 @@ export const quizCategories = {
         }
     },
 
-  attachedLetters: {
-        id: 'attachedLetters',
-        name: 'Attached Letters (Dok-chen)',
-        gridSize: 4, // 4 options grid layout (2x2 format)
-        getPool: () => {
-          const pool = [];
-          for (const [subKey, combinations] of Object.entries(attachedLettersData)) {
-            for (const [baseKey, item] of Object.entries(combinations)) {
-              // Determine if this specific item triggers joke mode (Only La-ta except ཟླ)
-              let isJoke = false;
-              if (subKey === 'la' && baseKey !== '22_saa') {
-                isJoke = true;
-              }
+	attachedLetters: {
+	        id: 'attachedLetters',
+	        name: 'Attached Letters (Dok-chen)',
+	        gridSize: 4, // 4 options grid layout (2x2 format)
+	        getPool: () => {
+	          const pool = [];
+	          for (const [subKey, combinations] of Object.entries(attachedLettersData)) {
+	            for (const [baseKey, item] of Object.entries(combinations)) {
+	              // Determine if this specific item triggers joke mode (Only La-ta except ཟླ)
+	              let isJoke = false;
+	              if (subKey === 'la' && baseKey !== '22_saa') {
+	                isJoke = true;
+	              }
 
-              pool.push({
-                id: item.id || `${subKey}_${baseKey}`,
-                baseId: baseKey,
-                subjoined: subKey,
-                tib: item.tib,
-                eng: item.eng,
-                audioPath: item.audioPath,
-                isJoke: isJoke,
-                jokeMessage: "All the options were right! Most ལ attached letters sound like 'la'"
-              });
-            }
-          }
-          return pool;
-        },
-        generateOptions: (currentQuestion, masterPool) => {
-          const options = [currentQuestion];
-          const maxChoices = 4;
+	              pool.push({
+	                id: item.id || `${subKey}_${baseKey}`,
+	                baseId: baseKey,
+	                subjoined: subKey,
+	                tib: item.tib,
+	                eng: item.eng,
+	                audioPath: item.audioPath,
+	                isJoke: isJoke,
+	                jokeMessage: isJoke ? (t('lataJokeMessage') || "All the options were right! Most ལ attached letters sound like 'la'") : null
+	              });
+	            }
+	          }
+	          return pool;
+	        },
+	        generateOptions: (currentQuestion, masterPool) => {
+	          const options = [currentQuestion];
+	          const maxChoices = 4;
 
-          // Rule 1: Universal La-ta (la) Joke Rounds
-          if (currentQuestion.isJoke) {
-            // Exclude 'ཟླ' (baseId === '22_saa') as a distractor when the correct answer is a standard 'la' sound
-            const sameSubPool = masterPool.filter(item => 
-              item.id !== currentQuestion.id && 
-              item.subjoined === currentQuestion.subjoined && 
-              item.baseId !== '22_saa'
-            );
-            sameSubPool.sort(() => Math.random() - 0.5);
+	          // Rule 1: Universal La-ta (la) Joke Rounds
+	          if (currentQuestion.isJoke) {
+	            // Exclude 'ཟླ' (baseId === '22_saa') as a distractor when the correct answer is a standard 'la' sound
+	            const sameSubPool = masterPool.filter(item => 
+	              item.id !== currentQuestion.id && 
+	              item.subjoined === currentQuestion.subjoined && 
+	              item.baseId !== '22_saa'
+	            );
+	            sameSubPool.sort(() => Math.random() - 0.5);
 
-            for (const distractor of sameSubPool) {
-              if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
-                options.push(distractor);
-              }
-            }
-          }
-          // Rule 2: Ra-ta (ra) Homophonic Column Guardrails
-          else if (currentQuestion.subjoined === 'ra') {
-            // Define the groups of stops that sound identical under Ra-ta
-            const group1 = ["01_ka", "09_ta", "13_pa"]; // sounds like 'ta' / 'ka' depending on style
-            const group2 = ["02_kha", "10_tha", "14_pha"]; // aspirated stops
-            const group3 = ["03_kaa", "11_taa", "15_paa"]; // low-tone stops
+	            for (const distractor of sameSubPool) {
+	              if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
+	                options.push(distractor);
+	              }
+	            }
+	          }
+	          // Rule 2: Ra-ta (ra) Homophonic Column Guardrails
+	          else if (currentQuestion.subjoined === 'ra') {
+	            // Define the groups of stops that sound identical under Ra-ta
+	            const group1 = ["01_ka", "09_ta", "13_pa"]; // sounds like 'ta' / 'ka' depending on style
+	            const group2 = ["02_kha", "10_tha", "14_pha"]; // aspirated stops
+	            const group3 = ["03_kaa", "11_taa", "15_paa"]; // low-tone stops
 
-            let forbiddenBaseKeys = [];
-            if (group1.includes(currentQuestion.baseId)) forbiddenBaseKeys = group1;
-            else if (group2.includes(currentQuestion.baseId)) forbiddenBaseKeys = group2;
-            else if (group3.includes(currentQuestion.baseId)) forbiddenBaseKeys = group3;
+	            let forbiddenBaseKeys = [];
+	            if (group1.includes(currentQuestion.baseId)) forbiddenBaseKeys = group1;
+	            else if (group2.includes(currentQuestion.baseId)) forbiddenBaseKeys = group2;
+	            else if (group3.includes(currentQuestion.baseId)) forbiddenBaseKeys = group3;
 
-            // Pull distractors from the *other* columns or sonorants (avoiding identical homophones)
-            const safeRaPool = masterPool.filter(item => 
-              item.id !== currentQuestion.id && 
-              item.subjoined === 'ra' && 
-              !forbiddenBaseKeys.includes(item.baseId)
-            );
-            safeRaPool.sort(() => Math.random() - 0.5);
+	            // Pull distractors from the *other* columns or sonorants (avoiding identical homophones)
+	            const safeRaPool = masterPool.filter(item => 
+	              item.id !== currentQuestion.id && 
+	              item.subjoined === 'ra' && 
+	              !forbiddenBaseKeys.includes(item.baseId)
+	            );
+	            safeRaPool.sort(() => Math.random() - 0.5);
 
-            for (const distractor of safeRaPool) {
-              if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
-                options.push(distractor);
-              }
-            }
-          }
-          // Rule 3: Standard Wa-zur / Ya-ta / Unique items
-          else {
-            const sameSubPool = masterPool.filter(item => 
-              item.id !== currentQuestion.id && item.subjoined === currentQuestion.subjoined
-            );
-            sameSubPool.sort(() => Math.random() - 0.5);
+	            for (const distractor of safeRaPool) {
+	              if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
+	                options.push(distractor);
+	              }
+	            }
+	          }
+	          // Rule 3: Standard Wa-zur / Ya-ta / Unique items
+	          else {
+	            const sameSubPool = masterPool.filter(item => 
+	              item.id !== currentQuestion.id && item.subjoined === currentQuestion.subjoined
+	            );
+	            sameSubPool.sort(() => Math.random() - 0.5);
 
-            for (const distractor of sameSubPool) {
-              if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
-                options.push(distractor);
-              }
-            }
-          }
+	            for (const distractor of sameSubPool) {
+	              if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
+	                options.push(distractor);
+	              }
+	            }
+	          }
 
-          // General fallback if pool is too small to fill 4 choices
-          const fallbackPool = masterPool.filter(item => item.id !== currentQuestion.id);
-          fallbackPool.sort(() => Math.random() - 0.5);
+	          // General fallback if pool is too small to fill 4 choices
+	          const fallbackPool = masterPool.filter(item => item.id !== currentQuestion.id);
+	          fallbackPool.sort(() => Math.random() - 0.5);
 
-          for (const distractor of fallbackPool) {
-            if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
-              options.push(distractor);
-            }
-          }
+	          for (const distractor of fallbackPool) {
+	            if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
+	              options.push(distractor);
+	            }
+	          }
 
-          options.sort(() => Math.random() - 0.5);
-          return options;
-        }
-    }
+	          options.sort(() => Math.random() - 0.5);
+	          return options;
+	        }
+	    }
 };
 
 /**
