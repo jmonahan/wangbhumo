@@ -1,3 +1,25 @@
+/**
+ * DEBUGGING URL PARAMETER COMBINATIONS:
+ * 
+ * 1. Root Syllables only:
+ *    ?c=s
+ * 
+ * 2. Vowels only:
+ *    ?c=v
+ * 
+ * 3. Head Letters (all):
+ *    ?c=hl
+ * 
+ * 4. Specific Head Letter:
+ *    ?c=hl&s=[head_key]  (s=ra, la, sa)
+ * 
+ * 5. Attached Letters (all):
+ *    ?c=al
+ * 
+ * 6. Specific Attached Letter:
+ *    ?c=al&s=[subjoined_key]  (s=ya, ra, la, wa)
+ */
+
 // js/quiz_engine.js
 import { tibetanAlphabet } from './syllables_data.js';
 import { getAllVowelCombinations } from './vowels_data.js';
