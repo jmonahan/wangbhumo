@@ -26,15 +26,12 @@ export const attachedLettersData = {
     "30_a":   { id: "ra_30_a",  tib: "སྲ", soundShift: false, audioPath: "audio/syllables/30_a.mp3" }
   },
   la: {
-    "01_ka":  { id: "la_01_ka", tib: "ཀླ", soundShift: false, audioPath: "audio/syllables/01_ka.mp3" },
-    "03_kaa": { id: "la_03_kaa", tib: "གླ", soundShift: true, toneKey: "tone_high_tune", eng: "la", audioPath: "audio/attachedletters/03_kaa_la.mp3" },
-    "09_ta":  { id: "la_09_ta", tib: "བླ", soundShift: false, audioPath: "audio/syllables/09_ta.mp3" }, // Note: standard base mapping layout mapping checks
-    "11_taa": { id: "la_11_taa", tib: "ཟླ", soundShift: true, toneKey: "tone_harder_sound", eng: "da-da", audioPath: "audio/attachedletters/11_taa_la.mp3" },
-    "13_pa":  { id: "la_13_pa", tib: "པླ", soundShift: false, audioPath: "audio/syllables/13_pa.mp3" },
-    "15_paa": { id: "la_15_paa", tib: "བླ", soundShift: true, toneKey: "tone_high_tune", eng: "la", audioPath: "audio/attachedletters/15_paa_la.mp3" },
-    "21_zha": { id: "la_21_zha", tib: "ཟླ", soundShift: false, audioPath: "audio/syllables/21_zha.mp3" },
-    "25_ra":  { id: "la_25_ra", tib: "རླ", soundShift: true, toneKey: "tone_high_tune", eng: "la", audioPath: "audio/attachedletters/25_ra_la.mp3" },
-    "28_sha": { id: "la_28_sha", tib: "ཤླ", soundShift: false, audioPath: "audio/syllables/28_sha.mp3" }
+    "01_ka":  { id: "la_01_ka", tib: "ཀླ", soundShift: true, eng: "laa", audioPath: "audio/attachedletters/01_ka_la.mp3" },
+    "03_kaa": { id: "la_03_kaa", tib: "གླ", soundShift: true, eng: "laa", audioPath: "audio/attachedletters/01_ka_la.mp3" },
+    "15_paa": { id: "la_15_paa", tib: "བླ", soundShift: true, eng: "laa", audioPath: "audio/attachedletters/01_ka_la.mp3" },
+    "22_saa": { id: "la_21_saa", tib: "ཟླ", soundShift: true, eng: "daa", audioPath: "audio/attachedletters/22_saa_la.mp3" },
+    "25_raa": { id: "la_25_raa", tib: "རླ", soundShift: true, eng: "laa", audioPath: "audio/attachedletters/01_ka_la.mp3" },
+    "28_sa": { id: "la_28_sa", tib: "སླ", soundShift: true, eng: "laa", audioPath: "audio/attachedletters/01_ka_la.mp3" }
   },
   wa: {
     "01_ka":  { id: "wa_01_ka", tib: "ཀྭ", soundShift: false, audioPath: "audio/syllables/01_ka.mp3" },
