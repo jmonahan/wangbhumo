@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="bo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tibetan Prefixes Study Guide</title>
+  <link rel="stylesheet" href="css/all.css">
+  <script type="module" src="js/shared-layout.js"></script>
+  <style>
+    /* Specific styles for Prefix Radio Controls */
+    .prefix-toggle-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Hide the actual radio button visually while keeping it functional */
+    .prefix-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    /* Style the label as a standalone toggle button */
+    .prefix-option {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 6px;
+      padding: 10px 16px;
+      background-color: #ffffff;
+      border: 1px solid var(--gray-light, #e0e0e0);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--text-dark, #2c3e50);
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .prefix-option:last-child {
+      margin-right: 0;
+    }
+
+    .prefix-symbol {
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    /* Hover state for unselected pills */
+    .prefix-option:hover {
+      border-color: var(--accent-maroon, #800000);
+      background-color: rgba(128, 0, 0, 0.03);
+    }
+
+    /* ACTIVE/CHECKED STATE */
+    .prefix-option:has(input[type="radio"]:checked),
+    .prefix-option input[type="radio"]:checked {
+      background-color: var(--accent-maroon, #800000);
+      color: #ffffff;
+      border-color: var(--accent-maroon, #800000);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Shared Universal Navigation -->
+  <site-nav></site-nav>
+
+  <div class="container">
+    <!-- Section 1: Header -->
+    <header>
+      <h1 class="title-with-audio">
+        <!-- Truly centered text for Prefixes (སྔོན་འཇུག) -->
+        <span class="title-text">སྔོན་འཇུག</span>
+      </h1>
+      <p class="subtitle" id="subtitleText"></p>
+    </header>
+
+    <!-- Section 2: Unified Sticky Two-Row Controls Component -->
+    <site-controls>
+      <div class="prefix-toggle-group" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+        
+        <!-- Base / Default Option -->
+        <label class="prefix-option">
+          <input type="radio" name="prefixSelect" value="none" checked>
+          <span id="labelNone"></span>
+        </label>
+
+        <!-- 1. Ga (ག) -->
+        <label class="prefix-option">
+          <input type="radio" name="prefixSelect" value="kaa">
+          <span class="prefix-symbol">ག</span>
+        </label>
+
+        <!-- 2. Da (ད) -->
+        <label class="prefix-option">
+          <input type="radio" name="prefixSelect" value="taa">
+          <span class="prefix-symbol">ད</span>
+        </label>
+
+        <!-- 3. Ba (བ) -->
+        <label class="prefix-option">
+          <input type="radio" name="prefixSelect" value="paa">
+          <span class="prefix-symbol">བ</span>
+        </label>
+
+        <!-- 4. Ma (མ) -->
+        <label class="prefix-option">
+          <input type="radio" name="prefixSelect" value="ma">
+          <span class="prefix-symbol">མ</span>
+        </label>
+
+        <!-- 5. aa (འ) -->
+        <label class="prefix-option">
+          <input type="radio" name="prefixSelect" value="aa">
+          <span class="prefix-symbol">འ</span>
+        </label>
+
+      </div>
+    </site-controls>
+
+    <!-- Section 3: Syllables Grid -->
+    <main class="grid-container" id="alphabetGrid"></main>
+
+    <!-- Shared Universal Footer -->
+    <site-footer></site-footer>
+  </div>
+
+  <script type="module">
+        import { createSyllableCard } from './js/shared-layout.js';
+        import { t } from './js/i18n.js';
+        import { tibetanAlphabet } from './js/syllables_data.js';
+        import { getPrefixCombination, isHomorganicClash } from './js/prefixes_data.js';
+        import { bindAudioSpeed } from './js/audio-helper.js';
+
+        window.addEventListener('DOMContentLoaded', () => {
+          const subtitleElem = document.getElementById('subtitleText');
+          const baseOnlyElem = document.getElementById('labelNone');
+      
+          if (subtitleElem) subtitleElem.textContent = t('prefixesTitle') || 'Prefixes';
+          if (baseOnlyElem) baseOnlyElem.textContent = t('none');
+        });
+
+        const titleAudio = bindAudioSpeed(new Audio("audio/prefixes/prefixes_title.mp3"));
+        titleAudio.preload = 'auto';
+
+        let currentAudio = null;
+        let currentCard = null;
+
+        function stopAudio() {
+          if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            if (currentCard) currentCard.classList.remove('playing');
+          }
+        }
+
+        const prefixAudio = {
+          kaa: bindAudioSpeed(new Audio("audio/syllables/03_kaa.mp3")),
+          taa: bindAudioSpeed(new Audio("audio/syllables/11_taa.mp3")),
+          paa: bindAudioSpeed(new Audio("audio/syllables/15_paa.mp3")),
+          ma: bindAudioSpeed(new Audio("audio/syllables/16_ma.mp3")),
+          aa: bindAudioSpeed(new Audio("audio/syllables/23_aa.mp3"))
+        };
+
+        const grid = document.getElementById('alphabetGrid');
+        let activePrefix = "none";
+
+        document.addEventListener('change', (event) => {
+          if (event.target && event.target.name === 'prefixSelect') {
+            activePrefix = event.target.value;
+
+            if (activePrefix !== 'none' && prefixAudio[activePrefix]) {
+              stopAudio();
+              prefixAudio[activePrefix].currentTime = 0;
+              prefixAudio[activePrefix].play().catch(err => console.log("Prefix audio error"));
+              currentAudio = prefixAudio[activePrefix];
+            }
+
+            renderGrid();
+          }
+        });
+
+        function renderGrid() {
+          grid.innerHTML = '';
+
+          tibetanAlphabet.forEach(item => {
+            let displayTibetan = item.tib;
+            let audioPath = `audio/syllables/${item.id}.mp3`;
+            let hasShift = false;
+            let shiftExplanation = null;
+            let isDisabled = false;
+
+            let displayRom = item.eng || '';
+            let displayToneKey = item.toneKey || '';
+
+            if (activePrefix !== "none") {
+              // Check exclusion rule first
+              if (isHomorganicClash(activePrefix, item.id)) {
+                isDisabled = true;
+              } else {
+                // Generate or fetch exception data automatically
+                const comboData = getPrefixCombination(activePrefix, item);
+              
+                displayTibetan = comboData.tib;
+                hasShift = comboData.hasShift;
+                shiftExplanation = comboData.toneKey ? t(comboData.toneKey) : null;
+                displayRom = comboData.eng;
+                displayToneKey = comboData.toneKey;
+                audioPath = comboData.audioPath;
+              }
+            }
+
+            const card = createSyllableCard({
+                id: item.id,
+                script: displayTibetan,
+                romanization: displayRom,
+                tone: hasShift ? shiftExplanation : (displayToneKey ? t(displayToneKey) : ''),
+                hasSoundShift: hasShift,
+                shiftExplanation: shiftExplanation,
+                isDisabled: isDisabled
+            });
+
+            if (!isDisabled) {
+              const audioObj = bindAudioSpeed(new Audio(audioPath));
+              audioObj.preload = 'auto';
+
+              card.addEventListener('click', () => {
+                stopAudio();
+                card.classList.add('playing');
+                audioObj.play().catch(error => console.error("Audio error:", audioPath));
+                currentAudio = audioObj;
+                currentCard = card;
+                audioObj.onended = () => card.classList.remove('playing');
+              });
+            }
+
+            grid.appendChild(card);
+          });
+        }
+
+        renderGrid();
+    </script>
+</body>
+</html>
