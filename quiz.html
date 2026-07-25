@@ -168,6 +168,12 @@
       position: fixed;
       inset: 0;
     }
+	.joke-modal h3{
+		font-size: 3rem;
+	}
+	.joke-modal .success-syllable-badge{
+		border: 0;
+	}
 
     #successModal::backdrop {
       background: rgba(0, 0, 0, 0.5);
@@ -232,7 +238,7 @@
     <site-footer></site-footer>
   </div>
 
-  <script type="module">
+<script type="module">
      import { t } from './js/i18n.js';
      import { tibetanAlphabet } from './js/syllables_data.js';
      import { getNextQuizRound } from './js/quiz_engine.js';
@@ -354,7 +360,10 @@
      }
 
      function handleAnswerSelection(selectedOpt, clickedBtn, correctOpt) {
-       if (selectedOpt.id === correctOpt.id) {
+       // Check if correct choice OR if it's a joke round (where any option selection succeeds)
+       const isCorrect = (selectedOpt.id === correctOpt.id) || correctOpt.isJoke;
+
+       if (isCorrect) {
          if (audioTimeout) {
            clearTimeout(audioTimeout);
            audioTimeout = null;
@@ -364,7 +373,14 @@
            currentAudioObj.onended = null;
          }
 
+         // Highlight the clicked button as correct
          clickedBtn.classList.add('correct');
+         
+         // If it's a joke round, automatically highlight all other choices as correct for visual fun!
+         if (correctOpt.isJoke) {
+           document.querySelectorAll('.quiz-option').forEach(b => b.classList.add('correct'));
+         }
+
          quizFeedback.textContent = t('quizCorrectMsg') || "Correct! Great job.";
          quizFeedback.style.color = "#28a745";
 
@@ -372,37 +388,71 @@
 
          const modalHeading = document.getElementById('successModalHeading');
          const modalText = document.getElementById('successModalText');
+         const sparkleContainer = document.querySelector('.sparkle-container');
 
-         if (guessCount <= 1) {
-           modalHeading.textContent = t('quizModalSpotOnHeading') || "Spot On!";
+         // Handle Joke Message vs Regular Correct Message
+         if (correctOpt.isJoke) {
+           successModal.classList.add('joke-modal');
+           modalHeading.textContent = "རྩེད་མོ་རྩེ";
            modalHeading.style.color = "#28a745";
-           modalText.textContent = t('quizModalSpotOnText') || "You nailed that sound!";
+           modalText.textContent = correctOpt.jokeMessage;
+		   // Grab all the option buttons currently rendered on the page
+		   const optionButtons = document.querySelectorAll('.options-grid .quiz-option');
+
+		   // Extract their Tibetan text and join them with spaces
+		   const allSyllables = Array.from(optionButtons).map(btn => btn.textContent).join('  ');
+
+		   // Inject them right into your modal's sparkle container / badge area
+		   sparkleContainer.innerHTML = `
+		     <span class="sparkle">😆</span>
+		     <span class="sparkle">🤪</span>
+		     <span class="sparkle">🥳</span>
+		     <span class="sparkle">🤣</span>
+		     <div class="success-syllable-badge" style="font-size: 2.2rem; word-spacing: 8px;">${allSyllables}</div>
+		   `;
          } else {
-           modalHeading.textContent = t('quizModalGotItHeading') || "You got it!";
-           modalHeading.style.color = "#d97706";
+           successModal.classList.remove('joke-modal');
 
-           let toneTip = t('quizToneTipDefault') || "the tone (high or low) if there is aspiration.";
-           const targetBaseId = correctOpt.baseId || correctOpt.id;
-           const baseItem = tibetanAlphabet.find(i => i.id === targetBaseId);
+           // Restore standard sparkles for normal questions
+           sparkleContainer.innerHTML = `
+             <span class="sparkle">✨</span>
+             <span class="sparkle">⭐</span>
+             <span class="sparkle">✨</span>
+             <span class="sparkle">🌟</span>
+             <div class="success-syllable-badge" id="modalSyllableDisplay">${correctOpt.tib}</div>
+           `;
 
-           if (baseItem && baseItem.toneKey) {
-             switch (baseItem.toneKey) {
-               case 'highTone':
-                 toneTip = t('quizToneTipHigh') || "a high, crisp tone.";
-                 break;
-               case 'aspirated':
-                 toneTip = t('quizToneTipAspirated') || "a high tone with a strong puff of air.";
-                 break;
-               case 'lowTone':
-                 toneTip = t('quizToneTipLow') || "a lower, deeper tone.";
-                 break;
-               case 'nasal':
-                 toneTip = t('quizToneTipNasal') || "a lower tone with a nasal sound.";
-                 break;
+           if (guessCount <= 1) {
+             modalHeading.textContent = t('quizModalSpotOnHeading') || "Spot On!";
+             modalHeading.style.color = "#28a745";
+             modalText.textContent = t('quizModalSpotOnText') || "You nailed that sound!";
+           } else {
+             modalHeading.textContent = t('quizModalGotItHeading') || "You got it!";
+             modalHeading.style.color = "#d97706";
+
+             let toneTip = t('quizToneTipDefault') || "the tone (high or low) if there is aspiration.";
+             const targetBaseId = correctOpt.baseId || correctOpt.id;
+             const baseItem = tibetanAlphabet.find(i => i.id === targetBaseId);
+
+             if (baseItem && baseItem.toneKey) {
+               switch (baseItem.toneKey) {
+                 case 'highTone':
+                   toneTip = t('quizToneTipHigh') || "a high, crisp tone.";
+                   break;
+                 case 'aspirated':
+                   toneTip = t('quizToneTipAspirated') || "a high tone with a strong puff of air.";
+                   break;
+                 case 'lowTone':
+                   toneTip = t('quizToneTipLow') || "a lower, deeper tone.";
+                   break;
+                 case 'nasal':
+                   toneTip = t('quizToneTipNasal') || "a lower tone with a nasal sound.";
+                   break;
+               }
              }
-           }
 
-           modalText.textContent = `${t('quizModalRememberListen') || "Remember to listen for"} ${toneTip}`;
+             modalText.textContent = `${t('quizModalRememberListen') || "Remember to listen for"} ${toneTip}`;
+           }
          }
 
          document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);

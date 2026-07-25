@@ -17,7 +17,7 @@ export const attachedLettersData = {
     "09_ta":  { id: "ra_09_ta", tib: "ཏྲ", soundShift: true, eng: "ta", toneKey: "highTone", audioPath: "audio/attachedletters/01_ka_ra.mp3" },
     "10_tha": { id: "ra_10_tha", tib: "ཐྲ", soundShift: true,eng: "tha", toneKey: "aspirated", audioPath: "audio/attachedletters/02_kha_ra.mp3" },
     "11_taa": { id: "ra_11_taa", tib: "དྲ", soundShift: true,  eng: "taa", toneKey: "lowTone", audioPath: "audio/attachedletters/03_kaa_ra.mp3" },
-	"12_na": { id: "ra_12_na", tib: "ནྲ", soundShift: false, eng: "na", toneKey: "nasal", audioPath: "audio/syllalbes/12_na.mp3" },
+	"12_na": { id: "ra_12_na", tib: "ནྲ", soundShift: false, eng: "na", toneKey: "nasal", audioPath: "audio/syllables/12_na.mp3" },
     "13_pa":  { id: "ra_13_pa", tib: "པྲ", soundShift: true, eng: "ta", toneKey: "highTone", audioPath: "audio/attachedletters/01_ka_ra.mp3" },
     "14_pha": { id: "ra_14_pha", tib: "ཕྲ", soundShift: true, eng: "tha", toneKey: "aspirated", audioPath: "audio/attachedletters/02_kha_ra.mp3" },
     "15_paa": { id: "ra_15_paa", tib: "བྲ", soundShift: true, eng: "taa", toneKey: "lowTone", audioPath: "audio/attachedletters/03_kaa_ra.mp3" },
