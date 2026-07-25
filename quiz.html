@@ -8,9 +8,9 @@
   <script type="module" src="js/shared-layout.js"></script>
 
   <style>
-	.subtitle.quiz-instructions{
-		font-size: 1.3rem;
-	}
+    .subtitle.quiz-instructions{
+      font-size: 1.3rem;
+    }
     .quiz-card {
       background: var(--card-bg, #ffffff);
       border: 1px solid var(--border-color, #e0e0e0);
@@ -47,11 +47,16 @@
       stroke: white;
     }
 
+    /* 2 rows by 3 columns grid layout (Taller than longer) */
     .options-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(3, auto);
       gap: 12px;
       margin-top: 25px;
+      max-width: 450px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .quiz-option {
@@ -193,26 +198,26 @@
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
           </svg>
         </button>
-		<div id="playback-speed-indicator" style="font-size: 0.75rem; color: #666; margin-top: 20px;" data-speed-label="Playback Speed: "></div>
+        <div id="playback-speed-indicator" style="font-size: 0.75rem; color: #666; margin-top: 20px;" data-speed-label="Playback Speed: "></div>
 
-        <!-- Multiple Choice Grid (6 options) -->
+        <!-- Multiple Choice Grid -->
         <div class="options-grid" id="optionsGrid"></div>
-		
-		<!-- Success Celebration Modal -->
-		<dialog id="successModal">
-		  <div class="sparkle-container">
+        
+        <!-- Success Celebration Modal -->
+        <dialog id="successModal">
+          <div class="sparkle-container">
             <span class="sparkle">✨</span>
             <span class="sparkle">⭐</span>
             <span class="sparkle">✨</span>
             <span class="sparkle">🌟</span>
-		    <div class="success-syllable-badge" id="modalSyllableDisplay"></div>
+            <div class="success-syllable-badge" id="modalSyllableDisplay"></div>
           </div>
-		  <h3 id="successModalHeading" style="color: #28a745; margin-bottom: 8px;">Spot On!</h3>
-		  <p id="successModalText" style="color: #555; margin-bottom: 20px; line-height: 1.4;">You nailed that sound!</p>
-		  <button type="button" id="modalNextBtn" style="background: var(--accent-maroon, #800000); color: white; border: none; padding: 12px 25px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; font-weight: bold;">
-		    Next Round! ✨
-		  </button>
-		</dialog>
+          <h3 id="successModalHeading" style="color: #28a745; margin-bottom: 8px;">Spot On!</h3>
+          <p id="successModalText" style="color: #555; margin-bottom: 20px; line-height: 1.4;">You nailed that sound!</p>
+          <button type="button" id="modalNextBtn" style="background: var(--accent-maroon, #800000); color: white; border: none; padding: 12px 25px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; font-weight: bold;">
+            Next Round! ✨
+          </button>
+        </dialog>
 
         <!-- Feedback & Action Buttons -->
         <div class="quiz-feedback" id="quizFeedback"></div>
@@ -230,10 +235,9 @@
   <script type="module">
      import { t } from './js/i18n.js';
      import { tibetanAlphabet } from './js/syllables_data.js';
-     import { getAllVowelCombinations } from './js/vowels_data.js';
+     import { getNextQuizRound } from './js/quiz_engine.js';
 
      // Apply translations to layout texts
-// Apply translations to layout texts
      document.getElementById('pageTitle').textContent = t('quizPageTitle') || "Tibetan Study Companion - Quiz";
      document.getElementById('quizHeaderTitle').textContent = t('quizHeaderTitle') || "Practice Quiz";
      document.getElementById('quizHeaderSubtitle').textContent = t('quizHeaderSubtitle') || "Listen to the audio and choose the correct syllable or combination.";
@@ -242,24 +246,11 @@
      document.getElementById('nextQuestionBtn').textContent = t('quizNextBtn') || "Next Question";
      document.getElementById('modalNextBtn').textContent = t('quizModalNextBtn') || "Next Round! ✨";
 
-     // Combine root syllables and all vowel combinations into one rich item pool
-     const rootItems = tibetanAlphabet.map(item => ({
-       id: item.id,
-       baseId: item.id,
-       vowel: "none",
-       tib: item.tib,
-       eng: item.eng,
-       audioPath: `audio/syllables/${item.id}.mp3`
-     }));
-    
-     const vowelItems = getAllVowelCombinations();
-     const masterPool = [...rootItems, ...vowelItems];
-
      let currentQuestion = null;
      let currentAudioObj = null;
      let playCount = 0;
-     let guessCount = 0; // Tracks incorrect guesses per question
-     let audioTimeout = null; // Tracks active delay timer to clear it if needed
+     let guessCount = 0; 
+     let audioTimeout = markerTimer => clearTimeout(markerTimer); 
 
      const playPromptBtn = document.getElementById('playPromptBtn');
      const optionsGrid = document.getElementById('optionsGrid');
@@ -269,8 +260,6 @@
 
      const successModal = document.getElementById('successModal');
      const modalNextBtn = document.getElementById('modalNextBtn');
-	 
-	 
 
      function playAudioWithLoopLimit(maxLoops = 3) {
        if (!currentAudioObj) return;
@@ -301,225 +290,131 @@
      }
 
      function loadNewQuestion() {
-            if (successModal.open) {
-              successModal.close();
-            }
+       if (successModal.open) {
+         successModal.close();
+       }
 
-            if (audioTimeout) {
-              clearTimeout(audioTimeout);
-              audioTimeout = null;
-            }
+       if (audioTimeout) {
+         clearTimeout(audioTimeout);
+         audioTimeout = null;
+       }
 
-            // Reset guess count for the new round
-            guessCount = 0;
+       guessCount = 0;
+       quizFeedback.textContent = '';
+       nextQuestionBtn.style.display = 'none';
+       optionsGrid.innerHTML = '';
 
-	        quizFeedback.textContent = '';
-	        nextQuestionBtn.style.display = 'none';
-	        optionsGrid.innerHTML = '';
+       // Fetch selected category round and matrix-computed options from the engine module
+       const roundData = getNextQuizRound();
+       currentQuestion = roundData.question;
+       const options = roundData.options;
 
-	        // 1. Pick a random correct item from the master pool
-	        const correctIndex = Math.floor(Math.random() * masterPool.length);
-	        currentQuestion = masterPool[correctIndex];
+       // Dynamically adjust grid layout template based on category grid size configuration (2x3 grid)
+       if (roundData.category.gridSize === 6) {
+         optionsGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+         optionsGrid.style.gridTemplateRows = 'repeat(3, auto)';
+       } else {
+         optionsGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+         optionsGrid.style.gridTemplateRows = 'repeat(2, auto)';
+       }
 
-	        // 2. Strict Constraint-Based Distractor Selection (Targeting 6 options total)
-	        const options = [currentQuestion];
-      
-	        const baseAlphabetIndex = tibetanAlphabet.findIndex(item => item.id === currentQuestion.baseId);
-	        const rowIdx = Math.floor(baseAlphabetIndex / 4);
-	        const colIdx = baseAlphabetIndex % 4;
+       // Setup Audio object & Random Playback Speed
+       if (currentAudioObj) {
+         currentAudioObj.pause();
+       }
+       currentAudioObj = new Audio(currentQuestion.audioPath);
+       currentAudioObj.preload = 'auto';
 
-	        let refinedPoolBaseIds = [];
-	        let mustHaveBaseIds = []; 
+       const speedOptions = [1.0, 1.5, 1.9];
+       const randomSpeed = speedOptions[Math.floor(Math.random() * speedOptions.length)];
+       currentAudioObj.playbackRate = randomSpeed;
 
-	        if (baseAlphabetIndex >= 20) {
-	          const finalSectionItems = tibetanAlphabet.slice(20).map(i => i.id);
-	          refinedPoolBaseIds.push(...finalSectionItems);
+       var randomSpeedText = randomSpeed;
+       if (randomSpeed == 1.9){
+         randomSpeedText = 2.0;
+       }
 
-	          let leftIdx1 = baseAlphabetIndex - 1;
-	          let leftIdx2 = baseAlphabetIndex - 2;
-	          let rightIdx1 = baseAlphabetIndex + 1;
+       const speedIndicator = document.getElementById('playback-speed-indicator');
+       if (speedIndicator) {
+         const speedLabelText = speedIndicator.getAttribute('data-speed-label') || "Playback Speed: ";
+         speedIndicator.textContent = `${speedLabelText}${randomSpeedText}x`;
+       }
 
-	          if (!tibetanAlphabet[rightIdx1]) {
-	            if (tibetanAlphabet[leftIdx1]) mustHaveBaseIds.push(tibetanAlphabet[leftIdx1].id);
-	            if (tibetanAlphabet[leftIdx2]) mustHaveBaseIds.push(tibetanAlphabet[leftIdx2].id);
-	          } else if (leftIdx1 < 20) {
-	            if (tibetanAlphabet[baseAlphabetIndex + 1]) mustHaveBaseIds.push(tibetanAlphabet[baseAlphabetIndex + 1].id);
-	            if (tibetanAlphabet[baseAlphabetIndex + 2]) mustHaveBaseIds.push(tibetanAlphabet[baseAlphabetIndex + 2].id);
-	          } else {
-	            if (tibetanAlphabet[leftIdx1]) mustHaveBaseIds.push(tibetanAlphabet[leftIdx1].id);
-	            if (tibetanAlphabet[rightIdx1]) mustHaveBaseIds.push(tibetanAlphabet[rightIdx1].id);
-	          }
-	        } 
-	        else if (colIdx === 3) {
-	          for (let i = 3; i < tibetanAlphabet.length; i += 4) {
-	            if (tibetanAlphabet[i]) refinedPoolBaseIds.push(tibetanAlphabet[i].id);
-	          }
-	        } 
-	        else {
-	          for (let r = 0; r <= 4; r++) {
-	            if (tibetanAlphabet[r * 4]) refinedPoolBaseIds.push(tibetanAlphabet[r * 4].id);
-	            if (tibetanAlphabet[(r * 4) + 1]) refinedPoolBaseIds.push(tibetanAlphabet[(r * 4) + 1].id);
-	            if (tibetanAlphabet[(r * 4) + 2]) refinedPoolBaseIds.push(tibetanAlphabet[(r * 4) + 2].id);
-	          }
+       playAudioWithLoopLimit(3);
 
-	          const rowStart = rowIdx * 4;
-	          for (let c = 0; c <= 2; c++) {
-	            let siblingIndex = rowStart + c;
-	            if (siblingIndex !== baseAlphabetIndex && tibetanAlphabet[siblingIndex]) {
-	              mustHaveBaseIds.push(tibetanAlphabet[siblingIndex].id);
-	            }
-	          }
-	        }
-
-	        if (mustHaveBaseIds.length > 0) {
-	          const priorityDistractors = masterPool.filter(item => 
-	            item.vowel === currentQuestion.vowel && 
-	            mustHaveBaseIds.includes(item.baseId)
-	          );
-         
-	          for (const distractor of priorityDistractors) {
-	            if (options.length < 6 && !options.some(opt => opt.id === distractor.id)) {
-	              options.push(distractor);
-	            }
-	          }
-	        }
-
-	        const smartDistractors = masterPool.filter(item => 
-	          item.id !== currentQuestion.id && 
-	          item.vowel === currentQuestion.vowel && 
-	          refinedPoolBaseIds.includes(item.baseId)
-	        );
-
-	        smartDistractors.sort(() => Math.random() - 0.5);
-	        for (const distractor of smartDistractors) {
-	          if (options.length < 6 && !options.some(opt => opt.id === distractor.id)) {
-	            options.push(distractor);
-	          }
-	        }
-
-	        const restrictedFallbackPool = masterPool.filter(item => 
-	          item.vowel === currentQuestion.vowel && refinedPoolBaseIds.includes(item.baseId)
-	        );
-	        while (options.length < 6 && restrictedFallbackPool.length > options.length) {
-	          const randItem = restrictedFallbackPool[Math.floor(Math.random() * restrictedFallbackPool.length)];
-	          if (!options.some(opt => opt.id === randItem.id)) {
-	            options.push(randItem);
-	          }
-	        }
-
-	        const absoluteVowelPool = masterPool.filter(item => item.vowel === currentQuestion.vowel);
-	        while (options.length < 6 && absoluteVowelPool.length > options.length) {
-	          const randItem = absoluteVowelPool[Math.floor(Math.random() * absoluteVowelPool.length)];
-	          if (!options.some(opt => opt.id === randItem.id)) {
-	            options.push(randItem);
-	          }
-	        }
-
-	        options.sort(() => Math.random() - 0.5);
-
-	        // 3. Setup Audio object & Random Playback Speed
-	        if (currentAudioObj) {
-	          currentAudioObj.pause();
-	        }
-	        currentAudioObj = new Audio(currentQuestion.audioPath);
-	        currentAudioObj.preload = 'auto';
-
-	        const speedOptions = [1.0, 1.5, 1.9];
-	        const randomSpeed = speedOptions[Math.floor(Math.random() * speedOptions.length)];
-	        currentAudioObj.playbackRate = randomSpeed;
-
-			var randomSpeedText = randomSpeed;
-			if (randomSpeed == 1.9){
-				randomSpeedText = 2.0;
-			}
-
-	        const speedIndicator = document.getElementById('playback-speed-indicator');
-	        if (speedIndicator) {
-	          const speedLabelText = speedIndicator.getAttribute('data-speed-label') || "Playback Speed: ";
-	          speedIndicator.textContent = `${speedLabelText}${randomSpeedText}x`;
-	        }
-
-	        playAudioWithLoopLimit(3);
-
-	        // 4. Render choice buttons
-	        options.forEach(opt => {
-	          const btn = document.createElement('button');
-	          btn.type = 'button';
-	          btn.className = 'quiz-option';
-	          btn.textContent = opt.tib;
-        
-	          btn.addEventListener('click', () => handleAnswerSelection(opt, btn, currentQuestion));
-	          optionsGrid.appendChild(btn);
-	        });
+       // Render choice buttons
+       options.forEach(opt => {
+         const btn = document.createElement('button');
+         btn.type = 'button';
+         btn.className = 'quiz-option';
+         btn.textContent = opt.tib;
+         btn.addEventListener('click', () => handleAnswerSelection(opt, btn, currentQuestion));
+         optionsGrid.appendChild(btn);
+       });
      }
 
-	 function handleAnswerSelection(selectedOpt, clickedBtn, correctOpt) {
-	      if (selectedOpt.id === correctOpt.id) {
-	        if (audioTimeout) {
-	          clearTimeout(audioTimeout);
-	          audioTimeout = null;
-	        }
-	        if (currentAudioObj) {
-	          currentAudioObj.pause();
-	          currentAudioObj.onended = null;
-	        }
+     function handleAnswerSelection(selectedOpt, clickedBtn, correctOpt) {
+       if (selectedOpt.id === correctOpt.id) {
+         if (audioTimeout) {
+           clearTimeout(audioTimeout);
+           audioTimeout = null;
+         }
+         if (currentAudioObj) {
+           currentAudioObj.pause();
+           currentAudioObj.onended = null;
+         }
 
-	        clickedBtn.classList.add('correct');
-	        quizFeedback.textContent = t('quizCorrectMsg') || "Correct! Great job.";
-	        quizFeedback.style.color = "#28a745";
+         clickedBtn.classList.add('correct');
+         quizFeedback.textContent = t('quizCorrectMsg') || "Correct! Great job.";
+         quizFeedback.style.color = "#28a745";
 
-	        // Populate the correct Tibetan syllable inside the modal badge
-	        document.getElementById('modalSyllableDisplay').textContent = correctOpt.tib;
+         document.getElementById('modalSyllableDisplay').textContent = correctOpt.tib;
 
-	        // Configure modal text based on guess count
-	        const modalHeading = document.getElementById('successModalHeading');
-	        const modalText = document.getElementById('successModalText');
+         const modalHeading = document.getElementById('successModalHeading');
+         const modalText = document.getElementById('successModalText');
 
-	        if (guessCount <= 1) {
-	          // 1 or 2 total guesses (0 or 1 incorrect attempts before correct selection)
-	          modalHeading.textContent = t('quizModalSpotOnHeading') || "Spot On!";
-	          modalHeading.style.color = "#28a745";
-	          modalText.textContent = t('quizModalSpotOnText') || "You nailed that sound!";
-	        } else {
-	          // 3 or more attempts total
-	          modalHeading.textContent = t('quizModalGotItHeading') || "You got it!";
-	          modalHeading.style.color = "#d97706"; // Warm encouraging amber/gold tone
+         if (guessCount <= 1) {
+           modalHeading.textContent = t('quizModalSpotOnHeading') || "Spot On!";
+           modalHeading.style.color = "#28a745";
+           modalText.textContent = t('quizModalSpotOnText') || "You nailed that sound!";
+         } else {
+           modalHeading.textContent = t('quizModalGotItHeading') || "You got it!";
+           modalHeading.style.color = "#d97706";
 
-	          // Determine tone tip based on source data toneKey (checking baseId or id)
-	          let toneTip = t('quizToneTipDefault') || "the tone (high or low) if there is aspiration.";
-	          const targetBaseId = correctOpt.baseId || correctOpt.id;
-	          const baseItem = tibetanAlphabet.find(i => i.id === targetBaseId);
+           let toneTip = t('quizToneTipDefault') || "the tone (high or low) if there is aspiration.";
+           const targetBaseId = correctOpt.baseId || correctOpt.id;
+           const baseItem = tibetanAlphabet.find(i => i.id === targetBaseId);
 
-	          if (baseItem && baseItem.toneKey) {
-	            switch (baseItem.toneKey) {
-	              case 'highTone':
-	                toneTip = t('quizToneTipHigh') || "a high, crisp tone.";
-	                break;
-	              case 'aspirated':
-	                toneTip = t('quizToneTipAspirated') || "a high tone with a strong puff of air.";
-	                break;
-	              case 'lowTone':
-	                toneTip = t('quizToneTipLow') || "a lower, deeper tone.";
-	                break;
-	              case 'nasal':
-	                toneTip = t('quizToneTipNasal') || "a lower tone with a nasal sound.";
-	                break;
-	            }
-	          }
+           if (baseItem && baseItem.toneKey) {
+             switch (baseItem.toneKey) {
+               case 'highTone':
+                 toneTip = t('quizToneTipHigh') || "a high, crisp tone.";
+                 break;
+               case 'aspirated':
+                 toneTip = t('quizToneTipAspirated') || "a high tone with a strong puff of air.";
+                 break;
+               case 'lowTone':
+                 toneTip = t('quizToneTipLow') || "a lower, deeper tone.";
+                 break;
+               case 'nasal':
+                 toneTip = t('quizToneTipNasal') || "a lower tone with a nasal sound.";
+                 break;
+             }
+           }
 
-	          modalText.textContent = `${t('quizModalRememberListen') || "Remember to listen for"} ${toneTip}`;
-	        }
+           modalText.textContent = `${t('quizModalRememberListen') || "Remember to listen for"} ${toneTip}`;
+         }
 
-	        document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
-	        successModal.showModal();
-	      } else {
-	        guessCount++;
-	        clickedBtn.classList.add('incorrect');
-	        clickedBtn.disabled = true;
-	        quizFeedback.textContent = t('quizIncorrectMsg') || "Not quite, try again!";
-	        quizFeedback.style.color = "#dc3545";
-	      }
-	    }
+         document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+         successModal.showModal();
+       } else {
+         guessCount++;
+         clickedBtn.classList.add('incorrect');
+         clickedBtn.disabled = true;
+         quizFeedback.textContent = t('quizIncorrectMsg') || "Not quite, try again!";
+         quizFeedback.style.color = "#dc3545";
+       }
+     }
 
      playPromptBtn.addEventListener('click', () => {
        playAudioWithLoopLimit(3);
