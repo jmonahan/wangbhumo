@@ -292,11 +292,46 @@ export const quizCategories = {
  * Randomly picks a quiz category, picks a target question, and generates grid options.
  */
 export function getNextQuizRound() {
-  const categoryKeys = Object.keys(quizCategories);
-  const selectedKey = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
-  const category = quizCategories[selectedKey];
+  const urlParams = new URLSearchParams(window.location.search);
+  const categoryCode = urlParams.get('c'); // 's', 'v', 'hl', 'al'
+  const subSelection = urlParams.get('s'); // specific subjoined or head letter key
 
-  const pool = category.getPool();
+  let categoryKey;
+  if (categoryCode === 's' || categoryCode === 'v') {
+    categoryKey = 'syllablesAndVowels';
+  } else if (categoryCode === 'hl') {
+    categoryKey = 'headLetters';
+  } else if (categoryCode === 'al') {
+    categoryKey = 'attachedLetters';
+  } else {
+    // Default fallback: pick a random category if no 'c' param is provided
+    const categoryKeys = Object.keys(quizCategories);
+    categoryKey = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
+  }
+
+  let category = quizCategories[categoryKey];
+  let pool = category.getPool();
+
+  // Apply shorthand filters
+  if (categoryCode === 'v') {
+    pool = pool.filter(item => item.vowel !== 'none');
+  } else if (categoryCode === 's') {
+    pool = pool.filter(item => item.vowel === 'none');
+  }
+
+  if (subSelection) {
+    if (categoryKey === 'headLetters') {
+      pool = pool.filter(item => item.head === subSelection);
+    } else if (categoryKey === 'attachedLetters') {
+      pool = pool.filter(item => item.subjoined === subSelection);
+    }
+  }
+
+  // Fallback if filter returns empty
+  if (pool.length === 0) {
+    pool = category.getPool();
+  }
+
   const correctItem = pool[Math.floor(Math.random() * pool.length)];
   const options = category.generateOptions(correctItem, pool);
 
