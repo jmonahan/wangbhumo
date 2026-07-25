@@ -1,17 +1,16 @@
 // js/quiz_engine.js
 import { tibetanAlphabet } from './syllables_data.js';
 import { getAllVowelCombinations } from './vowels_data.js';
+import { headLettersData } from './headletters_data.js';
 
 /**
  * Registry of available quiz categories. 
- * Each category defines its source pool, grid configuration (grid columns/max options), 
- * and custom distractor generation logic.
  */
 export const quizCategories = {
   syllablesAndVowels: {
     id: 'syllablesAndVowels',
     name: 'Root Syllables & Vowels',
-    gridSize: 6, // 6 options grid layout
+    gridSize: 6, // 6 options grid layout (2x3 format)
     getPool: () => {
       const rootItems = tibetanAlphabet.map(item => ({
         id: item.id,
@@ -67,7 +66,6 @@ export const quizCategories = {
           }
         }
 
-        // Explicitly ensure row siblings (e.g., ཀ and ག for ཁ) are forced into must-haves
         const rowStart = rowIdx * 4;
         for (let c = 0; c <= 2; c++) {
           let siblingIndex = rowStart + c;
@@ -124,8 +122,91 @@ export const quizCategories = {
       options.sort(() => Math.random() - 0.5);
       return options;
     }
-  }
-  // Future categories (e.g., headLetters) will plug in here cleanly!
+  },
+
+  headLetters: {
+      id: 'headLetters',
+      name: 'Head Letters (Go-chen)',
+      gridSize: 4, // 4 options grid layout (2x2 format)
+      getPool: () => {
+        const pool = [];
+        for (const [headKey, combinations] of Object.entries(headLettersData)) {
+          for (const [baseKey, item] of Object.entries(combinations)) {
+            pool.push({
+              id: item.id || `${headKey}_${baseKey}`,
+              baseId: baseKey,
+              head: headKey,
+              tib: item.tib,
+              eng: item.eng,
+              audioPath: item.audioPath
+            });
+          }
+        }
+        return pool;
+      },
+      generateOptions: (currentQuestion, masterPool) => {
+        const options = [currentQuestion];
+        const maxChoices = 4;
+
+        // Define the base keys that represent the nasal/sonorant columns (similar to column 4 behavior)
+        const column4BaseKeys = ["04_nga", "08_nya", "12_na", "16_ma"];
+        const isColumn4 = column4BaseKeys.includes(currentQuestion.baseId);
+
+        if (isColumn4) {
+          // Priority 1: Must share the same head letter AND be part of the column 4 group
+          const column4Siblings = masterPool.filter(item => 
+            item.id !== currentQuestion.id && 
+            item.head === currentQuestion.head && 
+            column4BaseKeys.includes(item.baseId)
+          );
+          column4Siblings.sort(() => Math.random() - 0.5);
+
+          for (const distractor of column4Siblings) {
+            if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
+              options.push(distractor);
+            }
+          }
+
+          // Priority 2: If we still need options, grab other column 4 items from any head letter
+          const generalColumn4 = masterPool.filter(item => 
+            item.id !== currentQuestion.id && 
+            column4BaseKeys.includes(item.baseId)
+          );
+          generalColumn4.sort(() => Math.random() - 0.5);
+
+          for (const distractor of generalColumn4) {
+            if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
+              options.push(distractor);
+            }
+          }
+        }
+
+        // Standard Rule: Prioritize distractors sharing the same head letter
+        const sameHeadPool = masterPool.filter(item => 
+          item.id !== currentQuestion.id && item.head === currentQuestion.head
+        );
+        sameHeadPool.sort(() => Math.random() - 0.5);
+
+        for (const distractor of sameHeadPool) {
+          if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
+            options.push(distractor);
+          }
+        }
+
+        // Fallback: Fill remaining slots with any head letters if needed
+        const fallbackPool = masterPool.filter(item => item.id !== currentQuestion.id);
+        fallbackPool.sort(() => Math.random() - 0.5);
+
+        for (const distractor of fallbackPool) {
+          if (options.length < maxChoices && !options.some(opt => opt.id === distractor.id)) {
+            options.push(distractor);
+          }
+        }
+
+        options.sort(() => Math.random() - 0.5);
+        return options;
+      }
+    }
 };
 
 /**
