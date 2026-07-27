@@ -46,7 +46,7 @@
         <div>
           <div class="module-title">
             <span id="card3Title">Head Letters</span>
-            <span class="badge badge-available" id="badge3">New!</span>
+            <!-- <span class="badge badge-available" id="badge3">New!</span> -->
           </div>
           <p class="module-description">
             མགོ་ཅན། - <span id="headLettersDesc"></span>
@@ -55,17 +55,32 @@
       </a>
 	  
       <!-- Attached Letters Module Placeholder -->
-      <a href="#" class="module-card disabled-card">
+      <a href="attachedletters.html" class="module-card">
         <div>
           <div class="module-title">
             <span id="attachedCardTitle"></span>
-            <span class="badge badge-coming-soon" id="attachedBadge">Coming Soon</span>
+            <span class="badge badge-available" id="attachedBadge">New!</span>
           </div>
           <p class="module-description">
             འདོགས་ཅན། - <span id="attachedLettersDesc"></span>
           </p>
         </div>
       </a>
+	  
+      <!-- Prefixes Module Placeholder -->
+      <a href="#" class="module-card disabled-card">
+        <div>
+          <div class="module-title">
+            <span id="prefixesCardTitle"></span>
+            <span class="badge badge-coming-soon" id="prefixesBadge">Coming Soon</span>
+          </div>
+          <p class="module-description">
+             <span id="prefixesDesc"></span>
+          </p>
+        </div>
+      </a>
+	  
+
 
       <!-- Quiz Module -->
       <a href="quiz.html" class="module-card">
@@ -75,7 +90,7 @@
             <span class="badge badge-available" id="badge4">New!</span>
           </div>
           <p class="module-description">
-            <span id="card4Desc">Audio based quiz. New -- now supports head letters!</span>
+            <span id="card4Desc">Audio based quiz. New -- now supports head and attached letters!</span>
           </p>
         </div>
       </a>
@@ -99,12 +114,19 @@
     document.getElementById('card2Desc').textContent = t('vowelsDesc');
 
     document.getElementById('card3Title').textContent = t('headLettersTitle');
-    document.getElementById('badge3').textContent = t('badgeNew');
+    // document.getElementById('badge3').textContent = t('badgeNew');
     document.getElementById('headLettersDesc').textContent = t('headLettersDesc');
 
     document.getElementById('attachedCardTitle').textContent = t('attachedLettersTitle');
-    document.getElementById('attachedBadge').textContent = t('badgeComingSoon');
+    document.getElementById('attachedBadge').textContent = t('badgeNew');
     document.getElementById('attachedLettersDesc').textContent = t('attachedLettersDesc');	
+	
+    document.getElementById('prefixesCardTitle').textContent = t('prefixesTitle');
+    document.getElementById('prefixesBadge').textContent = t('badgeComingSoon');
+    document.getElementById('prefixesDesc').textContent = t('prefixesDesc');	
+	
+	
+	
 	
 
     document.getElementById('card4Title').textContent = t('quizTitle');

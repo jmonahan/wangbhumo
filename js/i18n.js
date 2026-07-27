@@ -41,7 +41,7 @@ export const translations = {
     speedLabel: "Audio Speed:",
 	quizTitle: "Quiz",
 	badgeNew: "New!",
-	quizDesc: "Audio based quiz. New: now supports Head Letters!",
+	quizDesc: "Audio based quiz. New -- now supports head and attached letters!",
 	quizPageTitle: "Tibetan Study Companion - Quiz",
 	quizHeaderTitle: "Practice Quiz",
 	quizHeaderSubtitle: "Listen to the audio and pick the correct syllable.",
@@ -68,6 +68,7 @@ export const translations = {
     audioSpeedLabel: "Audio Speed:",
 	syllableSoundChanges: "Has sound change",
 	prefixesTitle: "Prefixes",
+	prefixesDesc: "Select different prefixes and see which syllables they pair with and how the sounds change.",
   },
   fr: {
     siteTitle: "Compagnon d'étude tibétaine",
@@ -109,7 +110,7 @@ export const translations = {
     speedLabel: "Audio Vitesse :",
 	quizTitle: "Quiz",
 	badgeNew: "Nouveau !",
-	quizDesc: "Quiz audio. Nouveau: prend désormais en charge les lettres sur-inscrites !",
+	quizDesc: "Quiz audio. Nouveau -- prend désormais en charge les lettres têtes et les lettres jointes !",
 	quizPageTitle: "Compagnon d'étude du tibétain - Quiz",
 	quizHeaderTitle: "Quiz d'entraînement",
 	quizHeaderSubtitle: "Écoutez l'audio et choisissez la syllabe correcte.",
@@ -136,6 +137,7 @@ export const translations = {
     audioSpeedLabel: "Vitesse audio :",
     syllableSoundChanges: "Changement de son",
 	prefixesTitle: "Préfixes",
+	prefixesDesc: "Sélectionnez différents préfixes pour voir avec quelles syllabes ils s'associent et comment les sons changent.",
   }
 };
 
